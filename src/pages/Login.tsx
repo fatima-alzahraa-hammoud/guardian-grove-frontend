@@ -85,7 +85,7 @@ const Login : React.FC = () => {
                             <label htmlFor="username" className="block text-sm font-medium text-gray-700 text-left mb-1">
                                 Username
                             </label>
-                            <Input id="username" type="text" placeholder="username" className="flex h-9 border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-md border-[#3A8EBA] placeholder:text-sm placeholder:text-gray-500  focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                            <Input id="username" type="text" placeholder="username" className="flex h-9 border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-md border-[#3A8EBA] placeholder:text-sm placeholder:text-gray-500  focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
                         </div>
 
                         <div className="mx-10">
@@ -102,16 +102,16 @@ const Login : React.FC = () => {
                             <Input id="password" type="password" placeholder="Password" className="mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
                         </div>
                         <div className="text-right mr-10">
-                            <a href="/forgot-password" className="text-sm text-[#3A8EBA] hover:text-[#326E9F]" >
+                            <a href="/forgot-password" className="underline text-xs text-[#000000] hover:text-[#326E9F]" >
                                 Forgot your password?
                             </a>
                         </div>
                         <Button className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-sm">Login</Button>
                     </form>
 
-                    <p className="text-center text-sm text-gray-600">
+                    <p className="text-center text-xs text-gray-600">
                         Don't have an account?{' '}
-                        <a href="/sign-up" className="text-[#3A8EBA] hover:text-[#326E9F]">
+                        <a href="/sign-up" className="text-[#3A8EBA] hover:text-[#326E9F] underline">
                         Sign Up
                         </a>
                     </p>
