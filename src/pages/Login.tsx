@@ -1,28 +1,30 @@
 'use client';
 
 import React from "react";
+import "../styles/global.css";
 import logo from '../assets/logo/GuardianGrove_logo_Text.png';
+import img from '../assets/images/family-login1.png';
 import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
 
 const Login : React.FC = () => {
     return (
-        <div className="min-h-screen flex flex-col lg:flex-row">
-            <div className="flex-1 flex flex-col items-center justify-center p-8 lg:p-16">
-                <div className="w-full max-w-md space-y-8">
-                    {/*logo*/}
-                    <div >
-                        <img src={logo} alt="Guardian Grove Logo" width={100} height={100} />
-                    </div>
+        <div className="h-screen flex flex-col lg:flex-row p-0 m-0">
+            <div className="absolute top-4 left-4">
+                <img src={logo} alt="Guardian Grove Logo" width={100} height={100} />
+            </div>
+            <div className="flex-1 flex flex-col items-center justify-start p-8 lg:p-16">
+                <div className="w-full max-w-md space-y-6 mt-16">
                     {/*title*/}
                     <div className="form-element text-center flex-col space-y-4">
                         <h1 className="text-3xl font-bold text-center text-gray-800">Sign in to Guardian Grove</h1>
                         <div className="form-element flex justify-center space-x-4">
-                            <Button variant="outline" size="icon" className="rounded-full w-12 h-12 flex items-center justify-center bg-[#3A8EBA]">
+                            <Button size="icon" className="rounded-full w-10 h-10 flex items-center justify-center bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-facebook w-5 h-5 text-[#ffffff] fill-[#ffffff]">
                                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
                                 </svg>                            
                             </Button>
-                            <Button variant="outline" size="icon" className="rounded-full w-12 h-12 flex items-center justify-center bg-[#3A8EBA]">
+                            <Button size="icon" className="rounded-full w-10 h-10 flex items-center justify-center bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F]">
                                 <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="26" height="26" viewBox="0,0,256,256">
                                     <g fill="#ffffff" fill-rule="nonzero" stroke="none" strokeWidth="1" strokeLinecap="butt" strokeLinejoin="miter" strokeMiterlimit="10" strokeDasharray="" strokeDashoffset="0" fontFamily="none" fontWeight="none" fontSize="none" textAnchor="none" className="w-5 h-5 text-[#ffffff] fill-[#ffffff]">
                                         <g transform="scale(5.12,5.12)">
@@ -32,7 +34,7 @@ const Login : React.FC = () => {
                                     </g>
                                 </svg>
                             </Button>
-                            <Button variant="outline" size="icon" className="rounded-full w-12 h-12 flex items-center justify-center bg-[#3A8EBA]">
+                            <Button size="icon" className="rounded-full w-10 h-10 flex items-center justify-center bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F]">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-facebook w-5 h-5 text-[#ffffff] fill-[#ffffff]">
                                     <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
                                     <rect width="4" height="12" x="2" y="9"/>
@@ -51,11 +53,48 @@ const Login : React.FC = () => {
                             </div>
                         </div>
                     </div>
+
+                    {/* Login Form */}
+                    <form className="space-y-4 w-full">
+                        <div className="mx-10">
+                            <label htmlFor="username" className="block text-sm font-medium text-gray-700 text-left mb-1">
+                                Username
+                            </label>
+                            <Input id="username" type="text" placeholder="username" className="flex h-9 border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-md border-[#3A8EBA] placeholder:text-sm placeholder:text-gray-500  focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                        </div>
+
+                        <div className="mx-10">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 text-left mb-1 ">
+                                Email
+                            </label>
+                            <Input id="email" type="email" placeholder="Email" className="mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                        </div>
+
+                        <div className="mx-10">
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 text-left mb-1">
+                                Password
+                            </label>
+                            <Input id="password" type="password" placeholder="Password" className="mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                        </div>
+                        <div className="text-right mr-10">
+                            <a href="/forgot-password" className="text-sm text-[#3A8EBA] hover:text-[#326E9F]" >
+                                Forgot your password?
+                            </a>
+                        </div>
+                        <Button className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-sm">Login</Button>
+                    </form>
+
+                    <p className="text-center text-sm text-gray-600">
+                        Don't have an account?{' '}
+                        <a href="/sign-up" className="text-[#3A8EBA] hover:text-[#326E9F]">
+                        Sign Up
+                        </a>
+                    </p>
                 </div>
             </div>
             
-            <div>
-                
+            <div className="lg:flex flex-1 relative overflow-hidden bg-gradient-to-b from-purple-50 to-blue-50" >
+                <img src={img} alt="" className="object-cover" />
             </div>
         </div>
     );
