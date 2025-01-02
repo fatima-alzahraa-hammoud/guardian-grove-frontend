@@ -49,6 +49,10 @@ module.exports = {
         md: `calc(var(--radius) - 2px)`,
         sm: "calc(var(--radius) - 4px)",
       },
+      fontFamily: {
+        comic: ['"Comic Neue"', 'cursive'], // Add Comic Neue font
+        poppins: ['Poppins', 'cursive'], 
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
