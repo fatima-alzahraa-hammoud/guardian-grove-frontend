@@ -8,17 +8,30 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { gsap } from "gsap";
 import {useNavigate} from "react-router-dom";
-import {FieldValues, useForm} from "react-hook-form";
+import {useForm} from "react-hook-form";
+import { loginSchema, TLogin } from "../libs/types/loginTypes";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Login : React.FC = () => {
     const { 
         register, 
         handleSubmit, 
-        formState: { errors } 
-    } = useForm();
+        formState: { errors },
+        reset
+    } = useForm<TLogin>({
+        resolver: zodResolver(loginSchema)
+    });
 
-    const onSubmit = (data: FieldValues) => {
+    const onSubmit = (data: TLogin) => {
         console.log(data);
+
+        toast.success('Login successful!');
+
+        // Reset the form
+        reset();
     }
 
     const navigate = useNavigate();
@@ -47,8 +60,21 @@ const Login : React.FC = () => {
         }
     }, []);
 
+    useEffect(() => {
+        if (errors.name) {
+            toast.error(errors.name.message);
+        }
+        if (errors.email) {
+            toast.error(errors.email.message);
+        }
+        if (errors.password) {
+            toast.error(errors.password.message);
+        }
+    }, [errors]);
+
     return (
         <div className="h-screen flex flex-col lg:flex-row p-0 m-0 font-poppins">
+            <ToastContainer />
             <div ref={logoRef} className="absolute top-4 left-4">
                 <img src={logo} alt="Guardian Grove Logo" width={100} height={100} />
             </div>
