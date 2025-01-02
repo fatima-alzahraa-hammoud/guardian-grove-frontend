@@ -77,7 +77,7 @@ const Signup : React.FC = () => {
                             <div className="absolute inset-0 flex items-center">
                                 <span className="w-full border-t" />
                             </div>
-                            <div className="relative flex justify-center text-sm">
+                            <div className="relative flex justify-center text-xs">
                                 <span className="px-2 bg-white text-gray-500">
                                     or use your email account
                                 </span>
@@ -88,11 +88,11 @@ const Signup : React.FC = () => {
                     {/* Login Form */}
                     <form ref={formRef} className="space-y-4 w-full">
                         <div className="mx-10 relative">
-                            <label htmlFor="username" className="block text-sm font-medium text-gray-700 text-left mb-1">
+                            <label htmlFor="username" className="block text-xs font-medium text-gray-700 text-left mb-1">
                                 Username
                             </label>
                             <div className="relative">
-                                <Input id="username" type="text" placeholder="username" className="pl-8 mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                                <Input id="username" type="text" placeholder="username" className=" flex-1 h-9 bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-xs file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-xs pl-8 mt-1 placeholder:text-xs placeholder:text-gray-500 rounded-md border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round text-gray-500">
                                         <circle cx="12" cy="8" r="5"/>
@@ -103,11 +103,11 @@ const Signup : React.FC = () => {
                         </div>
 
                         <div className="mx-10 relative">
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 text-left mb-1">
+                            <label htmlFor="email" className="block text-xs font-medium text-gray-700 text-left mb-1">
                                 Email
                             </label>
                             <div className="relative">
-                                <Input id="email" type="email" placeholder="email" className="pl-8 mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                                <Input id="email" type="email" placeholder="email" className="pl-8 mt-1 placeholder:text-xs placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs" />
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail text-gray-500">
                                         <rect width="20" height="16" x="2" y="4" rx="2"/>
@@ -118,11 +118,11 @@ const Signup : React.FC = () => {
                         </div>
 
                         <div className="mx-10 relative">
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 text-left mb-1">
+                            <label htmlFor="password" className="block text-xs font-medium text-gray-700 text-left mb-1">
                                 Password
                             </label>
                             <div className="relative">
-                                <Input id="password" type="password" placeholder="password" className="pl-8 mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                                <Input id="password" type="password" placeholder="password" className="pl-8 mt-1 placeholder:text-xs placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs" />
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-lock-keyhole text-gray-500">
                                         <circle cx="12" cy="16" r="1"/>
@@ -134,11 +134,11 @@ const Signup : React.FC = () => {
                         </div>
 
                         <div className="mx-10 relative">
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 text-left mb-1">
+                            <label htmlFor="confirmPassword" className="block text-xs font-medium text-gray-700 text-left mb-1">
                                 Password
                             </label>
                             <div className="relative">
-                                <Input id="confirmPassword" type="password" placeholder="confirm password" className="pl-8 mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                                <Input id="confirmPassword" type="password" placeholder="confirm password" className="pl-8 mt-1 placeholder:text-xs placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs" />
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-lock-keyhole text-gray-500">
                                         <circle cx="12" cy="16" r="1"/>
@@ -150,11 +150,11 @@ const Signup : React.FC = () => {
                         </div>
 
                         <div className="text-right mr-10">
-                            <a href="/forgot-password" className="underline text-xs text-[#000000] hover:text-[#326E9F] cursor-pointer" >
+                            <a onClick={() => navigate('/forgot-password')} className="underline text-xs text-[#000000] hover:text-[#326E9F] cursor-pointer" >
                                 Forgot your password?
                             </a>
                         </div>
-                        <Button className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-sm">Next</Button>
+                        <Button className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-xs">Next</Button>
                         
                         <p className="text-center text-xs text-gray-600">
                             Already have an account?{' '}

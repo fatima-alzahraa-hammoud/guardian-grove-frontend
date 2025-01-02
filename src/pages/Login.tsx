@@ -131,7 +131,7 @@ const Login : React.FC = () => {
                             </div>
                         </div>
                         <div className="text-right mr-10">
-                            <a href="/forgot-password" className="underline text-xs text-[#000000] hover:text-[#326E9F] cursor-pointer" >
+                            <a onClick={() => navigate('/forgot-password')} className="underline text-xs text-[#000000] hover:text-[#326E9F] cursor-pointer" >
                                 Forgot your password?
                             </a>
                         </div>
