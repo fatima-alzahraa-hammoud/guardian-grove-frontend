@@ -1,24 +1,49 @@
 'use client';
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import "../styles/global.css";
 import logo from '../assets/logo/GuardianGrove_logo_Text.png';
 import img from '../assets/images/family-login1.png';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
+import { gsap } from "gsap";
 
 const Login : React.FC = () => {
+    const formRef = useRef<HTMLFormElement>(null);
+    const logoRef = useRef<HTMLDivElement>(null);
+    const titleRef = useRef<HTMLDivElement>(null);
+    const buttonsRef = useRef<HTMLDivElement>(null);
+    const imgRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (formRef.current) {
+            gsap.fromTo(formRef.current, { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 1, ease: "power2.out" });
+        }
+        if (logoRef.current) {
+            gsap.fromTo(logoRef.current, { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 1, delay: 0.2, ease: "power2.out" });
+        }
+        if (titleRef.current) {
+            gsap.fromTo(titleRef.current, { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 1, delay: 0.4, ease: "power2.out" });
+        }
+        if (buttonsRef.current) {
+            gsap.fromTo(buttonsRef.current, { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 1, delay: 0.6, ease: "power2.out" });
+        }
+        if (imgRef.current) {
+            gsap.fromTo(imgRef.current, { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 1, delay: 0.8, ease: "power2.out" });
+        }
+    }, []);
+
     return (
         <div className="h-screen flex flex-col lg:flex-row p-0 m-0">
-            <div className="absolute top-4 left-4">
+            <div ref={logoRef} className="absolute top-4 left-4">
                 <img src={logo} alt="Guardian Grove Logo" width={100} height={100} />
             </div>
             <div className="flex-1 flex flex-col items-center justify-start p-8 lg:p-16">
-                <div className="w-full max-w-md space-y-6 mt-16">
+                <div ref={titleRef} className="w-full max-w-md space-y-6 mt-16">
                     {/*title*/}
                     <div className="form-element text-center flex-col space-y-4">
                         <h1 className="text-3xl font-bold text-center text-gray-800">Sign in to Guardian Grove</h1>
-                        <div className="form-element flex justify-center space-x-4">
+                        <div ref={buttonsRef} className="form-element flex justify-center space-x-4">
                             <Button size="icon" className="rounded-full w-10 h-10 flex items-center justify-center bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-facebook w-5 h-5 text-[#ffffff] fill-[#ffffff]">
                                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
@@ -55,7 +80,7 @@ const Login : React.FC = () => {
                     </div>
 
                     {/* Login Form */}
-                    <form className="space-y-4 w-full">
+                    <form ref={formRef} className="space-y-4 w-full">
                         <div className="mx-10">
                             <label htmlFor="username" className="block text-sm font-medium text-gray-700 text-left mb-1">
                                 Username
@@ -93,7 +118,7 @@ const Login : React.FC = () => {
                 </div>
             </div>
             
-            <div className="lg:flex flex-1 relative overflow-hidden bg-gradient-to-b from-purple-50 to-blue-50" >
+            <div ref={imgRef} className="lg:flex flex-1 relative overflow-hidden bg-gradient-to-b from-purple-50 to-blue-50" >
                 <img src={img} alt="" className="object-cover" />
             </div>
         </div>
