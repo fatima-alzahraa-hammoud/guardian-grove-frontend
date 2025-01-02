@@ -42,7 +42,7 @@ const Login : React.FC = () => {
             <div ref={logoRef} className="absolute top-4 left-4">
                 <img src={logo} alt="Guardian Grove Logo" width={100} height={100} />
             </div>
-            <div className="flex-1 flex flex-col items-center justify-start p-8 lg:p-16 w-1/2">
+            <div className="lg:w-1/2 flex-1 flex flex-col items-center justify-start p-8 lg:p-16 w-1/2">
                 <div ref={titleRef} className="w-full max-w-md space-y-6 mt-16">
                     {/*title*/}
                     <div className="form-element text-center flex-col space-y-4">
@@ -85,28 +85,53 @@ const Login : React.FC = () => {
 
                     {/* Login Form */}
                     <form ref={formRef} className="space-y-4 w-full">
-                        <div className="mx-10">
+                        <div className="mx-10 relative">
                             <label htmlFor="username" className="block text-sm font-medium text-gray-700 text-left mb-1">
                                 Username
                             </label>
-                            <Input id="username" type="text" placeholder="username" className="flex h-9 border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-md border-[#3A8EBA] placeholder:text-sm placeholder:text-gray-500  focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                            <div className="relative">
+                                <Input id="username" type="text" placeholder="username" className="pl-8 mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round text-gray-500">
+                                        <circle cx="12" cy="8" r="5"/>
+                                        <path d="M20 21a8 8 0 0 0-16 0"/>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="mx-10">
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 text-left mb-1 ">
+                        <div className="mx-10 relative">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 text-left mb-1">
                                 Email
                             </label>
-                            <Input id="email" type="email" placeholder="Email" className="mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                            <div className="relative">
+                                <Input id="email" type="email" placeholder="email" className="pl-8 mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail text-gray-500">
+                                        <rect width="20" height="16" x="2" y="4" rx="2"/>
+                                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="mx-10">
+                        <div className="mx-10 relative">
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700 text-left mb-1">
                                 Password
                             </label>
-                            <Input id="password" type="password" placeholder="Password" className="mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                            <div className="relative">
+                                <Input id="password" type="password" placeholder="password" className="pl-8 mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-lock-keyhole text-gray-500">
+                                        <circle cx="12" cy="16" r="1"/>
+                                        <rect x="3" y="10" width="18" height="12" rx="2"/>
+                                        <path d="M7 10V7a5 5 0 0 1 10 0v3"/>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
                         <div className="text-right mr-10">
-                            <a href="/forgot-password" className="underline text-xs text-[#000000] hover:text-[#326E9F]" >
+                            <a href="/forgot-password" className="underline text-xs text-[#000000] hover:text-[#326E9F] cursor-pointer" >
                                 Forgot your password?
                             </a>
                         </div>
@@ -115,15 +140,15 @@ const Login : React.FC = () => {
 
                     <p className="text-center text-xs text-gray-600">
                         Don't have an account?{' '}
-                        <a  onClick={() => {navigate("/signup");}} className="text-[#3A8EBA] hover:text-[#326E9F] underline">
+                        <a  onClick={() => {navigate("/signup");}} className="text-[#3A8EBA] hover:text-[#326E9F] underline cursor-pointer">
                         Sign Up
                         </a>
                     </p>
                 </div>
             </div>
             
-            <div ref={imgRef} className="lg:flex lg:w-1/2 flex-1 relative overflow-hidden bg-gradient-to-b from-purple-50 to-blue-50 w-1/2" >
-                <img src={img} alt="" className="object-cover" />
+            <div ref={imgRef} className="lg:w-1/2 flex-1 relative overflow-hidden bg-gradient-to-b from-purple-50 to-blue-50" >
+                <img src={img} alt="" className="object-cover w-full h-full" />
             </div>
         </div>
     );
