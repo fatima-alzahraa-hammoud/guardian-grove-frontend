@@ -37,7 +37,7 @@ const Signup : React.FC = () => {
     }, []);
 
     return (
-        <div className="h-screen flex flex-col lg:flex-row p-0 m-0">
+        <div className="h-screen flex flex-col lg:flex-row p-0 m-0 font-poppins">
             <div ref={imgRef} className="lg:w-1/2 flex-1 relative overflow-hidden bg-gradient-to-b from-purple-50 to-blue-50">
                 <img src={img} alt="" className="object-cover w-full h-full" />
             </div>
@@ -48,7 +48,7 @@ const Signup : React.FC = () => {
                 <div ref={titleRef} className="w-full max-w-md space-y-6 -mt-24">
                     {/*title*/}
                     <div className="form-element text-center flex-col space-y-4">
-                        <h1 className="text-3xl font-bold text-center text-gray-800" style={{ fontFamily: '"Comic Neue", cursive' }}>Create Account</h1>
+                        <h1 className="text-3xl font-bold text-center text-gray-800 font-comic">Create Account</h1>
                         <div ref={buttonsRef} className="form-element flex justify-center space-x-4">
                             <Button size="icon" className="rounded-full w-10 h-10 flex items-center justify-center bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-facebook w-5 h-5 text-[#ffffff] fill-[#ffffff]">
