@@ -3,12 +3,16 @@
 import React, { useEffect, useRef } from "react";
 import "../styles/global.css";
 import logo from '../assets/logo/GuardianGrove_logo_Text.png';
-import img from '../assets/images/family-login1.png';
+import img from '../assets/images/family-login.png';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { gsap } from "gsap";
+import {useNavigate} from "react-router-dom";
 
 const Login : React.FC = () => {
+
+    const navigate = useNavigate();
+
     const formRef = useRef<HTMLFormElement>(null);
     const logoRef = useRef<HTMLDivElement>(null);
     const titleRef = useRef<HTMLDivElement>(null);
@@ -38,11 +42,11 @@ const Login : React.FC = () => {
             <div ref={logoRef} className="absolute top-4 left-4">
                 <img src={logo} alt="Guardian Grove Logo" width={100} height={100} />
             </div>
-            <div className="flex-1 flex flex-col items-center justify-start p-8 lg:p-16">
+            <div className="flex-1 flex flex-col items-center justify-start p-8 lg:p-16 w-1/2">
                 <div ref={titleRef} className="w-full max-w-md space-y-6 mt-16">
                     {/*title*/}
                     <div className="form-element text-center flex-col space-y-4">
-                        <h1 className="text-3xl font-bold text-center text-gray-800">Sign in to Guardian Grove</h1>
+                        <h1 className="text-3xl font-bold text-center text-gray-800" style={{ fontFamily: '"Comic Neue", cursive' }}>Sign in to Guardian Grove</h1>
                         <div ref={buttonsRef} className="form-element flex justify-center space-x-4">
                             <Button size="icon" className="rounded-full w-10 h-10 flex items-center justify-center bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-facebook w-5 h-5 text-[#ffffff] fill-[#ffffff]">
@@ -111,14 +115,14 @@ const Login : React.FC = () => {
 
                     <p className="text-center text-xs text-gray-600">
                         Don't have an account?{' '}
-                        <a href="/sign-up" className="text-[#3A8EBA] hover:text-[#326E9F] underline">
+                        <a  onClick={() => {navigate("/signup");}} className="text-[#3A8EBA] hover:text-[#326E9F] underline">
                         Sign Up
                         </a>
                     </p>
                 </div>
             </div>
             
-            <div ref={imgRef} className="lg:flex flex-1 relative overflow-hidden bg-gradient-to-b from-purple-50 to-blue-50" >
+            <div ref={imgRef} className="lg:flex lg:w-1/2 flex-1 relative overflow-hidden bg-gradient-to-b from-purple-50 to-blue-50 w-1/2" >
                 <img src={img} alt="" className="object-cover" />
             </div>
         </div>
