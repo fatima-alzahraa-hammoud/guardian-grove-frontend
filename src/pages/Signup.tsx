@@ -10,25 +10,25 @@ import { Input } from '../../components/ui/input';
 const Signup : React.FC = () => {
 
     return (
-        <div>
-            <div>
-                <img src={img} alt="Family picnic" />
+        <div className="h-screen flex flex-col lg:flex-row p-0 m-0">
+            <div className="lg:w-1/2 flex-1 relative overflow-hidden bg-gradient-to-b from-purple-50 to-blue-50">
+                <img src={img} alt="" className="object-cover w-full h-full" />
             </div>
-            <div>
-                <div>
+            <div className="lg:w-1/2 flex flex-col items-center justify-start p-8 lg:p-16">
+                <div className="relative w-full flex justify-start right-12 bottom-12">
                     <img src={logo} alt="Guardian Grove Logo" width={100} height={100} />
                 </div>
-                <div>
+                <div className="w-full max-w-md space-y-6 -mt-24">
                     {/*title*/}
-                    <div>
-                        <h1>Create Account</h1>
-                        <div>
-                            <Button size="icon">
+                    <div className="form-element text-center flex-col space-y-4">
+                        <h1 className="text-3xl font-bold text-center text-gray-800" style={{ fontFamily: '"Comic Neue", cursive' }}>Create Account</h1>
+                        <div className="form-element flex justify-center space-x-4">
+                            <Button size="icon" className="rounded-full w-10 h-10 flex items-center justify-center bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-facebook w-5 h-5 text-[#ffffff] fill-[#ffffff]">
                                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
                                 </svg>                            
                             </Button>
-                            <Button size="icon">
+                            <Button size="icon" className="rounded-full w-10 h-10 flex items-center justify-center bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F]">
                                 <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="26" height="26" viewBox="0,0,256,256">
                                     <g fill="#ffffff" fill-rule="nonzero" stroke="none" strokeWidth="1" strokeLinecap="butt" strokeLinejoin="miter" strokeMiterlimit="10" strokeDasharray="" strokeDashoffset="0" fontFamily="none" fontWeight="none" fontSize="none" textAnchor="none" className="w-5 h-5 text-[#ffffff] fill-[#ffffff]">
                                         <g transform="scale(5.12,5.12)">
@@ -38,7 +38,7 @@ const Signup : React.FC = () => {
                                     </g>
                                 </svg>
                             </Button>
-                            <Button size="icon">
+                            <Button size="icon" className="rounded-full w-10 h-10 flex items-center justify-center bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F]">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-facebook w-5 h-5 text-[#ffffff] fill-[#ffffff]">
                                     <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
                                     <rect width="4" height="12" x="2" y="9"/>
@@ -46,12 +46,12 @@ const Signup : React.FC = () => {
                                 </svg>
                             </Button>
                         </div>
-                        <div>
-                            <div>
-                                <span/>
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <span className="w-full border-t" />
                             </div>
-                            <div>
-                                <span>
+                            <div className="relative flex justify-center text-sm">
+                                <span className="px-2 bg-white text-gray-500">
                                     or use your email account
                                 </span>
                             </div>
@@ -59,14 +59,14 @@ const Signup : React.FC = () => {
                     </div>
 
                     {/* Login Form */}
-                    <form>
-                        <div >
-                            <label htmlFor="username">
+                    <form className="space-y-4 w-full">
+                        <div className="mx-10 relative">
+                            <label htmlFor="username" className="block text-sm font-medium text-gray-700 text-left mb-1">
                                 Username
                             </label>
-                            <div>
-                                <Input id="username" type="text" placeholder="username" />
-                                <div>
+                            <div className="relative">
+                                <Input id="username" type="text" placeholder="username" className="pl-8 mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round text-gray-500">
                                         <circle cx="12" cy="8" r="5"/>
                                         <path d="M20 21a8 8 0 0 0-16 0"/>
@@ -75,13 +75,13 @@ const Signup : React.FC = () => {
                             </div>
                         </div>
 
-                        <div>
-                            <label htmlFor="email">
+                        <div className="mx-10 relative">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 text-left mb-1">
                                 Email
                             </label>
-                            <div>
-                                <Input id="email" type="email" placeholder="email"/>
-                                <div>
+                            <div className="relative">
+                                <Input id="email" type="email" placeholder="email" className="pl-8 mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail text-gray-500">
                                         <rect width="20" height="16" x="2" y="4" rx="2"/>
                                         <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
@@ -90,13 +90,13 @@ const Signup : React.FC = () => {
                             </div>
                         </div>
 
-                        <div>
-                            <label htmlFor="password">
+                        <div className="mx-10 relative">
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 text-left mb-1">
                                 Password
                             </label>
-                            <div>
-                                <Input id="password" type="password" placeholder="password"/>
-                                <div>
+                            <div className="relative">
+                                <Input id="password" type="password" placeholder="password" className="pl-8 mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-lock-keyhole text-gray-500">
                                         <circle cx="12" cy="16" r="1"/>
                                         <rect x="3" y="10" width="18" height="12" rx="2"/>
@@ -106,13 +106,13 @@ const Signup : React.FC = () => {
                             </div>
                         </div>
 
-                        <div>
-                            <label htmlFor="confirmPassword">
+                        <div className="mx-10 relative">
+                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 text-left mb-1">
                                 Password
                             </label>
-                            <div>
-                                <Input id="confirmPassword" type="password" placeholder="confirm password" />
-                                <div>
+                            <div className="relative">
+                                <Input id="confirmPassword" type="password" placeholder="confirm password" className="pl-8 mt-1 placeholder:text-sm placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-lock-keyhole text-gray-500">
                                         <circle cx="12" cy="16" r="1"/>
                                         <rect x="3" y="10" width="18" height="12" rx="2"/>
@@ -122,16 +122,16 @@ const Signup : React.FC = () => {
                             </div>
                         </div>
 
-                        <div>
-                            <a href="/forgot-password">
+                        <div className="text-right mr-10">
+                            <a href="/forgot-password" className="underline text-xs text-[#000000] hover:text-[#326E9F] cursor-pointer" >
                                 Forgot your password?
                             </a>
                         </div>
-                        <Button >Next</Button>
+                        <Button className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-sm">Next</Button>
                         
-                        <p>
+                        <p className="text-center text-xs text-gray-600">
                             Already have an account?{' '}
-                            <a>
+                            <a className="text-[#3A8EBA] hover:text-[#326E9F] underline cursor-pointer">
                             Login
                             </a>
                         </p>
