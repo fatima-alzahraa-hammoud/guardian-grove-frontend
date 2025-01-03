@@ -8,6 +8,7 @@ import { gsap } from "gsap";
 import FirstSignUpForm from "../components/FirstSignUpForm";
 import { FieldValues } from "react-hook-form";
 import { ToastContainer } from "react-toastify";
+import SecondSignUpForm from "../components/SecondSignUpForm";
 
 const Signup : React.FC = () => {
 
@@ -43,6 +44,7 @@ const Signup : React.FC = () => {
                     <ToastContainer position="top-left" />
                 </div>
                 {step === 1 && <FirstSignUpForm onNext={handleNext} />}
+                {step === 2 && <SecondSignUpForm />}
             </div>
         </div>
     );

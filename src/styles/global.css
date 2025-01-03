@@ -57,3 +57,24 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+/* Hide default date picker icon (WebKit-based browsers) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
+
+:root {
+  --rdp-accent-color: #3A8EBA; /* Selected day color */
+  --rdp-background-color: #D9ECF6; /* Background color for selected day */
+}
+
+.rdp .rdp-day_selected {
+  background-color: var(--rdp-accent-color);
+  color: white;
+  border-radius: 50%;
+}
+
+.rdp .rdp-day_selected:hover {
+  background-color: var(--rdp-accent-color);
+}
