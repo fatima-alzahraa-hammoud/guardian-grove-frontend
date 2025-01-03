@@ -7,7 +7,8 @@ import "../styles/global.css";
 import { gsap } from "gsap";
 import { firstStepSchema, TFirstStep } from "../libs/types/signupTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import { Label } from "../../components/ui/label";
 
 interface FirstSignUpFormProps {
     onNext: (data: FieldValues) => void;
@@ -56,6 +57,9 @@ const FirstSignUpForm : React.FC<FirstSignUpFormProps> = ({onNext}) => {
         if (errors.password) {
             toast.error(errors.password.message);
         }
+        if (errors.confirmPassword) {
+            toast.error(errors.confirmPassword.message);
+        }
     }, [errors]);
 
     return(
@@ -100,11 +104,11 @@ const FirstSignUpForm : React.FC<FirstSignUpFormProps> = ({onNext}) => {
             </div>
 
             {/* Login Form */}
-            <form ref={formRef} className="space-y-4 w-full">
+            <form ref={formRef} onSubmit={handleSubmit(onSubmit)}  className="space-y-4 w-full">
                 <div className="mx-10 relative">
-                    <label htmlFor="name" className="block text-xs font-medium text-gray-700 text-left mb-1">
+                    <Label htmlFor="name" className="block text-xs font-medium text-gray-700 text-left mb-1">
                         Name
-                    </label>
+                    </Label>
                     <div className="relative">
                         <Input 
                             {...register("name", { required: true })}
@@ -167,7 +171,7 @@ const FirstSignUpForm : React.FC<FirstSignUpFormProps> = ({onNext}) => {
 
                 <div className="mx-10 relative">
                     <label htmlFor="confirmPassword" className="block text-xs font-medium text-gray-700 text-left mb-1">
-                        Password
+                        Confirm Password
                     </label>
                     <div className="relative">
                         <Input 
@@ -192,7 +196,7 @@ const FirstSignUpForm : React.FC<FirstSignUpFormProps> = ({onNext}) => {
                         Forgot your password?
                     </a>
                 </div>
-                <Button onClick={handleSubmit(onSubmit)} className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-xs">Next</Button>
+                <Button type="submit" className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-xs">Next</Button>
                 
                 <p className="text-center text-xs text-gray-600">
                     Already have an account?{' '}
