@@ -8,8 +8,23 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { gsap } from "gsap";
 import { useNavigate } from "react-router-dom";
+import { FieldValues, useForm } from "react-hook-form";
 
 const Signup : React.FC = () => {
+
+    const { 
+        register, 
+        handleSubmit, 
+        formState: { errors },
+        reset
+    } = useForm();
+
+    const onSubmit = async (data: FieldValues) =>{
+        console.log("Data submitted!");
+
+        reset();
+    }
+
     const navigate = useNavigate();
 
     const formRef = useRef<HTMLFormElement>(null);
@@ -88,11 +103,17 @@ const Signup : React.FC = () => {
                     {/* Login Form */}
                     <form ref={formRef} className="space-y-4 w-full">
                         <div className="mx-10 relative">
-                            <label htmlFor="username" className="block text-xs font-medium text-gray-700 text-left mb-1">
-                                Username
+                            <label htmlFor="name" className="block text-xs font-medium text-gray-700 text-left mb-1">
+                                Name
                             </label>
                             <div className="relative">
-                                <Input id="username" type="text" placeholder="username" className=" flex-1 h-9 bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-xs file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-xs pl-8 mt-1 placeholder:text-xs placeholder:text-gray-500 rounded-md border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" />
+                                <Input 
+                                    {...register("name", { required: true })}
+                                    id="name"   
+                                    type="text" 
+                                    placeholder="name" 
+                                    className=" flex-1 h-9 bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-xs file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-xs pl-8 mt-1 placeholder:text-xs placeholder:text-gray-500 rounded-md border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA]" 
+                                />
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round text-gray-500">
                                         <circle cx="12" cy="8" r="5"/>
@@ -107,7 +128,13 @@ const Signup : React.FC = () => {
                                 Email
                             </label>
                             <div className="relative">
-                                <Input id="email" type="email" placeholder="email" className="pl-8 mt-1 placeholder:text-xs placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs" />
+                                <Input 
+                                    {...register("email", { required: true })}
+                                    id="email" 
+                                    type="email" 
+                                    placeholder="email" 
+                                    className="pl-8 mt-1 placeholder:text-xs placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs" 
+                                />
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail text-gray-500">
                                         <rect width="20" height="16" x="2" y="4" rx="2"/>
@@ -122,7 +149,13 @@ const Signup : React.FC = () => {
                                 Password
                             </label>
                             <div className="relative">
-                                <Input id="password" type="password" placeholder="password" className="pl-8 mt-1 placeholder:text-xs placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs" />
+                                <Input
+                                    {...register("password", { required: true })}
+                                    id="password" 
+                                    type="password" 
+                                    placeholder="password" 
+                                    className="pl-8 mt-1 placeholder:text-xs placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs" 
+                                />
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-lock-keyhole text-gray-500">
                                         <circle cx="12" cy="16" r="1"/>
@@ -138,7 +171,13 @@ const Signup : React.FC = () => {
                                 Password
                             </label>
                             <div className="relative">
-                                <Input id="confirmPassword" type="password" placeholder="confirm password" className="pl-8 mt-1 placeholder:text-xs placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs" />
+                                <Input 
+                                    {...register("confirmPassword", { required: true })}
+                                    id="confirmPassword" 
+                                    type="password" 
+                                    placeholder="confirm password" 
+                                    className="pl-8 mt-1 placeholder:text-xs placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs" 
+                                />
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-lock-keyhole text-gray-500">
                                         <circle cx="12" cy="16" r="1"/>
@@ -154,7 +193,7 @@ const Signup : React.FC = () => {
                                 Forgot your password?
                             </a>
                         </div>
-                        <Button className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-xs">Next</Button>
+                        <Button onClick={handleSubmit(onSubmit)} className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-xs">Next</Button>
                         
                         <p className="text-center text-xs text-gray-600">
                             Already have an account?{' '}
