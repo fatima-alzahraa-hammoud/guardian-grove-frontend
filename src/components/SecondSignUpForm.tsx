@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import 'react-day-picker/dist/style.css';
 import { Input } from "../../components/ui/input";
 import { ChevronDownIcon } from "lucide-react";
+import Select from 'react-select';
 import "../styles/global.css";
 
 
@@ -13,7 +14,69 @@ const SecondSignUpForm: React.FC = () => {
         if (dateInputRef.current) {
           dateInputRef.current.showPicker();
         }
-      };
+    };
+
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+            ...provided,
+            height: '2.5rem',
+            minHeight: '2.5rem',
+            borderColor: state.isFocused ? '#3A8EBA' : '#3A8EBA',
+            borderRadius: '0.375rem',
+            paddingLeft: '0.5rem',
+            paddingRight: '2.5rem',
+            fontSize: '0.75rem',
+            color: '#4A5568',
+            boxShadow: state.isFocused ? '0 0 0 1px #3A8EBA' : 'none',
+            '&:hover': {
+                borderColor: '#3A8EBA',
+            },
+        }),
+        placeholder: (provided: any) => ({
+            ...provided,
+            color: '#A0AEC0',
+            fontSize: '0.75rem',
+        }),
+        multiValue: (provided: any) => ({
+            ...provided,
+            backgroundColor: '#E2E8F0',
+            borderRadius: '0.375rem',
+            padding: '0.25rem',
+        }),
+        multiValueLabel: (provided: any) => ({
+            ...provided,
+            color: '#4A5568',
+            fontSize: '0.75rem',
+        }),
+        multiValueRemove: (provided: any) => ({
+            ...provided,
+            color: '#4A5568',
+            '&:hover': {
+                backgroundColor: '#3A8EBA',
+                color: 'white',
+            },
+        }),
+        dropdownIndicator: (provided: any) => ({
+            ...provided,
+            color: '#A0AEC0',
+            '&:hover': {
+                color: '#A0AEC0',
+            },
+        }),
+        indicatorSeparator: () => ({
+            display: 'none',
+        }),
+    };
+
+    const interestsOptions = [
+        { value: 'sports', label: 'Sports' },
+        { value: 'music', label: 'Music' },
+        { value: 'reading', label: 'Reading' },
+        { value: 'traveling', label: 'Traveling' },
+        { value: 'cooking', label: 'Cooking' },
+        { value: 'gaming', label: 'Gaming' }
+    ];
+
 
     return (
         <div className="w-full max-w-md space-y-6 -mt-24 font-poppins">
@@ -70,7 +133,7 @@ const SecondSignUpForm: React.FC = () => {
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                         </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pt-1 pointer-events-none">
                             <ChevronDownIcon className="h-4 w-4 text-gray-500" />
                         </div>
                     </div>
@@ -85,16 +148,36 @@ const SecondSignUpForm: React.FC = () => {
                         <select
                             id="familyMember"
                             name="familyMember"
-                            className="w-full h-10 pl-4 pr-10 mt-1 placeholder:text-xs cursor-pointer placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus:outline-none focus:ring-1 focus:ring-[#3A8EBA] md:text-xs custom-select"
+                            
+                            className="w-full h-10 pl-4 pr-10 mt-1 placeholder:text-xs cursor-pointer placeholder:text-gray-400 rounded-md border border-[#3A8EBA] focus:outline-none focus:ring-1 focus:ring-[#3A8EBA] md:text-xs"
                         >
-                            <option value="" disabled selected>Select option</option>
+                            <option value="" disabled selected className="text-gray-400">Select option</option>
                             <option value="parent">Parent</option>
                             <option value="child">Child</option>
                             <option value="grandParent">GrandParent</option>
                         </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pt-1 pointer-events-none">
                             <ChevronDownIcon className="h-4 w-4 text-gray-500" />
                         </div>
+                    </div>
+                </div>
+
+                {/* Select Interests */}
+                <div className="mx-10 relative">
+                    <label htmlFor="interests" className="block text-xs font-medium text-gray-700 text-left mb-1">
+                        Select Interests
+                    </label>
+                    <div className="relative w-full">
+                        <Select
+                            id="interests"
+                            name="interests"
+                            isMulti
+                            options={interestsOptions}
+                            styles={customStyles}
+                            placeholder="Select interests..."
+                            className="custom-select text-xs"
+                            classNamePrefix="react-select"
+                        />
                     </div>
                 </div>
             </form>

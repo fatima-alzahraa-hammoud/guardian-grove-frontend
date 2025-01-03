@@ -58,7 +58,7 @@ module.exports = {
   		},
   		fontFamily: {
   			comic: [
-  				'Comic Neue"',
+  				'Comic Neue',
   				'cursive'
   			],
   			poppins: [
