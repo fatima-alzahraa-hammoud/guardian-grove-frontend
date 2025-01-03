@@ -13,6 +13,8 @@ import { loginSchema, TLogin } from "../libs/types/loginTypes";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { requestApi } from "../libs/requestApi";
+import { requestMethods } from "../libs/enum/requestMethods";
 
 
 const Login : React.FC = () => {
@@ -25,13 +27,28 @@ const Login : React.FC = () => {
         resolver: zodResolver(loginSchema)
     });
 
-    const onSubmit = (data: TLogin) => {
-        console.log(data);
+    const onSubmit = async (data: TLogin) => {
+        try {
+            const response = await requestApi({
+                route: "/auth/login",
+                method: requestMethods.POST,
+                body: data
+            });
 
-        toast.success('Login successful!');
+            if (response && response.token) {
+                toast.success('Login successful!');
+                localStorage.setItem("token", response.token);
+                // Navigate to the dashboard or home page
+                navigate("/dashboard");
+            } else {
+                toast.error(response.message || 'Login failed!');
+            }
 
-        // Reset the form
-        reset();
+            // Reset the form
+            reset();
+        } catch (error) {
+            toast.error('An error occurred during login.');
+        }
     }
 
     const navigate = useNavigate();
