@@ -27,24 +27,12 @@ const Signup : React.FC = () => {
 
     const navigate = useNavigate();
 
-    const formRef = useRef<HTMLFormElement>(null);
     const logoRef = useRef<HTMLDivElement>(null);
-    const titleRef = useRef<HTMLDivElement>(null);
-    const buttonsRef = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (formRef.current) {
-            gsap.fromTo(formRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, ease: "power2.out" });
-        }
         if (logoRef.current) {
             gsap.fromTo(logoRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, delay: 0.2, ease: "power2.out" });
-        }
-        if (titleRef.current) {
-            gsap.fromTo(titleRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, delay: 0.4, ease: "power2.out" });
-        }
-        if (buttonsRef.current) {
-            gsap.fromTo(buttonsRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, delay: 0.6, ease: "power2.out" });
         }
         if (imgRef.current) {
             gsap.fromTo(imgRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, delay: 0.8, ease: "power2.out" });
@@ -60,9 +48,7 @@ const Signup : React.FC = () => {
                 <div ref={logoRef} className="relative w-full flex justify-start right-12 bottom-12">
                     <img src={logo} alt="Guardian Grove Logo" width={100} height={100} />
                 </div>
-                <div ref={titleRef} className="w-full max-w-md space-y-6 -mt-24">
-                    
-                </div>
+                
             </div>
         </div>
     );

@@ -25,18 +25,22 @@ const FirstSignUpForm : React.FC<FirstSignUpFormProps> = ({onNext}) => {
     const navigate = useNavigate();
     const buttonsRef = useRef<HTMLDivElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
+    const titleRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (formRef.current) {
             gsap.fromTo(formRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, ease: "power2.out" });
-        };
+        }
         if (buttonsRef.current) {
             gsap.fromTo(buttonsRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, delay: 0.6, ease: "power2.out" });
-        };
+        }
+        if (titleRef.current) {
+            gsap.fromTo(titleRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, delay: 0.4, ease: "power2.out" });
+        }
     }, []);
 
     return(
-        <div>
+        <div ref={titleRef} className="w-full max-w-md space-y-6 -mt-24">
             {/*title*/}
             <div className="form-element text-center flex-col space-y-4">
                 <h1 className="text-3xl font-bold text-center text-gray-800 font-comic">Create Account</h1>
