@@ -3,6 +3,8 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { FieldValues, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import "../styles/global.css";
+import { gsap } from "gsap";
 
 interface FirstSignUpFormProps {
     onNext: (data: FieldValues) => void;

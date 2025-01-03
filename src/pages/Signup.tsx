@@ -4,28 +4,18 @@ import React, { useEffect, useRef } from "react";
 import "../styles/global.css";
 import logo from '../assets/logo/GuardianGrove_logo_Text.png';
 import img from '../assets/images/family-signup1.png';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
 import { gsap } from "gsap";
-import { useNavigate } from "react-router-dom";
-import { FieldValues, useForm } from "react-hook-form";
+import FirstSignUpForm from "../components/FirstSignUpForm";
+import { FieldValues } from "react-hook-form";
 
 const Signup : React.FC = () => {
 
-    const { 
-        register, 
-        handleSubmit, 
-        formState: { errors },
-        reset
-    } = useForm();
+    const [step, setStep] = React.useState(1);
 
-    const onSubmit = async (data: FieldValues) =>{
-        console.log("Data submitted!");
-
-        reset();
+    function handleNext(data: FieldValues): void {
+        console.log("Form data:", data);
+        setStep(2);
     }
-
-    const navigate = useNavigate();
 
     const logoRef = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLDivElement>(null);
@@ -48,7 +38,7 @@ const Signup : React.FC = () => {
                 <div ref={logoRef} className="relative w-full flex justify-start right-12 bottom-12">
                     <img src={logo} alt="Guardian Grove Logo" width={100} height={100} />
                 </div>
-                
+                {step === 1 && <FirstSignUpForm onNext={handleNext} />}
             </div>
         </div>
     );
