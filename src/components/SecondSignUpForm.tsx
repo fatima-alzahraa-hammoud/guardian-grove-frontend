@@ -76,6 +76,27 @@ const SecondSignUpForm: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Select Family Member */}
+                <div className="mx-10 relative">
+                    <label htmlFor="familyMember" className="block text-xs font-medium text-gray-700 text-left mb-1">
+                        Select Family Member
+                    </label>
+                    <div className="relative w-full">
+                        <select
+                            id="familyMember"
+                            name="familyMember"
+                            className="w-full h-10 pl-4 pr-10 mt-1 placeholder:text-xs cursor-pointer placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus:outline-none focus:ring-1 focus:ring-[#3A8EBA] md:text-xs custom-select"
+                        >
+                            <option value="" disabled selected>Select option</option>
+                            <option value="parent">Parent</option>
+                            <option value="child">Child</option>
+                            <option value="grandParent">GrandParent</option>
+                        </select>
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <ChevronDownIcon className="h-4 w-4 text-gray-500" />
+                        </div>
+                    </div>
+                </div>
             </form>
         </div>
     )
