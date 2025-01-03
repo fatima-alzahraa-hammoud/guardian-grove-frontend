@@ -7,6 +7,7 @@ import "../styles/global.css";
 import { gsap } from "gsap";
 import { firstStepSchema, TFirstStep } from "../libs/types/signupTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast, ToastContainer } from "react-toastify";
 
 interface FirstSignUpFormProps {
     onNext: (data: FieldValues) => void;
@@ -44,6 +45,18 @@ const FirstSignUpForm : React.FC<FirstSignUpFormProps> = ({onNext}) => {
             gsap.fromTo(titleRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, delay: 0.4, ease: "power2.out" });
         }
     }, []);
+
+    useEffect(() => {
+        if (errors.name) {
+            toast.error(errors.name.message);
+        }
+        if (errors.email) {
+            toast.error(errors.email.message);
+        }
+        if (errors.password) {
+            toast.error(errors.password.message);
+        }
+    }, [errors]);
 
     return(
         <div ref={titleRef} className="w-full max-w-md space-y-6 -mt-24">

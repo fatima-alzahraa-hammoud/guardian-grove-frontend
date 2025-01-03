@@ -7,6 +7,7 @@ import img from '../assets/images/family-signup1.png';
 import { gsap } from "gsap";
 import FirstSignUpForm from "../components/FirstSignUpForm";
 import { FieldValues } from "react-hook-form";
+import { ToastContainer } from "react-toastify";
 
 const Signup : React.FC = () => {
 
@@ -37,6 +38,9 @@ const Signup : React.FC = () => {
             <div className="lg:w-1/2 flex flex-col items-center justify-start p-8 lg:p-16">
                 <div ref={logoRef} className="relative w-full flex justify-start right-12 bottom-12">
                     <img src={logo} alt="Guardian Grove Logo" width={100} height={100} />
+                </div>
+                <div className="absolute left-0 top-0 text-xs">
+                    <ToastContainer position="top-left" />
                 </div>
                 {step === 1 && <FirstSignUpForm onNext={handleNext} />}
             </div>
