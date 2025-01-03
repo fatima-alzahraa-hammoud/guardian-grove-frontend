@@ -64,17 +64,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   -webkit-appearance: none;
 }
 
+select::-ms-expand {
+  display: none;
+}
+
+select {
+  appearance: none; 
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: none;
+}
+
 :root {
   --rdp-accent-color: #3A8EBA; /* Selected day color */
   --rdp-background-color: #D9ECF6; /* Background color for selected day */
-}
-
-.rdp .rdp-day_selected {
-  background-color: var(--rdp-accent-color);
-  color: white;
-  border-radius: 50%;
-}
-
-.rdp .rdp-day_selected:hover {
-  background-color: var(--rdp-accent-color);
 }
