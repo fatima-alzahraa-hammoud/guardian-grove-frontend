@@ -5,6 +5,8 @@ import { FieldValues, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import "../styles/global.css";
 import { gsap } from "gsap";
+import { firstStepSchema, TFirstStep } from "../libs/types/signupTypes";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface FirstSignUpFormProps {
     onNext: (data: FieldValues) => void;
@@ -16,9 +18,11 @@ const FirstSignUpForm : React.FC<FirstSignUpFormProps> = ({onNext}) => {
         register, 
         handleSubmit,
         formState: { errors }
-    } = useForm();
+    } = useForm<TFirstStep>({
+        resolver: zodResolver(firstStepSchema)
+    });
 
-    const onSubmit = async (data: FieldValues) =>{
+    const onSubmit = async (data: TFirstStep) =>{
         console.log("Data submitted!");
         onNext(data);
     }
