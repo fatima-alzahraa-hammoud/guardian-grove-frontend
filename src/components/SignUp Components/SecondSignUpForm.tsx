@@ -1,32 +1,32 @@
 'use client';
 
 import React, { useEffect, useRef } from "react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { cn } from "../lib/utils";
-import { Calendar } from "./ui/calendar";
+import { cn } from "../../lib/utils";
+import { Calendar } from "../ui/calendar";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-} from "./ui/form";
+} from "../ui/form";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "./ui/popover";
-import "../styles/global.css";
+} from "../ui/popover";
+import "../../styles/global.css";
 import { gsap } from "gsap";
 import 'react-day-picker/dist/style.css';
-import { Select, SelectContent, SelectItem, SelectTrigger } from "./ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 import Selects, {components} from 'react-select';
-import AvatarSelector from "./AvatarSelector";
+import AvatarSelector from "../AvatarSelector";
 
 const FormSchema = z.object({
     avatar: z.number(),

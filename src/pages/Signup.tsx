@@ -5,10 +5,10 @@ import "../styles/global.css";
 import logo from '../assets/logo/GuardianGrove_logo_Text.png';
 import img from '../assets/images/family-signup1.png';
 import { gsap } from "gsap";
-import FirstSignUpForm from "../components/FirstSignUpForm";
+import FirstSignUpForm from "../components/SignUp Components/FirstSignUpForm";
 import { FieldValues } from "react-hook-form";
 import { ToastContainer } from "react-toastify";
-import SecondSignUpForm from "../components/SecondSignUpForm";
+import SecondSignUpForm from "../components/SignUp Components/SecondSignUpForm";
 
 const Signup : React.FC = () => {
 
