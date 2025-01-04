@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import "../styles/global.css";
 import logo from '../assets/logo/GuardianGrove_logo_Text.png';
 import img from '../assets/images/family-signup1.png';
