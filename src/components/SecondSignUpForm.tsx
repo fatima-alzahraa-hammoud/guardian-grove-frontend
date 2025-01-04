@@ -5,7 +5,7 @@ import { Button } from "../components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { cn } from "../lib/utils";
 import { Calendar } from "../components/ui/calendar";
@@ -25,13 +25,28 @@ import "../styles/global.css";
 import { gsap } from "gsap";
 import 'react-day-picker/dist/style.css';
 import { Select, SelectContent, SelectItem, SelectTrigger } from "./ui/select";
+import Selects, {components} from 'react-select';
 
 const FormSchema = z.object({
   dob: z.date({
     required_error: "A date of birth is required.",
   }),
   gender: z.string().nonempty({ message: "Gender is required." }),
+  familyMember: z.string().nonempty({ message: "Family member type is required." }),
+  interests: z.array(z.string()).nonempty({ message: "At least one interest is required." }),
 });
+
+type FormSchemaType = z.infer<typeof FormSchema>;
+
+const interestOptions = [
+  { label: 'Sports', value: 'Sports' },
+  { label: 'Music', value: 'Music' },
+  { label: 'Reading', value: 'Reading' },
+  { label: 'Travel', value: 'Travel' },
+  { label: 'Technology', value: 'Technology' },
+  { label: 'Cooking', value: 'Cooking' },
+  { label: 'Photography', value: 'Photography' },
+];
 
 const SecondSignUpForm: React.FC = () => {
   const buttonsRef = useRef<HTMLDivElement>(null);
@@ -50,7 +65,7 @@ const SecondSignUpForm: React.FC = () => {
     }
   }, []);
 
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),
   });
 
@@ -67,56 +82,59 @@ const SecondSignUpForm: React.FC = () => {
             <Form {...form}>
                 <form className="space-y-4">
                     <FormField
-                        name="username"
+                        name="dob"
                         render={({ field }) => (
-                            <FormItem className="mx-12 relative">
-                                <FormLabel className="block text-xs text-gray-700 text-left mb-1">Date of Birth</FormLabel>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <FormControl>
-                                            <Button
-                                                variant={"outline"}
-                                                className={cn(
-                                                    "w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs flex justify-between items-center",
-                                                    !field.value && "text-gray-500"
-                                                )}
-                                                style={{backgroundColor: "transparent"}}
-                                                >
-                                                {field.value ? (
-                                                    format(field.value, "PPP")
-                                                ) : (
-                                                    <span className="text-gray-500 font-normal text-[10px]">Pick a date</span>
-                                                )}
-                                                <CalendarIcon className="w-auto p-0 opacity-60 text-gray-500" />
-                                            </Button>
-                                        </FormControl>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0 justify-center">
-                                        <Calendar
-                                            mode="single"
-                                            selected={field.value}
-                                            onSelect={field.onChange}
-                                            disabled={(date) =>
-                                                date > new Date() || date < new Date("1900-01-01")
-                                            }
-                                            initialFocus
-                                            
-                                            className="rounded-md justify-center items-center bg-white"
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-                            </FormItem>
+                        <FormItem className="mx-12 relative">
+                            <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Date of Birth</FormLabel>
+                            <Popover>
+                            <PopoverTrigger asChild>
+                                <FormControl>
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                        "w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs flex justify-between items-center font-normal font-poppins",
+                                        !field.value && "text-gray-500"
+                                        )}
+                                        style={{ backgroundColor: "transparent" }} // Prevent background color change on hover
+                                    >
+                                        {field.value ? (
+                                        format(field.value, "PPP")
+                                        ) : (
+                                        <span className="text-gray-500 font-normal text-[10px]">Pick a date</span>
+                                        )}
+                                        <CalendarIcon className="ml-auto w-2 h-2 opacity-60 text-gray-500" />
+                                    </Button>
+                                </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 justify-center">
+                                <Calendar
+                                    mode="single"
+                                    selected={field.value}
+                                    onSelect={field.onChange}
+                                    disabled={(date) =>
+                                        date > new Date() || date < new Date("1900-01-01")
+                                    }
+                                    initialFocus
+                                    className="rounded-md justify-center items-center bg-white"
+                                />
+                            </PopoverContent>
+                            </Popover>
+                        </FormItem>
                         )}
                     />
+
                     <FormField
                         name="gender"
                         render={({ field }) => (
                         <FormItem className="mx-12 relative">
-                            <FormLabel className="block text-xs text-gray-700 text-left mb-1">Select gender</FormLabel>
+                            <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Select gender</FormLabel>
                             <FormControl>
-                                <Select {...field}>
+                                <Select
+                                    value={field.value}
+                                    onValueChange={field.onChange}
+                                >
                                     <SelectTrigger className="w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs">
-                                        <span className={!field.value ? "text-gray-500 text-[10px]" : ""}>{field.value || "select option"}</span>
+                                        <span className={!field.value ? "text-gray-500 text-[10px]" : ""}>{field.value || "Select gender"}</span>
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="male">Male</SelectItem>
@@ -132,16 +150,19 @@ const SecondSignUpForm: React.FC = () => {
                         name="familyMember"
                         render={({ field }) => (
                         <FormItem className="mx-12 relative">
-                            <FormLabel className="block text-xs text-gray-700 text-left mb-1">Select Family Member</FormLabel>
+                            <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Select Family Member</FormLabel>
                             <FormControl>
-                                <Select {...field}>
+                                <Select
+                                    value={field.value}
+                                    onValueChange={field.onChange}
+                                >
                                     <SelectTrigger className="w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs">
-                                        <span className={!field.value ? "text-gray-500 text-[10px]" : ""}>{field.value || "select option"}</span>
+                                        <span className={!field.value ? "text-gray-500 text-[10px]" : ""}>{field.value || "Select family member"}</span>
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="child">Child</SelectItem>
                                         <SelectItem value="parent">Parent</SelectItem>
-                                        <SelectItem value="grandParent">GrandParnet</SelectItem>
+                                        <SelectItem value="grandParent">GrandParent</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </FormControl>
@@ -149,6 +170,27 @@ const SecondSignUpForm: React.FC = () => {
                         )}
                     />
 
+                    <FormField
+                            name="interests"
+                            render={({ field }) => (
+                                <FormItem className="mx-12 relative">
+                                    <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Select Interests</FormLabel>
+                                    <FormControl>
+                                        <Selects
+                                            name="interests"
+                                            isMulti
+                                            options={interestOptions}
+                                            placeholder="Select interests..."
+                                            className="custom-select text-xs"
+                                            classNamePrefix="react-select"
+                                            menuPortalTarget={document.body}
+                                            menuPosition="fixed"
+                                            menuShouldScrollIntoView={false}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
                     <Button type="submit" className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-xs">SignUp</Button>
                 </form>
             </Form>
