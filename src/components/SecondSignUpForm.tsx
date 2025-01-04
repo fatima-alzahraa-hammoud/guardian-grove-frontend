@@ -26,6 +26,7 @@ import { gsap } from "gsap";
 import 'react-day-picker/dist/style.css';
 import { Select, SelectContent, SelectItem, SelectTrigger } from "./ui/select";
 import Selects, {components} from 'react-select';
+import AvatarSelector from "./AvatarSelector";
 
 const FormSchema = z.object({
     avatar: z.number(),
@@ -131,7 +132,7 @@ const SecondSignUpForm: React.FC = () => {
     const buttonsRef = useRef<HTMLDivElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const titleRef = useRef<HTMLDivElement>(null);
-
+    
     useEffect(() => {
         if (formRef.current) {
         gsap.fromTo(formRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, ease: "power2.out" });
@@ -164,6 +165,20 @@ const SecondSignUpForm: React.FC = () => {
 
             <Form {...form}>
                 <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[350px] overflow-y-auto">
+
+                    <FormField
+                        name="avatar"
+                        render={({ field }) => (
+                            <FormItem className="mx-[74px] relative">
+                                <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1 -mx-[30px]">Select Avatar</FormLabel>
+                                <FormControl>
+                                    <AvatarSelector selectedAvatar={field.value} onAvatarClick={(id) => {
+                                        field.onChange(id);
+                                    }} />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
 
                     <FormField
                         name="date"
@@ -256,7 +271,7 @@ const SecondSignUpForm: React.FC = () => {
 
                     <FormField
                             name="interests"
-                            render={({ field }) => (
+                            render={({ }) => (
                                 <FormItem className="mx-11 relative">
                                     <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Select Interests</FormLabel>
                                     <FormControl>
