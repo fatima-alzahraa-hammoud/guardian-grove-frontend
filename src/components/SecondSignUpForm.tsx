@@ -48,26 +48,99 @@ const interestOptions = [
   { label: 'Photography', value: 'Photography' },
 ];
 
+const customStyles = {
+    control: (provided: any) => ({
+        ...provided,
+        borderColor: '#3A8EBA',
+        borderRadius: '0.375rem',
+        fontSize: '0.75rem',
+        minHeight: '36px',
+        
+    }),
+    placeholder: (provided: any) => ({
+        ...provided,
+        fontSize: '10px',
+        color: '#6b7280',
+        textAlign: 'left',
+        paddingLeft: '0.25rem',
+    }),
+    menu: (provided: any) => ({
+        ...provided,
+        zIndex: 9999,
+    }),
+
+    multiValue: (provided: any) => ({
+        ...provided,
+        backgroundColor: '#d6e4f8',
+        borderRadius: '0.375rem',
+    }),
+    multiValueLabel: (provided: any) => ({
+        ...provided,
+        color: '#4A5568',
+    }),
+    multiValueRemove: (provided: any) => ({
+        ...provided,
+        color: '#4A5568',
+        '&:hover': {
+            backgroundColor: '#3A8EBA',
+            color: 'white',
+        },
+    }),
+    dropdownIndicator: (provided: any) => ({
+        ...provided,
+        color: '#6b7280',
+        fontWeight: '50',
+        fontFamily: 'Poppins',
+        paddingRight: '0.75rem',
+    }),
+    menuList: (provided: any) => ({
+        ...provided,
+        maxHeight: '150px',
+    }),
+};
+
+const DropdownIndicator = (props: any) => {
+    return (
+        <components.DropdownIndicator {...props}>
+            <svg
+                width="15"
+                height="15"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+            <path
+                d="M5 7L10 12L15 7"
+                stroke="#6b7280"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            </svg>
+        </components.DropdownIndicator>
+    );
+};  
+
 const SecondSignUpForm: React.FC = () => {
-  const buttonsRef = useRef<HTMLDivElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
+    const buttonsRef = useRef<HTMLDivElement>(null);
+    const formRef = useRef<HTMLFormElement>(null);
+    const titleRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (formRef.current) {
-      gsap.fromTo(formRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, ease: "power2.out" });
-    }
-    if (buttonsRef.current) {
-      gsap.fromTo(buttonsRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, delay: 0.6, ease: "power2.out" });
-    }
-    if (titleRef.current) {
-      gsap.fromTo(titleRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, delay: 0.4, ease: "power2.out" });
-    }
-  }, []);
+    useEffect(() => {
+        if (formRef.current) {
+        gsap.fromTo(formRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, ease: "power2.out" });
+        }
+        if (buttonsRef.current) {
+        gsap.fromTo(buttonsRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, delay: 0.6, ease: "power2.out" });
+        }
+        if (titleRef.current) {
+        gsap.fromTo(titleRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, delay: 0.4, ease: "power2.out" });
+        }
+    }, []);
 
-  const form = useForm<FormSchemaType>({
-    resolver: zodResolver(FormSchema),
-  });
+    const form = useForm<FormSchemaType>({
+        resolver: zodResolver(FormSchema),
+    });
 
     return (
         <div ref={titleRef} className="w-full max-w-md space-y-6 -mt-20 font-poppins">
@@ -183,6 +256,8 @@ const SecondSignUpForm: React.FC = () => {
                                             placeholder="Select interests..."
                                             className="custom-select text-xs"
                                             classNamePrefix="react-select"
+                                            styles={customStyles}
+                                            components={{ DropdownIndicator }}
                                             menuPortalTarget={document.body}
                                             menuPosition="fixed"
                                             menuShouldScrollIntoView={false}
