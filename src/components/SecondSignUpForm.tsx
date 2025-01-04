@@ -78,15 +78,16 @@ const SecondSignUpForm: React.FC = () => {
                                                 variant={"outline"}
                                                 className={cn(
                                                     "w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs flex justify-between items-center",
-                                                    !field.value && "text-muted-foreground"
+                                                    !field.value && "text-gray-500"
                                                 )}
+                                                style={{backgroundColor: "transparent"}}
                                                 >
                                                 {field.value ? (
                                                     format(field.value, "PPP")
                                                 ) : (
-                                                    <span>Pick a date</span>
+                                                    <span className="text-gray-500 font-normal text-[10px]">Pick a date</span>
                                                 )}
-                                                <CalendarIcon className="ml-auto h-3 w-3 opacity-60" />
+                                                <CalendarIcon className="w-auto p-0 opacity-60 text-gray-500" />
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
@@ -111,15 +112,36 @@ const SecondSignUpForm: React.FC = () => {
                         name="gender"
                         render={({ field }) => (
                         <FormItem className="mx-12 relative">
-                            <FormLabel className="block text-xs text-gray-700 text-left mb-1">Gender</FormLabel>
+                            <FormLabel className="block text-xs text-gray-700 text-left mb-1">Select gender</FormLabel>
                             <FormControl>
                                 <Select {...field}>
                                     <SelectTrigger className="w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs">
-                                        <span className={!field.value ? "text-gray-500 text-xs" : ""}>{field.value || "Select gender"}</span>
+                                        <span className={!field.value ? "text-gray-500 text-[10px]" : ""}>{field.value || "select option"}</span>
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="male">Male</SelectItem>
                                         <SelectItem value="female">Female</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </FormControl>
+                        </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        name="familyMember"
+                        render={({ field }) => (
+                        <FormItem className="mx-12 relative">
+                            <FormLabel className="block text-xs text-gray-700 text-left mb-1">Select Family Member</FormLabel>
+                            <FormControl>
+                                <Select {...field}>
+                                    <SelectTrigger className="w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs">
+                                        <span className={!field.value ? "text-gray-500 text-[10px]" : ""}>{field.value || "select option"}</span>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="child">Child</SelectItem>
+                                        <SelectItem value="parent">Parent</SelectItem>
+                                        <SelectItem value="grandParent">GrandParnet</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </FormControl>
