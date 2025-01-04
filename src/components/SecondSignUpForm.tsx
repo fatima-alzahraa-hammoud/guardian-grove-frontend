@@ -28,12 +28,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "./ui/select";
 import Selects, {components} from 'react-select';
 
 const FormSchema = z.object({
-  dob: z.date({
-    required_error: "A date of birth is required.",
-  }),
-  gender: z.string().nonempty({ message: "Gender is required." }),
-  familyMember: z.string().nonempty({ message: "Family member type is required." }),
-  interests: z.array(z.string()).nonempty({ message: "At least one interest is required." }),
+    date: z.date({
+        required_error: "A date of birth is required.",
+    }),
+    gender: z.string().nonempty({ message: "Gender is required." }),
+    familyMember: z.string().nonempty({ message: "Family member type is required." }),
+    interests: z.array(z.string()).nonempty({ message: "At least one interest is required." }),
+    agreeToTerms: z.boolean().refine(val => val === true, {
+        message: "You must agree to the Terms and Conditions and Privacy Policy",
+    }),
 });
 
 type FormSchemaType = z.infer<typeof FormSchema>;
@@ -153,9 +156,9 @@ const SecondSignUpForm: React.FC = () => {
             </div>
 
             <Form {...form}>
-                <form className="space-y-4">
+                <form className="space-y-4 max-h-[500px] overflow-y-auto">
                     <FormField
-                        name="dob"
+                        name="date"
                         render={({ field }) => (
                         <FormItem className="mx-12 relative">
                             <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Date of Birth</FormLabel>
@@ -266,8 +269,36 @@ const SecondSignUpForm: React.FC = () => {
                                 </FormItem>
                             )}
                         />
-                    <Button type="submit" className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-xs">SignUp</Button>
+
+                        <FormField
+                            name="agreeToTerms"
+                            render={({ field }) => (
+                                <FormItem className="mx-12 relative">
+                                    <FormControl>
+                                        <label className="flex items-center space-x-2">
+                                            <input
+                                                id= "agreeToTerms"
+                                                type="checkbox"
+                                                {...field}
+                                                className="form-checkbox h-3 w-3 text-blue-600"
+                                            />
+                                            <label htmlFor="agreeToTerms" className="text-[9px] text-left text-gray-700">
+                                                I have read and agree to the{" "}
+                                                <a href="/terms" className="text-[#3A8EBA] underline">
+                                                    Terms and Conditions
+                                                </a>{" "}
+                                                and{" "}
+                                                <a href="/privacy" className="text-[#3A8EBA] underline">
+                                                    Privacy Policy
+                                                </a>
+                                            </label>
+                                        </label>
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
                 </form>
+                <Button type="submit" className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-xs">SignUp</Button>
             </Form>
         </div>
     );
