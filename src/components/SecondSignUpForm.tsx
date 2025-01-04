@@ -1,26 +1,26 @@
 'use client';
 
 import React, { useEffect, useRef } from "react";
-import { Button } from "../components/ui/button";
+import { Button } from "./ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { cn } from "../lib/utils";
-import { Calendar } from "../components/ui/calendar";
+import { Calendar } from "./ui/calendar";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-} from "../components/ui/form";
+} from "./ui/form";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "../components/ui/popover";
+} from "./ui/popover";
 import "../styles/global.css";
 import { gsap } from "gsap";
 import 'react-day-picker/dist/style.css';
@@ -28,6 +28,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "./ui/select";
 import Selects, {components} from 'react-select';
 
 const FormSchema = z.object({
+    avatar: z.number(),
     date: z.date({
         required_error: "A date of birth is required.",
     }),
@@ -70,9 +71,11 @@ const customStyles = {
     menu: (provided: any) => ({
         ...provided,
         zIndex: 9999,
+        width: '200px',
     }),
 
     multiValue: (provided: any) => ({
+
         ...provided,
         backgroundColor: '#d6e4f8',
         borderRadius: '0.375rem',
@@ -145,6 +148,10 @@ const SecondSignUpForm: React.FC = () => {
         resolver: zodResolver(FormSchema),
     });
 
+    const onSubmit = (data: FormSchemaType) => {
+        console.log(data);
+    };
+
     return (
         <div ref={titleRef} className="w-full max-w-md space-y-6 -mt-20 font-poppins">
             {/*title*/}
@@ -156,11 +163,12 @@ const SecondSignUpForm: React.FC = () => {
             </div>
 
             <Form {...form}>
-                <form className="space-y-4 max-h-[500px] overflow-y-auto">
+                <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[350px] overflow-y-auto">
+
                     <FormField
                         name="date"
                         render={({ field }) => (
-                        <FormItem className="mx-12 relative">
+                        <FormItem className="mx-11 relative">
                             <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Date of Birth</FormLabel>
                             <Popover>
                             <PopoverTrigger asChild>
@@ -202,7 +210,7 @@ const SecondSignUpForm: React.FC = () => {
                     <FormField
                         name="gender"
                         render={({ field }) => (
-                        <FormItem className="mx-12 relative">
+                        <FormItem className="mx-11 relative">
                             <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Select gender</FormLabel>
                             <FormControl>
                                 <Select
@@ -225,7 +233,7 @@ const SecondSignUpForm: React.FC = () => {
                     <FormField
                         name="familyMember"
                         render={({ field }) => (
-                        <FormItem className="mx-12 relative">
+                        <FormItem className="mx-11 relative">
                             <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Select Family Member</FormLabel>
                             <FormControl>
                                 <Select
@@ -249,7 +257,7 @@ const SecondSignUpForm: React.FC = () => {
                     <FormField
                             name="interests"
                             render={({ field }) => (
-                                <FormItem className="mx-12 relative">
+                                <FormItem className="mx-11 relative">
                                     <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Select Interests</FormLabel>
                                     <FormControl>
                                         <Selects
@@ -273,14 +281,14 @@ const SecondSignUpForm: React.FC = () => {
                         <FormField
                             name="agreeToTerms"
                             render={({ field }) => (
-                                <FormItem className="mx-12 relative">
+                                <FormItem className="mx-11 relative">
                                     <FormControl>
                                         <label className="flex items-center space-x-2">
                                             <input
                                                 id= "agreeToTerms"
                                                 type="checkbox"
                                                 {...field}
-                                                className="form-checkbox h-3 w-3 text-blue-600"
+                                                className="form-checkbox h-3 w-3 bg-[#3A8EBA]"
                                             />
                                             <label htmlFor="agreeToTerms" className="text-[9px] text-left text-gray-700">
                                                 I have read and agree to the{" "}

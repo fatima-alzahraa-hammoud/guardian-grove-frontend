@@ -43,8 +43,8 @@ const Signup : React.FC = () => {
                 <div className="absolute left-0 top-0 text-xs">
                     <ToastContainer position="top-left" />
                 </div>
-                {/*step === 1 && <FirstSignUpForm onNext={handleNext} />*/}
-                {step === 1 && <SecondSignUpForm />}
+                {step === 1 && <FirstSignUpForm onNext={handleNext} />}
+                {step === 2 && <SecondSignUpForm />}
             </div>
         </div>
     );
