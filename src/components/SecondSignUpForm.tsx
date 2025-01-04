@@ -8,7 +8,6 @@ import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { cn } from "../lib/utils";
-import { toast } from "react-toastify";
 import { Calendar } from "../components/ui/calendar";
 import {
   Form,
@@ -25,6 +24,7 @@ import {
 import "../styles/global.css";
 import { gsap } from "gsap";
 import 'react-day-picker/dist/style.css';
+import { Select, SelectContent, SelectItem, SelectTrigger } from "./ui/select";
 
 const FormSchema = z.object({
   dob: z.date({
@@ -65,19 +65,19 @@ const SecondSignUpForm: React.FC = () => {
             </div>
 
             <Form {...form}>
-                <form className="space-y-6">
+                <form className="space-y-4">
                     <FormField
                         name="username"
                         render={({ field }) => (
                             <FormItem className="mx-12 relative">
-                                <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Date of Birth</FormLabel>
+                                <FormLabel className="block text-xs text-gray-700 text-left mb-1">Date of Birth</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <FormControl>
                                             <Button
                                                 variant={"outline"}
                                                 className={cn(
-                                                    "w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs flex justify-between items-center opacity-60",
+                                                    "w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs flex justify-between items-center",
                                                     !field.value && "text-muted-foreground"
                                                 )}
                                                 >
@@ -86,7 +86,7 @@ const SecondSignUpForm: React.FC = () => {
                                                 ) : (
                                                     <span>Pick a date</span>
                                                 )}
-                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-60" />
+                                                <CalendarIcon className="ml-auto h-3 w-3 opacity-60" />
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
@@ -100,13 +100,33 @@ const SecondSignUpForm: React.FC = () => {
                                             }
                                             initialFocus
                                             
-                                            className="rounded-md justify-center items-center bg-white font-normal"
+                                            className="rounded-md justify-center items-center bg-white"
                                         />
                                     </PopoverContent>
                                 </Popover>
                             </FormItem>
                         )}
                     />
+                    <FormField
+                        name="gender"
+                        render={({ field }) => (
+                        <FormItem className="mx-12 relative">
+                            <FormLabel className="block text-xs text-gray-700 text-left mb-1">Gender</FormLabel>
+                            <FormControl>
+                                <Select {...field}>
+                                    <SelectTrigger className="w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs">
+                                        <span className={!field.value ? "text-gray-500 text-xs" : ""}>{field.value || "Select gender"}</span>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="male">Male</SelectItem>
+                                        <SelectItem value="female">Female</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </FormControl>
+                        </FormItem>
+                        )}
+                    />
+
                     <Button type="submit" className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-xs">SignUp</Button>
                 </form>
             </Form>
