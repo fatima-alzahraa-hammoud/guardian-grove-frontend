@@ -44,13 +44,13 @@ const FormSchema = z.object({
 type FormSchemaType = z.infer<typeof FormSchema>;
 
 const interestOptions = [
-  { label: 'Sports', value: 'Sports' },
-  { label: 'Music', value: 'Music' },
-  { label: 'Reading', value: 'Reading' },
-  { label: 'Travel', value: 'Travel' },
-  { label: 'Technology', value: 'Technology' },
-  { label: 'Cooking', value: 'Cooking' },
-  { label: 'Photography', value: 'Photography' },
+    { label: 'Sports', value: 'Sports' },
+    { label: 'Music', value: 'Music' },
+    { label: 'Reading', value: 'Reading' },
+    { label: 'Travel', value: 'Travel' },
+    { label: 'Technology', value: 'Technology' },
+    { label: 'Cooking', value: 'Cooking' },
+    { label: 'Photography', value: 'Photography' },
 ];
 
 const customStyles = {
@@ -129,21 +129,9 @@ const DropdownIndicator = (props: any) => {
 };  
 
 const SecondSignUpForm: React.FC = () => {
-    const buttonsRef = useRef<HTMLDivElement>(null);
+    const buttonsRef = useRef<HTMLButtonElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const titleRef = useRef<HTMLDivElement>(null);
-    
-    useEffect(() => {
-        if (formRef.current) {
-        gsap.fromTo(formRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, ease: "power2.out" });
-        }
-        if (buttonsRef.current) {
-        gsap.fromTo(buttonsRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, delay: 0.6, ease: "power2.out" });
-        }
-        if (titleRef.current) {
-        gsap.fromTo(titleRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, delay: 0.4, ease: "power2.out" });
-        }
-    }, []);
 
     const form = useForm<FormSchemaType>({
         resolver: zodResolver(FormSchema),
@@ -236,8 +224,8 @@ const SecondSignUpForm: React.FC = () => {
                                         <span className={!field.value ? "text-gray-500 text-[10px]" : ""}>{field.value || "Select gender"}</span>
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="male">Male</SelectItem>
-                                        <SelectItem value="female">Female</SelectItem>
+                                        <SelectItem value="male" className="text-xs">Male</SelectItem>
+                                        <SelectItem value="female" className="text-xs">Female</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </FormControl>
@@ -259,9 +247,9 @@ const SecondSignUpForm: React.FC = () => {
                                         <span className={!field.value ? "text-gray-500 text-[10px]" : ""}>{field.value || "Select family member"}</span>
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="child">Child</SelectItem>
-                                        <SelectItem value="parent">Parent</SelectItem>
-                                        <SelectItem value="grandParent">GrandParent</SelectItem>
+                                        <SelectItem value="child" className="text-xs">Child</SelectItem>
+                                        <SelectItem value="parent" className="text-xs">Parent</SelectItem>
+                                        <SelectItem value="grandParent" className="text-xs">GrandParent</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </FormControl>
@@ -269,9 +257,9 @@ const SecondSignUpForm: React.FC = () => {
                         )}
                     />
 
-                    <FormField
+                        <FormField
                             name="interests"
-                            render={({ }) => (
+                            render={() => (
                                 <FormItem className="mx-11 relative">
                                     <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Select Interests</FormLabel>
                                     <FormControl>
@@ -280,9 +268,17 @@ const SecondSignUpForm: React.FC = () => {
                                             isMulti
                                             options={interestOptions}
                                             placeholder="Select interests..."
-                                            className="custom-select text-xs"
+                                            className="custom-select text-[10px]"
                                             classNamePrefix="react-select"
-                                            styles={customStyles}
+                                            styles={{
+                                                ...customStyles,
+                                                option: (provided: any, state: any) => ({
+                                                    ...provided,
+                                                    fontSize: '12px',
+                                                    backgroundColor: state.isFocused ? '#3A8EBA' : provided.backgroundColor,
+                                                    color: state.isFocused ? 'white' : provided.color,
+                                                }),
+                                            }}
                                             components={{ DropdownIndicator }}
                                             menuPortalTarget={document.body}
                                             menuPosition="fixed"
@@ -321,7 +317,7 @@ const SecondSignUpForm: React.FC = () => {
                             )}
                         />
                 </form>
-                <Button type="submit" className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-xs">SignUp</Button>
+                <Button ref={buttonsRef} type="submit" className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-xs">SignUp</Button>
             </Form>
         </div>
     );
