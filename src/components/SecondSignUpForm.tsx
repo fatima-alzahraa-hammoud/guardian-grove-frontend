@@ -129,9 +129,8 @@ const DropdownIndicator = (props: any) => {
 };  
 
 const SecondSignUpForm: React.FC = () => {
-    const buttonsRef = useRef<HTMLButtonElement>(null);
-    const formRef = useRef<HTMLFormElement>(null);
-    const titleRef = useRef<HTMLDivElement>(null);
+
+    const containerRef = useRef<HTMLDivElement>(null);
 
     const form = useForm<FormSchemaType>({
         resolver: zodResolver(FormSchema),
@@ -141,8 +140,18 @@ const SecondSignUpForm: React.FC = () => {
         console.log(data);
     };
 
+    useEffect(() => {   
+        if (containerRef.current) {
+            gsap.fromTo(
+                containerRef.current,
+                { opacity: 0 },
+                { opacity: 1, duration: 1, ease: "power2.out" }
+            );
+        }
+    }, []);
+
     return (
-        <div ref={titleRef} className="w-full max-w-md space-y-6 -mt-20 font-poppins">
+        <div ref={containerRef} className="w-full max-w-md space-y-6 -mt-20 font-poppins">
             {/*title*/}
             <div className="form-element text-center flex-col space-y-4">
                 <h1 className="text-2xl font-bold text-center text-gray-800 font-comic">Welcome to Guardian Grove!</h1>
@@ -152,7 +161,7 @@ const SecondSignUpForm: React.FC = () => {
             </div>
 
             <Form {...form}>
-                <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[350px] overflow-y-auto">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[350px] overflow-y-auto">
 
                     <FormField
                         name="avatar"
@@ -317,7 +326,7 @@ const SecondSignUpForm: React.FC = () => {
                             )}
                         />
                 </form>
-                <Button ref={buttonsRef} type="submit" className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-xs">SignUp</Button>
+                <Button type="submit" className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-xs">SignUp</Button>
             </Form>
         </div>
     );
