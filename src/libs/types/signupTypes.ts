@@ -13,7 +13,8 @@ export const firstStepSchema = z.object({
 export type TFirstStep = z.infer<typeof firstStepSchema>;
 
 export const secondStepSchems = z.object({
-    TSecondStep    date: z.date({
+    avatar: z.string().nonempty({ message: "Avatar is required." }),
+    date: z.date({
         required_error: "A date of birth is required.",
     }),
     gender: z.string().nonempty({ message: "Gender is required." }),

@@ -155,8 +155,8 @@ const SecondSignUpForm: React.FC = () => {
                             <FormItem className="mx-[74px] relative">
                                 <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1 -mx-[30px]">Select Avatar</FormLabel>
                                 <FormControl>
-                                    <AvatarSelector selectedAvatar={field.value} onAvatarClick={(id) => {
-                                        field.onChange(id);
+                                    <AvatarSelector selectedAvatar={field.value} onAvatarClick={(src) => {
+                                        field.onChange(src);
                                     }} />
                                 </FormControl>
                             </FormItem>

@@ -15,8 +15,8 @@ const avatars = [
 ];
 
 interface AvatarSelectorProps {
-  selectedAvatar: number | null;
-  onAvatarClick: (id: number) => void;
+  selectedAvatar: string | null;
+  onAvatarClick: (src: string) => void;
 }
 
 const AvatarSelector: React.FC<AvatarSelectorProps> = ({ selectedAvatar, onAvatarClick }) => {
@@ -29,11 +29,11 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({ selectedAvatar, onAvata
               alt="avatar"
               src={avatar.src}
               sx={{
-                border: selectedAvatar === avatar.id ? '3px solid #1976d2' : '2px solid #ddd',
+                border: selectedAvatar === avatar.src ? '3px solid #1976d2' : '2px solid #ddd',
                 cursor: 'pointer',
                 transition: 'border-color 0.3s ease',
               }}
-              onClick={() => onAvatarClick(avatar.id)}
+              onClick={() => onAvatarClick(avatar.src)}
             />
           </CarouselItem>
         ))}
