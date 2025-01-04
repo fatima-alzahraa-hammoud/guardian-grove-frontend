@@ -11,3 +11,17 @@ export const firstStepSchema = z.object({
 });
 
 export type TFirstStep = z.infer<typeof firstStepSchema>;
+
+export const secondStepSchems = z.object({
+    TSecondStep    date: z.date({
+        required_error: "A date of birth is required.",
+    }),
+    gender: z.string().nonempty({ message: "Gender is required." }),
+    familyMember: z.string().nonempty({ message: "Family member type is required." }),
+    interests: z.array(z.string()).nonempty({ message: "At least one interest is required." }),
+    agreeToTerms: z.boolean().refine(val => val === true, {
+        message: "You must agree to the Terms and Conditions and Privacy Policy",
+    }),
+});
+
+export type TSecondStep = z.infer<typeof secondStepSchems>;

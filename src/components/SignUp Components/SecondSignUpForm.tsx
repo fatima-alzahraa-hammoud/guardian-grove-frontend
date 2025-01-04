@@ -27,21 +27,7 @@ import 'react-day-picker/dist/style.css';
 import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 import Selects, {components} from 'react-select';
 import AvatarSelector from "../AvatarSelector";
-
-const FormSchema = z.object({
-    avatar: z.number(),
-    date: z.date({
-        required_error: "A date of birth is required.",
-    }),
-    gender: z.string().nonempty({ message: "Gender is required." }),
-    familyMember: z.string().nonempty({ message: "Family member type is required." }),
-    interests: z.array(z.string()).nonempty({ message: "At least one interest is required." }),
-    agreeToTerms: z.boolean().refine(val => val === true, {
-        message: "You must agree to the Terms and Conditions and Privacy Policy",
-    }),
-});
-
-type FormSchemaType = z.infer<typeof FormSchema>;
+import { secondStepSchems, TSecondStep } from "../../libs/types/signupTypes";
 
 const interestOptions = [
     { label: 'Sports', value: 'Sports' },
@@ -132,11 +118,11 @@ const SecondSignUpForm: React.FC = () => {
 
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const form = useForm<FormSchemaType>({
-        resolver: zodResolver(FormSchema),
+    const form = useForm<TSecondStep>({
+        resolver: zodResolver(secondStepSchems),
     });
 
-    const onSubmit = (data: FormSchemaType) => {
+    const onSubmit = (data: TSecondStep) => {
         console.log(data);
     };
 
