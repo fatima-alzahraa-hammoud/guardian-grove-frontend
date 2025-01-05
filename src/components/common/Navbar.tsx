@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
     Disclosure,
     DisclosureButton,
+    DisclosurePanel,
     Menu,
     MenuButton,
     MenuItem,
@@ -121,11 +122,11 @@ const Navbar: React.FC = () => {
                                 <MenuButton className="relative flex rounded-full bg-[#F3E5F5] text-sm focus:outline-none">
                                     <div className="relative p-[2px] rounded-full border-rotate-wrapper">
                                         <div className="border-[1.5px] border-dashed border-[#1140A6] rounded-full border-rotate h-12 w-12"></div>
-                                            <img
-                                                className="avatar-image h-10 w-10 rounded-full"
-                                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                                alt=""
-                                            />
+                                        <img
+                                            className="avatar-image h-10 w-10 rounded-full"
+                                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                            alt=""
+                                        />
                                     </div>
                                 </MenuButton>
                             </div>
@@ -173,7 +174,29 @@ const Navbar: React.FC = () => {
                         </Menu>
                     </div>
                 </div>
-            </div>            
+            </div>
+
+            <DisclosurePanel className="sm:hidden">
+                <div className="space-y-1 px-2 pb-3 pt-2">
+                    {navigation.map((item) => (
+                        <DisclosureButton
+                            key={item.name}
+                            as="a"
+                            href={item.href}
+                            onClick={() => handleNavigationClick(item.name)}
+                            className={classNames(
+                                item.current
+                                    ? "bg-[#3A8EBA] text-white"
+                                    : "text-black hover:bg-[#3A8EBA60] hover:text-black",
+                                "block rounded-md px-3 py-2 text-base font-extrabold font-comic"
+                            )}
+                            aria-current={item.current ? "page" : undefined}
+                        >
+                            {item.name}
+                        </DisclosureButton>
+                    ))}
+                </div>
+            </DisclosurePanel>
         </Disclosure>
     );
 };
