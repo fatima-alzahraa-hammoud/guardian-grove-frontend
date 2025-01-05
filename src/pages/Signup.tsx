@@ -6,22 +6,45 @@ import logo from '../assets/logo/GuardianGrove_logo_Text.png';
 import img from '../assets/images/family-signup1.png';
 import { gsap } from "gsap";
 import FirstSignUpForm from "../components/SignUp Components/FirstSignUpForm";
-import { FieldValues } from "react-hook-form";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import SecondSignUpForm from "../components/SignUp Components/SecondSignUpForm";
 import { TFirstStep, TSecondStep } from "../libs/types/signupTypes";
+import { requestApi } from "../libs/requestApi";
+import { requestMethods } from "../libs/enum/requestMethods";
+import { useNavigate } from "react-router-dom";
 
 const Signup : React.FC = () => {
 
+    const navigate = useNavigate();
     const [step, setStep] = React.useState(1);
+    const [firstStepData, setFirstStepData] = React.useState<TFirstStep | null>(null);
 
     function handleNext(data: TFirstStep): void {
-        console.log("Form data:", data);
+        setFirstStepData(data);
         setStep(2);
     }
 
-    function handleSubmit (data: TSecondStep):void{
-        console.log("Form data:", data);
+    const handleSubmit = async (secondStepData: TSecondStep) => {
+        const combinedData = { ...firstStepData, ...secondStepData };
+        console.log(combinedData)
+        try {
+            const response = await requestApi({
+                route: "/auth/register",
+                method: requestMethods.POST,
+                body: combinedData
+            });
+
+            if (response && response.token) {
+                toast.success('SignUp successful!');
+                localStorage.setItem("token", response.token);
+                // Navigate to the dashboard or home page
+                navigate("/dashboard");
+            } else {
+                toast.error(response.message || 'SignUp failed!');
+            }
+        } catch (error) {
+            toast.error('An error occurred during signUp.');
+        }
     }
 
     const logoRef = useRef<HTMLDivElement>(null);

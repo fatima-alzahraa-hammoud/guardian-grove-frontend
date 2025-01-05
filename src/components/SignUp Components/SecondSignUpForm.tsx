@@ -65,17 +65,15 @@ const SecondSignUpForm: React.FC<SecondSignUpFormProps> = ({onSubmit}) => {
         resolver: zodResolver(secondStepSchems),
         defaultValues: {
             avatar: "",
-            date: undefined,
+            birthday: undefined,
             gender: "",
-            familyMember: "",
+            role: "",
             interests: [],
             agreeToTerms: false
         }
     });
 
     const handleSubmit = (data: TSecondStep) => {
-        console.log("hello")
-        console.log("Form data:", data);
         onSubmit(data);
     };
 
@@ -130,7 +128,7 @@ const SecondSignUpForm: React.FC<SecondSignUpFormProps> = ({onSubmit}) => {
 
                     <FormField
                         control={form.control}
-                        name="date"
+                        name="birthday"
                         render={({ field }) => (
                         <FormItem className="mx-11 relative">
                             <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Date of Birth</FormLabel>
@@ -197,7 +195,7 @@ const SecondSignUpForm: React.FC<SecondSignUpFormProps> = ({onSubmit}) => {
 
                     <FormField
                         control={form.control}
-                        name="familyMember"
+                        name="role"
                         render={({ field }) => (
                         <FormItem className="mx-11 relative">
                             <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Select Family Member</FormLabel>
