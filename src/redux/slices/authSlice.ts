@@ -2,12 +2,12 @@ import {createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthState {
     token: string | null;
-  isAuthenticated: boolean;
+    isAuthenticated: boolean;
 }
 
 const initialState: AuthState = {
-  token: localStorage.getItem('token') || null,
-  isAuthenticated: !!localStorage.getItem('token'),
+    token: localStorage.getItem('token') || null,
+    isAuthenticated: !!localStorage.getItem('token'),
 };
 
 
