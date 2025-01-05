@@ -33,6 +33,7 @@ interface DecodedToken {
 const Navbar: React.FC = () => {
     const [userId, setUserId] = useState<string | null>(null);
     const [stars, setStars] = useState<number>(0);
+    const [avatar, setAvatar] = useState<string | null>(null);
 
     const navigate = useNavigate();
 
@@ -87,7 +88,33 @@ const Navbar: React.FC = () => {
         }
 
         fetchStars();
-    }, [userId]);    
+    }, [userId]); 
+    
+    // Fetch avatar from the API
+    useEffect(() => {
+        const fetchAvatar = async () => {
+            if (userId) {
+                try {
+                    const response = await requestApi({
+                        route: "/users/user/avatar",
+                        method: requestMethods.GET,
+                        body: userId
+                    });
+        
+                    if (response) {
+                        setAvatar(response.avatar);
+
+                    } else {
+                        console.log(response.message || 'Get avatar failed!');
+                    }
+                } catch (error) {
+                    console.log('An error occurred during getting the avatar.');
+                }
+            }
+        }
+
+        fetchAvatar();
+    }, [userId]); 
 
     return (
         <Disclosure as="nav" className='bg-[#F3E5F5]'>
@@ -177,7 +204,7 @@ const Navbar: React.FC = () => {
                                                 <div className="border-[1.5px] border-dashed border-[#1140A6] rounded-full border-rotate h-12 w-12"></div>
                                                 <img
                                                     className="avatar-image h-10 w-10 rounded-full"
-                                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                                    src={avatar || "src/assets/image/parent/avatar1.png"}
                                                     alt=""
                                                 />
                                             </div>
