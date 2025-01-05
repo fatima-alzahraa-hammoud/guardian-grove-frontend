@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     Disclosure,
     DisclosureButton,
@@ -9,7 +9,28 @@ import {
 } from "@heroicons/react/24/outline";
 import "../../styles/global.css";
 
+// Classnames utility function
+function classNames(...classes: string[]) {
+    return classes.filter(Boolean).join(" ");
+}
+
 const Navbar: React.FC = () => {
+    const [navigation, setNavigation] = useState([
+        { name: "Home", href: "#", current: true },
+        { name: "Features", href: "#", current: false },
+        { name: "About Us", href: "#", current: false },
+        { name: "Contact Us", href: "#", current: false },
+    ]);
+
+    const handleNavigationClick = (clickedItem: string) => {
+        setNavigation(prevNav =>
+            prevNav.map(item =>
+                item.name === clickedItem
+                    ? { ...item, current: true }
+                    : { ...item, current: false }
+            )
+        );
+    };
 
     return (
         <Disclosure as="nav" className='bg-[#F3E5F5]'>
@@ -31,12 +52,29 @@ const Navbar: React.FC = () => {
                                 alt="Your Company"
                             />
                         </div>
-                        
+                        <div className="hidden sm:flex justify-center items-center sm:ml-10 ">
+                            <div className="flex space-x-4">
+                                {navigation.map((item) => (
+                                    <a
+                                        key={item.name}
+                                        href={item.href}
+                                        onClick={() => handleNavigationClick(item.name)}
+                                        className={classNames(
+                                        item.current
+                                            ? "bg-[#3A8EBA] text-white"
+                                            : "text-black hover:bg-[#3A8EBA60] hover:text-black",
+                                            "rounded-md px-3 py-1 text-md font-extrabold font-comic"
+                                        )}
+                                        aria-current={item.current ? "page" : undefined}
+                                    >
+                                        {item.name}
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            
+            </div>            
         </Disclosure>
     );
 };
