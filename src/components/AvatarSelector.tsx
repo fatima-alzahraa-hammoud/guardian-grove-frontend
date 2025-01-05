@@ -24,7 +24,7 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({ selectedAvatar, onAvata
     <Carousel className="w-full max-w-sm">
       <CarouselContent className="-ml-1">
         {avatars.map((avatar) => (
-          <CarouselItem key={avatar.id} className="pl-1 md:basis-14 lg:basis-14">
+          <CarouselItem key={avatar.id} className="pl-1 basis-14">
             <Avatar
               alt="avatar"
               src={avatar.src}

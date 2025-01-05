@@ -40,11 +40,11 @@ const Signup : React.FC = () => {
                 // Navigate to the dashboard or home page
                 navigate("/dashboard");
             } else {
-                toast.error(response.message || 'SignUp failed!');
+                toast.error(response.error || 'SignUp failed!');
             }
-        } catch (error) {
-            toast.error('An error occurred during signUp.');
-        }
+        } catch (error : any ) {
+            const errorMessage = error.response?.data?.error || 'An unexpected error occurred';
+            toast.error(errorMessage);        }
     }
 
     const logoRef = useRef<HTMLDivElement>(null);
