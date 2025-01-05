@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import {
     Disclosure,
-    DisclosureButton,
+    DisclosureButton
 } from "@headlessui/react";
 import {
     Bars3Icon,
     XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { Button } from "../ui/button";
+import { Search, ShoppingCart, Star } from "lucide-react";
 import "../../styles/global.css";
 
 // Classnames utility function
@@ -71,6 +73,42 @@ const Navbar: React.FC = () => {
                                     </a>
                                 ))}
                             </div>
+                        </div>
+                    </div>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                        <div className="ml-auto flex items-center space-x-4">
+                            <Button
+                                variant="ghost"
+                                className="flex h-7 items-center gap-3 rounded-full bg-white px-2 text-[#FFC044] justify-center pt-3 pb-3 hover:bg-[#fcf7ef] hover:text-[#FFC044]"
+                                size="sm"
+                            >
+                                <Star className="h-4 w-4" />
+                                <span className="text-[13px] font-medium">12</span>
+                            </Button>
+
+                            <div className="relative p-[2px] rounded-full border-rotate-wrapper">
+                                <div className="border-[1.5px] border-dashed border-[#FFC85B] rounded-full border-rotate h-10 w-10"></div>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="p-1 focus:outline-none relative h-8 w-8 rounded-full bg-[#FFC85B] hover:bg-[#FFC85B] non-rotating-button"
+                                >
+                                    <ShoppingCart className="h-6 w-6 text-white fill-white" />
+                                    <span className="sr-only">Shopping cart</span>
+                                </Button>
+                            </div>
+
+                            <div className="relative p-[2px] rounded-full border-rotate-wrapper">
+                                <div className="border-[1.5px] border-dashed border-[#FA9DB7] rounded-full border-rotate h-10 w-10"></div>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="p-1 h-8 w-8 rounded-full bg-[#FA9DB7] hover:bg-[#FA9DB7] non-rotating-button"
+                                >
+                                    <Search className="h-6 w-6 text-white" />
+                                </Button>
+                            </div>
+
                         </div>
                     </div>
                 </div>
