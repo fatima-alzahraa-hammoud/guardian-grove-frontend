@@ -9,14 +9,19 @@ import FirstSignUpForm from "../components/SignUp Components/FirstSignUpForm";
 import { FieldValues } from "react-hook-form";
 import { ToastContainer } from "react-toastify";
 import SecondSignUpForm from "../components/SignUp Components/SecondSignUpForm";
+import { TFirstStep, TSecondStep } from "../libs/types/signupTypes";
 
 const Signup : React.FC = () => {
 
     const [step, setStep] = React.useState(1);
 
-    function handleNext(data: FieldValues): void {
+    function handleNext(data: TFirstStep): void {
         console.log("Form data:", data);
         setStep(2);
+    }
+
+    function handleSubmit (data: TSecondStep):void{
+        console.log("Form data:", data);
     }
 
     const logoRef = useRef<HTMLDivElement>(null);
@@ -40,11 +45,11 @@ const Signup : React.FC = () => {
                 <div ref={logoRef} className="relative w-full flex justify-start right-12 bottom-12">
                     <img src={logo} alt="Guardian Grove Logo" width={100} height={100} />
                 </div>
-                <div className="absolute left-0 top-0 text-xs">
+                <div className="absolute left-0 top-0 text-xs text-left">
                     <ToastContainer position="top-left" />
                 </div>
                 {step === 1 && <FirstSignUpForm onNext={handleNext} />}
-                {step === 2 && <SecondSignUpForm />}
+                {step === 2 && <SecondSignUpForm onSubmit={handleSubmit}/>}
             </div>
         </div>
     );

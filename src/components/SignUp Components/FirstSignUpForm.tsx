@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import "../../styles/global.css";
 import { gsap } from "gsap";
@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { Label } from "../ui/label";
 
 interface FirstSignUpFormProps {
-    onNext: (data: FieldValues) => void;
+    onNext: (data: TFirstStep) => void;
 }
 
 const FirstSignUpForm : React.FC<FirstSignUpFormProps> = ({onNext}) => {

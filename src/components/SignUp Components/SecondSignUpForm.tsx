@@ -28,6 +28,8 @@ import Selects, {components} from 'react-select';
 import AvatarSelector from "../AvatarSelector";
 import { secondStepSchems, TSecondStep } from "../../libs/types/signupTypes";
 import { customStyles, interestOptions } from "../../libs/constants";
+import { Input } from "@mui/material";
+import { toast } from "react-toastify";
 
 const DropdownIndicator = (props: any) => {
     return (
@@ -51,16 +53,39 @@ const DropdownIndicator = (props: any) => {
     );
 };  
 
-const SecondSignUpForm: React.FC = () => {
+interface SecondSignUpFormProps {
+    onSubmit: (data: TSecondStep) => void;
+}
+
+const SecondSignUpForm: React.FC<SecondSignUpFormProps> = ({onSubmit}) => {
 
     const containerRef = useRef<HTMLDivElement>(null);
 
     const form = useForm<TSecondStep>({
         resolver: zodResolver(secondStepSchems),
+        defaultValues: {
+            avatar: "",
+            date: undefined,
+            gender: "",
+            familyMember: "",
+            interests: [],
+            agreeToTerms: false
+        }
     });
 
-    const onSubmit = (data: TSecondStep) => {
-        console.log(data);
+    const handleSubmit = (data: TSecondStep) => {
+        console.log("hello")
+        console.log("Form data:", data);
+        onSubmit(data);
+    };
+
+    const onError = (errors: any) => {
+        console.log("Form errors:", errors);
+        if (errors) {
+            Object.keys(errors).forEach((key) => {
+                toast.error(errors[key]?.message || "Invalid input");  // Show error toast
+            });
+        }
     };
 
     useEffect(() => {   
@@ -84,23 +109,27 @@ const SecondSignUpForm: React.FC = () => {
             </div>
 
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[350px] overflow-y-auto">
-
+                <form onSubmit={form.handleSubmit(handleSubmit, onError)} className="space-y-4 max-h-[350px] overflow-y-auto">
                     <FormField
+                        control={form.control}
                         name="avatar"
                         render={({ field }) => (
                             <FormItem className="mx-[74px] relative">
                                 <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1 -mx-[30px]">Select Avatar</FormLabel>
                                 <FormControl>
-                                    <AvatarSelector selectedAvatar={field.value} onAvatarClick={(src) => {
-                                        field.onChange(src);
-                                    }} />
+                                    <AvatarSelector 
+                                        selectedAvatar={field.value} 
+                                        onAvatarClick={(src) => {
+                                            field.onChange(src);
+                                        }} 
+                                    />
                                 </FormControl>
                             </FormItem>
                         )}
                     />
 
                     <FormField
+                        control={form.control}
                         name="date"
                         render={({ field }) => (
                         <FormItem className="mx-11 relative">
@@ -111,7 +140,7 @@ const SecondSignUpForm: React.FC = () => {
                                     <Button
                                         variant={"outline"}
                                         className={cn(
-                                        "w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs flex justify-between items-center font-normal font-poppins",
+                                        "w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] text-xs flex justify-between items-center font-normal font-poppins",
                                         !field.value && "text-gray-500"
                                         )}
                                         style={{ backgroundColor: "transparent" }} // Prevent background color change on hover
@@ -143,6 +172,7 @@ const SecondSignUpForm: React.FC = () => {
                     />
 
                     <FormField
+                        control={form.control}
                         name="gender"
                         render={({ field }) => (
                         <FormItem className="mx-11 relative">
@@ -152,7 +182,7 @@ const SecondSignUpForm: React.FC = () => {
                                     value={field.value}
                                     onValueChange={field.onChange}
                                 >
-                                    <SelectTrigger className="w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs">
+                                    <SelectTrigger className="w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] text-xs">
                                         <span className={!field.value ? "text-gray-500 text-[10px]" : ""}>{field.value || "Select gender"}</span>
                                     </SelectTrigger>
                                     <SelectContent>
@@ -166,6 +196,7 @@ const SecondSignUpForm: React.FC = () => {
                     />
 
                     <FormField
+                        control={form.control}
                         name="familyMember"
                         render={({ field }) => (
                         <FormItem className="mx-11 relative">
@@ -175,7 +206,7 @@ const SecondSignUpForm: React.FC = () => {
                                     value={field.value}
                                     onValueChange={field.onChange}
                                 >
-                                    <SelectTrigger className="w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] md:text-xs">
+                                    <SelectTrigger className="w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] text-xs">
                                         <span className={!field.value ? "text-gray-500 text-[10px]" : ""}>{field.value || "Select family member"}</span>
                                     </SelectTrigger>
                                     <SelectContent>
@@ -189,67 +220,73 @@ const SecondSignUpForm: React.FC = () => {
                         )}
                     />
 
-                        <FormField
-                            name="interests"
-                            render={() => (
-                                <FormItem className="mx-11 relative">
-                                    <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Select Interests</FormLabel>
-                                    <FormControl>
-                                        <Selects
-                                            name="interests"
-                                            isMulti
-                                            options={interestOptions}
-                                            placeholder="Select interests..."
-                                            className="custom-select text-[10px]"
-                                            classNamePrefix="react-select"
-                                            styles={{
-                                                ...customStyles,
-                                                option: (provided: any, state: any) => ({
-                                                    ...provided,
-                                                    fontSize: '12px',
-                                                    backgroundColor: state.isFocused ? '#3A8EBA' : provided.backgroundColor,
-                                                    color: state.isFocused ? 'white' : provided.color,
-                                                }),
-                                            }}
-                                            components={{ DropdownIndicator }}
-                                            menuPortalTarget={document.body}
-                                            menuPosition="fixed"
-                                            menuShouldScrollIntoView={false}
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                            )}
-                        />
+                    <FormField
+                        control={form.control}
+                        name="interests"
+                        render={({field}) => (
+                            <FormItem className="mx-11 relative">
+                                <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1">Select Interests</FormLabel>
+                                <FormControl>
+                                    <Selects
+                                        name="interests"
+                                        isMulti
+                                        options={interestOptions}
+                                        placeholder="Select interests..."
+                                        className="custom-select text-[10px]"
+                                        classNamePrefix="react-select"
+                                        onChange={(selectedOptions) => {
+                                            const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
+                                            field.onChange(selectedValues);
+                                        }}
+                                        styles={{
+                                            ...customStyles,
+                                            option: (provided: any, state: any) => ({
+                                                ...provided,
+                                                fontSize: '12px',
+                                                backgroundColor: state.isFocused ? '#3A8EBA' : provided.backgroundColor,
+                                                color: state.isFocused ? 'white' : provided.color,
+                                            }),
+                                        }}
+                                        components={{ DropdownIndicator }}
+                                        menuPortalTarget={document.body}
+                                        menuPosition="fixed"
+                                        menuShouldScrollIntoView={false}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
 
-                        <FormField
-                            name="agreeToTerms"
-                            render={({ field }) => (
-                                <FormItem className="mx-11 relative">
-                                    <FormControl>
-                                        <label className="flex items-center space-x-2">
-                                            <input
-                                                id= "agreeToTerms"
-                                                type="checkbox"
-                                                {...field}
-                                                className="form-checkbox h-3 w-3 bg-[#3A8EBA]"
-                                            />
-                                            <label htmlFor="agreeToTerms" className="text-[9px] text-left text-gray-700">
-                                                I have read and agree to the{" "}
-                                                <a href="/terms" className="text-[#3A8EBA] underline">
-                                                    Terms and Conditions
-                                                </a>{" "}
-                                                and{" "}
-                                                <a href="/privacy" className="text-[#3A8EBA] underline">
-                                                    Privacy Policy
-                                                </a>
-                                            </label>
+                    <FormField
+                        control={form.control}
+                        name="agreeToTerms"
+                        render={({ field }) => (
+                            <FormItem className="mx-11 relative">
+                                <FormControl>
+                                    <label className="flex items-center space-x-2">
+                                        <Input
+                                            id= "agreeToTerms"
+                                            type="checkbox"
+                                            {...field}
+                                            className="form-checkbox h-3 w-3 bg-[#3A8EBA]"
+                                        />
+                                        <label htmlFor="agreeToTerms" className="text-[9px] text-left text-gray-700">
+                                            I have read and agree to the{" "}
+                                            <a href="/terms" className="text-[#3A8EBA] underline">
+                                                Terms and Conditions
+                                            </a>{" "}
+                                            and{" "}
+                                            <a href="/privacy" className="text-[#3A8EBA] underline">
+                                                Privacy Policy
+                                            </a>
                                         </label>
-                                    </FormControl>
-                                </FormItem>
-                            )}
-                        />
+                                    </label>
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                    <Button type="submit" className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-xs">SignUp</Button>
                 </form>
-                <Button type="submit" className="w-1/5 bg-[#3A8EBA] hover:bg-[#326E9F] focus:ring-2 focus:ring-offset-2 focus:ring-[#326E9F] text-white p-2 rounded-full px-3 text-xs">SignUp</Button>
             </Form>
         </div>
     );
