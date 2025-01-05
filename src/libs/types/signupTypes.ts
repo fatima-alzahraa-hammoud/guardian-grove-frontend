@@ -24,6 +24,7 @@ export const secondStepSchems = z.object({
         message: "You must agree to the Terms and Conditions and Privacy Policy",
     }),
     familyName: z.string().min(3, { message: "Family name is required" }),
+    familyAvatar: z.string().nonempty({ message: "Family Avatar is required." }),
 });
 
 export type TSecondStep = z.infer<typeof secondStepSchems>;

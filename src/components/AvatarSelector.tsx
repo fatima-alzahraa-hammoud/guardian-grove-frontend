@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
 import Avatar from "@mui/material/Avatar";
 
-const avatars = [
+const parentAvatars = [
   { id: 1, src: "src/assets/images/avatars/parent/avatar1.png" },
   { id: 2, src: "src/assets/images/avatars/parent/avatar2.png" },
   { id: 3, src: "src/assets/images/avatars/parent/avatar3.png" },
@@ -14,12 +14,37 @@ const avatars = [
   { id: 9, src: 'src/assets/images/avatars/parent/avatar9.png' },
 ];
 
+const familyAvatars = [
+  { id: 1, src: "src/assets/images/avatars/family/avatar1.png" },
+  { id: 2, src: "src/assets/images/avatars/family/avatar2.png" },
+  { id: 3, src: "src/assets/images/avatars/family/avatar3.png" },
+  { id: 4, src: "src/assets/images/avatars/family/avatar4.png" },
+  { id: 5, src: "src/assets/images/avatars/family/avatar5.png" },
+  { id: 6, src: "src/assets/images/avatars/family/avatar6.png" },
+  { id: 7, src: 'src/assets/images/avatars/family/avatar7.png' },
+  { id: 8, src: 'src/assets/images/avatars/family/avatar8.png' },
+  { id: 9, src: 'src/assets/images/avatars/family/avatar9.png' },
+  { id: 10, src: 'src/assets/images/avatars/family/avatar10.png' },
+  { id: 11, src: 'src/assets/images/avatars/family/avatar11.png' },
+];
+
 interface AvatarSelectorProps {
   selectedAvatar: string | null;
   onAvatarClick: (src: string) => void;
+  role: string | 'parent';
 }
 
-const AvatarSelector: React.FC<AvatarSelectorProps> = ({ selectedAvatar, onAvatarClick }) => {
+const AvatarSelector: React.FC<AvatarSelectorProps> = ({ selectedAvatar, onAvatarClick, role }) => {
+  const [avatars, setAvatars] = useState<{ id: number; src: string }[]>([]);
+
+  useEffect(() => {
+    if (role === "parent") {
+      setAvatars(parentAvatars);
+    } else if (role === "family"){
+      setAvatars(familyAvatars);
+    }
+  }, [role]);
+
   return (
     <Carousel className="w-full max-w-sm">
       <CarouselContent className="-ml-1">

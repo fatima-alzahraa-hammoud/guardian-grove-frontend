@@ -121,6 +121,7 @@ const SecondSignUpForm: React.FC<SecondSignUpFormProps> = ({onSubmit}) => {
                                             onAvatarClick={(src) => {
                                                 field.onChange(src);
                                             }} 
+                                            role="parent"
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -216,6 +217,25 @@ const SecondSignUpForm: React.FC<SecondSignUpFormProps> = ({onSubmit}) => {
                                     </Select>
                                 </FormControl>
                             </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="familyAvatar"
+                            render={({ field }) => (
+                                <FormItem className="mx-[74px] relative">
+                                    <FormLabel className="block text-xs font-medium text-gray-700 text-left mb-1 -mx-[32px]">Select Family Avatar</FormLabel>
+                                    <FormControl>
+                                        <AvatarSelector 
+                                            selectedAvatar={field.value} 
+                                            onAvatarClick={(src) => {
+                                                field.onChange(src);
+                                            }} 
+                                            role="family"
+                                        />
+                                    </FormControl>
+                                </FormItem>
                             )}
                         />
 
