@@ -16,6 +16,7 @@ import { Button } from "../ui/button";
 import { Search, ShoppingCart, Star } from "lucide-react";
 import "../../styles/global.css";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 // Classnames utility function
 function classNames(...classes: string[]) {
@@ -29,7 +30,7 @@ interface DecodedToken {
 
 const Navbar: React.FC = () => {
     const [userId, setUserId] = useState<string | null>(null);
-
+    const navigate = useNavigate();
 
     const [navigation, setNavigation] = useState([
         { name: "Home", href: "#", current: true },
@@ -196,6 +197,7 @@ const Navbar: React.FC = () => {
                             </>
                         ) :(
                             <Button
+                                onClick={(e) => {navigate('/')}}
                                 variant="ghost"
                                 className="w-full sm:mr-28 flex items-center justify-center rounded-full px-6 py-2 bg-[#3A8EBA] text-white hover:bg-[#326E9F] hover:text-white"
                             >
