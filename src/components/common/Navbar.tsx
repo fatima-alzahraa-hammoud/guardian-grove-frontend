@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Disclosure,
     DisclosureButton,
@@ -15,13 +15,22 @@ import {
 import { Button } from "../ui/button";
 import { Search, ShoppingCart, Star } from "lucide-react";
 import "../../styles/global.css";
+import { jwtDecode } from "jwt-decode";
 
 // Classnames utility function
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
 
+interface DecodedToken {
+    userId: string;
+    role: string;
+}
+
 const Navbar: React.FC = () => {
+    const [userId, setUserId] = useState<string>(null);
+
+
     const [navigation, setNavigation] = useState([
         { name: "Home", href: "#", current: true },
         { name: "Features", href: "#", current: false },
@@ -38,6 +47,15 @@ const Navbar: React.FC = () => {
             )
         );
     };
+
+    const token = localStorage.getItem("token");
+    useEffect(() =>{
+        if (token){
+            const decoded = jwtDecode<DecodedToken>(token);
+            console.log("Decoded token:", decoded); 
+            setUserId(decoded.userId);
+        }
+    }, [])
 
     return (
         <Disclosure as="nav" className='bg-[#F3E5F5]'>
