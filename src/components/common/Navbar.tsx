@@ -17,6 +17,8 @@ import { Search, ShoppingCart, Star } from "lucide-react";
 import "../../styles/global.css";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { requestApi } from "../../libs/requestApi";
+import { requestMethods } from "../../libs/enum/requestMethods";
 
 // Classnames utility function
 function classNames(...classes: string[]) {
@@ -30,6 +32,8 @@ interface DecodedToken {
 
 const Navbar: React.FC = () => {
     const [userId, setUserId] = useState<string | null>(null);
+    const [stars, setStars] = useState<number>(0);
+
     const navigate = useNavigate();
 
     const [navigation, setNavigation] = useState([
@@ -50,13 +54,40 @@ const Navbar: React.FC = () => {
     };
 
     const token = localStorage.getItem("token");
+    
     useEffect(() =>{
         if (token){
             const decoded = jwtDecode<DecodedToken>(token);
             console.log("Decoded token:", decoded); 
             setUserId(decoded.userId);
         }
-    }, [])
+    }, []);
+
+    // Fetch stars from the API
+    useEffect(() => {
+        const fetchStars = async () => {
+            if (userId) {
+                try {
+                    const response = await requestApi({
+                        route: "/users/stars",
+                        method: requestMethods.GET,
+                        body: userId
+                    });
+        
+                    if (response) {
+                        setStars(response.stars);
+
+                    } else {
+                        console.log(response.message || 'Get stars failed!');
+                    }
+                } catch (error) {
+                    console.log('An error occurred during getting the stars.');
+                }
+            }
+        }
+
+        fetchStars();
+    }, [userId]);    
 
     return (
         <Disclosure as="nav" className='bg-[#F3E5F5]'>
@@ -110,7 +141,7 @@ const Navbar: React.FC = () => {
                                         size="sm"
                                     >
                                         <Star className="h-4 w-4" />
-                                        <span className="text-[13px] font-medium">12</span>
+                                        <span className="text-[13px] font-medium">{stars}</span>
                                     </Button>
 
                                     <div className="relative p-[2px] rounded-full border-rotate-wrapper">
@@ -197,7 +228,7 @@ const Navbar: React.FC = () => {
                             </>
                         ) :(
                             <Button
-                                onClick={(e) => {navigate('/')}}
+                                onClick={() => {navigate('/')}}
                                 variant="ghost"
                                 className="w-full sm:mr-28 flex items-center justify-center rounded-full px-6 py-2 bg-[#3A8EBA] text-white hover:bg-[#326E9F] hover:text-white"
                             >
