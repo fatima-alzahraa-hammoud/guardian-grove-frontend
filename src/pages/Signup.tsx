@@ -12,9 +12,12 @@ import { TFirstStep, TSecondStep } from "../libs/types/signupTypes";
 import { requestApi } from "../libs/requestApi";
 import { requestMethods } from "../libs/enum/requestMethods";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setToken } from "../redux/slices/authSlice";
 
 const Signup : React.FC = () => {
 
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [step, setStep] = React.useState(1);
     const [firstStepData, setFirstStepData] = React.useState<TFirstStep | null>(null);
@@ -37,7 +40,8 @@ const Signup : React.FC = () => {
             if (response && response.token) {
                 toast.success('SignUp successful!');
                 localStorage.setItem("token", response.token);
-                // Navigate to the dashboard or home page
+                dispatch(setToken(response.token));
+
                 navigate("/dashboard");
             } else {
                 toast.error(response.error || 'SignUp failed!');

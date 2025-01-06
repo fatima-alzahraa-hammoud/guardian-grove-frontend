@@ -14,9 +14,13 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { requestApi } from "../libs/requestApi";
 import { requestMethods } from "../libs/enum/requestMethods";
+import { useDispatch } from "react-redux";
 import "../styles/global.css";
+import { setToken } from "../redux/slices/authSlice";
 
 const Login : React.FC = () => {
+    const dispatch = useDispatch();
+
     const { 
         register, 
         handleSubmit, 
@@ -37,7 +41,8 @@ const Login : React.FC = () => {
             if (response && response.token) {
                 toast.success('Login successful!');
                 localStorage.setItem("token", response.token);
-                // Navigate to the dashboard or home page
+                dispatch(setToken(response.token));
+
                 navigate("/dashboard");
             } else {
                 toast.error(response.message || 'Login failed!');
