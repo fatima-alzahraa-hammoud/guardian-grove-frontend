@@ -1,30 +1,21 @@
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 import { Navigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
-import React, { ReactElement } from 'react';
-
-interface Token {
-  userId: string;
-}
+import { toast } from 'react-toastify';
 
 interface ProtectedRouteProps {
-    element: ReactElement;
+  children: React.ReactNode;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
-    const token = localStorage.getItem("token");
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
-    if (!token) {
-        return <Navigate to="/" replace />;
-    }
+  if (!isAuthenticated) {
+    toast.error("Access denied. Please log in.");
+    return <Navigate to="/" replace />;
+  }
 
-    try {
-        const decoded: Token = jwtDecode(token);
-        const userId = decoded.userId;
-
-        return React.cloneElement(element, { userId });
-    } catch (error) {
-        return <Navigate to="/" replace />;
-    }
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;
