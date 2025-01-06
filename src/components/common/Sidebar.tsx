@@ -22,8 +22,9 @@ import achievementsImage from '../../assets/images/dashboard/achievements.png';
 import exploreImage from '../../assets/images/dashboard/exploreAndLearn.png';
 import funImage from '../../assets/images/dashboard/funZone.png';
 import calendarImage from '../../assets/images/dashboard/calendar.png';
-import settingsImage from '../../assets/images/dashboard/settings.png';
-import logoutImage from '../../assets/images/dashboard/logout.png';
+import settingsImage from '../../assets/images/dashboard/settings.svg';
+import logoutImage from '../../assets/images/dashboard/logout.svg';
+import infoImage from '../../assets/images/dashboard/badge-info.svg';
 
 import "../../styles/sidebar.css";
 
@@ -113,6 +114,7 @@ const Sidebar: React.FC = () => {
                 {/* Footer with Custom Images */}
                 <div className="flex justify-between pt-6 pb-6 pl-9 pr-9">
                     <FooterIcon icon={logoutImage} />
+                    <FooterIcon icon={infoImage} />
                     <FooterIcon icon={settingsImage} />
                 </div>
             </div>
@@ -154,7 +156,7 @@ function SidebarItem({
 // Footer Icon Component
 function FooterIcon({ icon }: { icon: string }) {
     return (
-        <div className="text-black hover:opacity-75 cursor-pointer">
+        <div className="text-black hover:text-[#3a8dba89] cursor-pointer transition-all duration-300 ease-in-out hover:scale-110">
             <img src={icon} alt="footer icon" className="w-4 h-4" />
         </div>
     );
