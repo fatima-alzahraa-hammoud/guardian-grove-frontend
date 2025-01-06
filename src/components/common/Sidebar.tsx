@@ -36,6 +36,15 @@ const Sidebar :React.FC = () => {
                         {collapsed ? <ChevronRight /> : <ChevronLeft />}
                     </Button>
                 </div>
+
+                {/* User Info */}
+                <div className="flex flex-col items-center mt-2">
+                    <div className="w-16 h-16 bg-white rounded-full mb-2"></div>
+                    {!collapsed && (
+                        <h1 className="text-lg font-semibold">name</h1>
+                    )}
+                </div>
+
             </div>
         </div>
     );
