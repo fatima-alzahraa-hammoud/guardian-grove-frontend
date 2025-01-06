@@ -12,23 +12,18 @@ import { Button } from "../ui/button";
 import { Search, ShoppingCart, Star } from "lucide-react";
 import "../../styles/global.css";
 import { useNavigate } from "react-router-dom";
-import { requestApi } from "../../libs/requestApi";
-import { requestMethods } from "../../libs/enum/requestMethods";
+import { useSelector } from "react-redux";
+import { selectAvatar, selectStars } from "../../redux/slices/userSlice";
 
 // Classnames utility function
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
-
-
-interface NavbarProps {
-    userId: string;
-}
   
-const Navbar: React.FC<NavbarProps> = ({ userId }) => {
+const Navbar: React.FC= () => {
 
-    const [stars, setStars] = useState<number>(0);
-    const [avatar, setAvatar] = useState<string | null>(null);
+    const stars = useSelector(selectStars);
+    const avatar = useSelector(selectAvatar);
 
     const navigate = useNavigate();
 
@@ -48,58 +43,6 @@ const Navbar: React.FC<NavbarProps> = ({ userId }) => {
             )
         );
     };
-
-    // Fetch stars from the API
-    useEffect(() => {
-        const fetchStars = async () => {
-            if (userId) {
-                try {
-                    const response = await requestApi({
-                        route: "/users/stars",
-                        method: requestMethods.GET,
-                        body: userId
-                    });
-        
-                    if (response) {
-                        setStars(response.stars);
-
-                    } else {
-                        console.log(response.message || 'Get stars failed!');
-                    }
-                } catch (error) {
-                    console.log('An error occurred during getting the stars.');
-                }
-            }
-        }
-
-        fetchStars();
-    }, [userId]); 
-    
-    // Fetch avatar from the API
-    useEffect(() => {
-        const fetchAvatar = async () => {
-            if (userId) {
-                try {
-                    const response = await requestApi({
-                        route: "/users/user/avatar",
-                        method: requestMethods.GET,
-                        body: userId
-                    });
-        
-                    if (response) {
-                        setAvatar(response.avatar);
-
-                    } else {
-                        console.log(response.message || 'Get avatar failed!');
-                    }
-                } catch (error) {
-                    console.log('An error occurred during getting the avatar.');
-                }
-            }
-        }
-
-        fetchAvatar();
-    }, [userId]); 
 
     return (
         <Disclosure as="nav" className='bg-[#F3E5F5]'>
