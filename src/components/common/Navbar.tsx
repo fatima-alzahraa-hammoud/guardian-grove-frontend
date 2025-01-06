@@ -45,7 +45,7 @@ const Navbar: React.FC= () => {
     };
 
     return (
-        <Disclosure as="nav" className='bg-[#F3E5F5]'>
+        <Disclosure as="nav" className='bg-purple-100'>
             <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-12">
                 <div className="relative flex items-center justify-between h-16">
                     <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">

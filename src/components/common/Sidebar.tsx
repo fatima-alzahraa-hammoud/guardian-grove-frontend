@@ -28,8 +28,8 @@ import logoutImage from '../../assets/images/dashboard/logout.png';
 import "../../styles/sidebar.css";
 
 const Sidebar: React.FC = () => {
-    const [collapsed, setCollapsed] = useState(false);
-    const [activeSection, setActiveSection] = useState('profile'); // Track active section
+    const [collapsed, setCollapsed] = useState<boolean>(false);
+    const [activeSection, setActiveSection] = useState<string>('profile');
 
     const toggleSidebar = () => {
         setCollapsed(!collapsed);
@@ -76,7 +76,7 @@ const Sidebar: React.FC = () => {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <div
-                                    className={`flex items-center text-sm text-black px-6 py-2 hover:bg-purple-200 ${(activeSection === 'familyJournal' || activeSection === 'familyTree' ) ? 'bg-purple-300' : ''} ${
+                                    className={`flex items-center text-sm text-black hover:text-black px-6 py-2 hover:bg-[#3a8dba89] ${(activeSection === 'familyJournal' || activeSection === 'familyTree' ) ? 'bg-[#3a8dba] text-white' : 'hover:bg-[#3a8dba89]'} ${
                                     collapsed ? 'justify-center' : 'pl-10'
                                     } cursor-pointer`}
                                 >
@@ -92,10 +92,10 @@ const Sidebar: React.FC = () => {
                                 </div>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="start" className="w-40 ml-12">
-                                <DropdownMenuItem onClick={() => setActiveSection('familyTree')} className={`${activeSection === 'familyTree' ? 'bg-purple-300' : ''}`}>
+                                <DropdownMenuItem onClick={() => setActiveSection('familyTree')} className={`text-black hover:text-black ${activeSection === 'familyTree' ? 'bg-[#3a8dba] text-white' : 'hover:bg-[#3a8dba89]'}`}>
                                     Family Tree
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setActiveSection('familyJournal')} className={`${activeSection === 'familyJournal' ? 'bg-purple-300' : ''}`}>
+                                <DropdownMenuItem onClick={() => setActiveSection('familyJournal')} className={`${activeSection === 'familyJournal' ? 'bg-[#3a8dba] text-white' : 'hover:bg-[#3a8dba89]'}`}>
                                     Family Journal
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -111,7 +111,7 @@ const Sidebar: React.FC = () => {
                 </div>
 
                 {/* Footer with Custom Images */}
-                <div className="flex justify-around pt-6 pb-6">
+                <div className="flex justify-between pt-6 pb-6 pl-9 pr-9">
                     <FooterIcon icon={logoutImage} />
                     <FooterIcon icon={settingsImage} />
                 </div>
@@ -139,8 +139,8 @@ function SidebarItem({
     return (
         <div
             onClick={onClick}
-            className={`flex items-center text-sm text-black px-6 py-2 hover:bg-purple-200 cursor-pointer ${
-                isActive ? 'bg-purple-300' : 'hover:bg-purple-200'
+            className={`flex items-center text-sm text-black px-6 py-2 hover:bg-[#3a8dba89] cursor-pointer hover:text-black ${
+                isActive ? 'bg-[#3A8EBA] text-white' : 'hover:bg-[#3a8dba89] hover:text-black'
             } ${ collapsed ? 'justify-center' : 'pl-10' }`}
         >
             <div className="w-4 h-4">
