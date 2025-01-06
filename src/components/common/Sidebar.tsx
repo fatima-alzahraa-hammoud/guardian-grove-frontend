@@ -58,6 +58,13 @@ const Sidebar :React.FC = () => {
                     <SidebarItem icon={<CalendarDays />} label="Calendar" collapsed={collapsed} />
                 </nav>
             </div>
+
+            {/* Footer Actions */}
+            <div className="flex justify-around pb-6">
+                <FooterIcon icon={<LogOut />} />
+                <FooterIcon icon={<Settings />} />
+                <FooterIcon icon={<Settings />} />
+            </div>
         </div>
     );
 }
