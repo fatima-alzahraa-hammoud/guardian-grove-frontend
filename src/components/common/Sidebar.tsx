@@ -1,4 +1,20 @@
 import React, { useState } from 'react';
+import {
+  User,
+  NotebookPen,
+  Users,
+  Bell,
+  Map,
+  Trophy,
+  BookOpen,
+  Gamepad2,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Settings,
+  LogOut,
+} from 'lucide-react';
+import { Button } from '../ui/button';
 
 const Sidebar :React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
@@ -13,7 +29,14 @@ const Sidebar :React.FC = () => {
                 collapsed ? 'w-20' : 'w-64'
             } transition-all duration-300 flex flex-col justify-between`}
         >
-            
+            <div>
+                {/* Sidebar Header */}
+                <div className="pr-2 pt-1 flex justify-end">
+                    <Button variant="ghost" onClick={toggleSidebar} size="icon" className="text-black hover:bg-[#3A8EBA] hover:text-white">
+                        {collapsed ? <ChevronRight /> : <ChevronLeft />}
+                    </Button>
+                </div>
+            </div>
         </div>
     );
 }
