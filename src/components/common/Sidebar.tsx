@@ -1,22 +1,33 @@
 import React, { useState } from 'react';
 import {
-  User,
-  NotebookPen,
-  Users,
-  Bell,
-  Map,
-  Trophy,
-  BookOpen,
-  Gamepad2,
-  CalendarDays,
   ChevronLeft,
   ChevronRight,
   Settings,
   LogOut,
+  ChevronDown,
 } from 'lucide-react';
 import { Button } from '../ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from '../ui/dropdown-menu';
 
-const Sidebar :React.FC = () => {
+// Custom Icons
+import profileImage from '../../assets/images/dashboard/profile.png';
+import notesImage from '../../assets/images/dashboard/notes.png';
+import familyImage from '../../assets/images/dashboard/family.png';
+import tipsImage from '../../assets/images/dashboard/tips.png';
+import adventureImage from '../../assets/images/dashboard/adventures.png';
+import achievementsImage from '../../assets/images/dashboard/achievements.png';
+import exploreImage from '../../assets/images/dashboard/exploreAndLearn.png';
+import funImage from '../../assets/images/dashboard/funZone.png';
+import calendarImage from '../../assets/images/dashboard/calendar.png';
+
+import "../../styles/sidebar.css";
+
+const Sidebar: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
 
     const toggleSidebar = () => {
@@ -25,49 +36,83 @@ const Sidebar :React.FC = () => {
 
     return (
         <div
-            className={`h-screen bg-purple-100 ${
+            className={`h-[calc(100vh-4rem)] bg-purple-100 ${
                 collapsed ? 'w-20' : 'w-64'
-            } transition-all duration-300 flex flex-col justify-between`}
+            } transition-all duration-300 flex flex-col justify-between fixed top-16 left-0`}
         >
             <div>
                 {/* Sidebar Header */}
-                <div className="pr-2 pt-1 flex justify-end">
-                    <Button variant="ghost" onClick={toggleSidebar} size="icon" className="text-black hover:bg-[#3A8EBA] hover:text-white">
+                <div className="pt-4 flex justify-end pr-2">
+                    <Button
+                        variant="ghost"
+                        onClick={toggleSidebar}
+                        size="icon"
+                        className="text-black hover:bg-[#3A8EBA] hover:text-white"
+                    >
                         {collapsed ? <ChevronRight /> : <ChevronLeft />}
                     </Button>
                 </div>
 
                 {/* User Info */}
-                <div className="flex flex-col items-center mt-2">
-                    <div className="w-16 h-16 bg-white rounded-full mb-2"></div>
+                <div className="flex flex-col items-center mt-4">
+                    <div className="w-14 h-14 bg-white rounded-full mb-2">
+                        <img src={profileImage} alt="User Profile" className="w-full h-full rounded-full" />
+                    </div>
                     {!collapsed && (
-                        <h1 className="text-lg font-semibold">name</h1>
+                        <h1 className="text-md font-semibold">Name</h1>
                     )}
                 </div>
 
-                {/* Sidebar Items */}
-                <nav className="flex flex-col space-y-5 mt-5">
-                    <SidebarItem icon={<User />} label="My Profile" collapsed={collapsed} />
-                    <SidebarItem icon={<NotebookPen />} label="My Notes" collapsed={collapsed} />
-                    <SidebarItem icon={<Users />} label="Family" collapsed={collapsed} />
-                    <SidebarItem icon={<Bell />} label="AI Tips & Alerts" collapsed={collapsed} />
-                    <SidebarItem icon={<Map />} label="Adventures & Goals" collapsed={collapsed} />
-                    <SidebarItem icon={<Trophy />} label="Achievements"  collapsed={collapsed} />
-                    <SidebarItem icon={<BookOpen />} label="Explore & Learn" collapsed={collapsed} />
-                    <SidebarItem icon={<Gamepad2 />} label="Fun Zone" collapsed={collapsed} />
-                    <SidebarItem icon={<CalendarDays />} label="Calendar" collapsed={collapsed} />
+                {/* Sidebar Items with Scroll */}
+                <nav
+                    className="flex flex-col space-y-2 mt-6 overflow-y-auto custom-scrollbar"
+                    style={{ maxHeight: '47vh' }}
+                >
+                    <SidebarItem icon={profileImage} label="My Profile" collapsed={collapsed} />
+                    <SidebarItem icon={notesImage} label="My Notes" collapsed={collapsed} />
+                    
+                    {/* Family Dropdown (Shadcn Dropdown) */}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <div
+                                className={`flex items-center text-sm text-black px-6 py-2 hover:bg-purple-200 ${
+                                collapsed ? 'justify-center' : 'pl-10'
+                                } cursor-pointer`}
+                            >
+                                <div className="w-4 h-4">
+                                <img src={familyImage} alt="Family" className="w-full h-full" />
+                                </div>
+                                {!collapsed && (
+                                <>
+                                    <span className="ml-4">Family</span>
+                                    <ChevronDown className="ml-auto w-4 h-4 text-gray-500" />
+                                </>
+                                )}
+                            </div>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="w-40 ml-12">
+                            <DropdownMenuItem>Family Tree</DropdownMenuItem>
+                            <DropdownMenuItem>Family Journal</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <SidebarItem icon={tipsImage} label="AI Tips & Alerts" collapsed={collapsed} />
+                    <SidebarItem icon={adventureImage} label="Adventures & Goals" collapsed={collapsed} />
+                    <SidebarItem icon={achievementsImage} label="Achievements" collapsed={collapsed} />
+                    <SidebarItem icon={exploreImage} label="Explore & Learn" collapsed={collapsed} />
+                    <SidebarItem icon={funImage} label="Fun Zone" collapsed={collapsed} />
+                    <SidebarItem icon={calendarImage} label="Calendar" collapsed={collapsed} />
                 </nav>
             </div>
 
             {/* Footer Actions */}
-            <div className="flex justify-around pb-6">
+            <div className="flex justify-around pb-8">
                 <FooterIcon icon={<LogOut />} />
-                <FooterIcon icon={<Settings />} />
                 <FooterIcon icon={<Settings />} />
             </div>
         </div>
     );
-}
+};
 
 export default Sidebar;
 
@@ -77,18 +122,20 @@ function SidebarItem({
     label,
     collapsed,
 }: {
-    icon: JSX.Element;
+    icon: string;
     label: string;
     collapsed: boolean;
 }) {
   return (
     <div
-        className={`flex items-center space-x-4 text-sm text-black px-4 hover:bg-purple-200 cursor-pointer ${
-            collapsed ? 'justify-center' : ''
+        className={`flex items-center text-sm text-black px-6 py-2 hover:bg-purple-200 cursor-pointer ${
+            collapsed ? 'justify-center' : 'pl-10'
         }`}
     >
-        <div className="w-3 h-3">{icon}</div>
-        {!collapsed && <span>{label}</span>}
+        <div className="w-4 h-4">  {/* Smaller icon size */}
+            <img src={icon} alt={label} className="w-full h-full" />
+        </div>
+        {!collapsed && <span className="ml-4">{label}</span>}  {/* Spacing between icon and text */}
     </div>
   );
 }
@@ -97,7 +144,7 @@ function SidebarItem({
 function FooterIcon({ icon }: { icon: JSX.Element }) {
     return (
         <div className="text-black text-md hover:text-purple-500 cursor-pointer">
-            {icon}
+        {React.cloneElement(icon, { size: 16 })}
         </div>
     );
 }
