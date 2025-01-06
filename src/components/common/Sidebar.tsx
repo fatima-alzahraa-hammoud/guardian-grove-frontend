@@ -69,28 +69,18 @@ const Sidebar: React.FC = () => {
                     {/* Sidebar Items */}
                     <nav className="flex flex-col space-y-2 mt-6 overflow-y-auto custom-scrollbar"
                         style={{ maxHeight: '50vh' }}>
-                        <SidebarItem 
-                            icon={profileImage} 
-                            label="My Profile" 
-                            collapsed={collapsed} 
-                            onClick={() => setActiveSection('profile')} 
-                        />
-                        <SidebarItem 
-                            icon={notesImage} 
-                            label="My Notes" 
-                            collapsed={collapsed} 
-                            onClick={() => setActiveSection('notes')} 
-                        />
+                        <SidebarItem  icon={profileImage} label="My Profile" collapsed={collapsed} onClick={() => setActiveSection('profile')} isActive={activeSection === 'profile'} />
+                        <SidebarItem icon={notesImage} label="My Notes" collapsed={collapsed} onClick={() => setActiveSection('notes')} isActive={activeSection === 'notes'} />
 
                         {/* Family Dropdown */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <div
-                                    className={`flex items-center text-sm text-black px-6 py-2 hover:bg-purple-200 ${
+                                    className={`flex items-center text-sm text-black px-6 py-2 hover:bg-purple-200 ${(activeSection === 'familyJournal' || activeSection === 'familyTree' ) ? 'bg-purple-300' : ''} ${
                                     collapsed ? 'justify-center' : 'pl-10'
                                     } cursor-pointer`}
                                 >
-                                    <div className="w-4 h-4">
+                                    <div className="w-4 h-4 ">
                                         <img src={familyImage} alt="Family" className="w-full h-full" />
                                     </div>
                                     {!collapsed && (
@@ -102,21 +92,21 @@ const Sidebar: React.FC = () => {
                                 </div>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="start" className="w-40 ml-12">
-                                <DropdownMenuItem onClick={() => setActiveSection('familyTree')}>
+                                <DropdownMenuItem onClick={() => setActiveSection('familyTree')} className={`${activeSection === 'familyTree' ? 'bg-purple-300' : ''}`}>
                                     Family Tree
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setActiveSection('familyJournal')}>
+                                <DropdownMenuItem onClick={() => setActiveSection('familyJournal')} className={`${activeSection === 'familyJournal' ? 'bg-purple-300' : ''}`}>
                                     Family Journal
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
 
-                        <SidebarItem icon={tipsImage} label="AI Tips & Alerts" collapsed={collapsed}  onClick={() => setActiveSection('notifications')} />
-                        <SidebarItem icon={adventureImage} label="Adventures & Goals" collapsed={collapsed} onClick={() => setActiveSection('goals&adventures')} />
-                        <SidebarItem icon={achievementsImage} label="Achievements" collapsed={collapsed} onClick={() => setActiveSection('achievements')}/>
-                        <SidebarItem icon={exploreImage} label="Explore & Learn" collapsed={collapsed} onClick={() => setActiveSection('explore&learn')}/>
-                        <SidebarItem icon={funImage} label="Fun Zone" collapsed={collapsed} onClick={() => setActiveSection('funZone')}/>
-                        <SidebarItem icon={calendarImage} label="Calendar" collapsed={collapsed} onClick={() => setActiveSection('calendar')}/>
+                        <SidebarItem icon={tipsImage} label="AI Tips & Alerts" collapsed={collapsed}  onClick={() => setActiveSection('notifications')} isActive={activeSection === 'notifications'}/>
+                        <SidebarItem icon={adventureImage} label="Adventures & Goals" collapsed={collapsed} onClick={() => setActiveSection('goals&adventures')} isActive={activeSection === 'goals&adventures'}/>
+                        <SidebarItem icon={achievementsImage} label="Achievements" collapsed={collapsed} onClick={() => setActiveSection('achievements')} isActive={activeSection === 'achievements'}/>
+                        <SidebarItem icon={exploreImage} label="Explore & Learn" collapsed={collapsed} onClick={() => setActiveSection('explore&learn')} isActive={activeSection === 'explore&learn'}/>
+                        <SidebarItem icon={funImage} label="Fun Zone" collapsed={collapsed} onClick={() => setActiveSection('funZone')} isActive={activeSection === 'funZone'}/>
+                        <SidebarItem icon={calendarImage} label="Calendar" collapsed={collapsed} onClick={() => setActiveSection('calendar')} isActive={activeSection === 'calendar'} />
                     </nav>
                 </div>
 
@@ -138,18 +128,20 @@ function SidebarItem({
     label,
     collapsed,
     onClick,
+    isActive,
 }: {
     icon: string;
     label: string;
     collapsed: boolean;
     onClick: () => void;
+    isActive: boolean,
 }) {
     return (
         <div
             onClick={onClick}
             className={`flex items-center text-sm text-black px-6 py-2 hover:bg-purple-200 cursor-pointer ${
-                collapsed ? 'justify-center' : 'pl-10'
-            }`}
+                isActive ? 'bg-purple-300' : 'hover:bg-purple-200'
+            } ${ collapsed ? 'justify-center' : 'pl-10' }`}
         >
             <div className="w-4 h-4">
                 <img src={icon} alt={label} className="w-full h-full" />
