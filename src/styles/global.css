@@ -69,7 +69,7 @@
 }
 
 .border-rotate-wrapper:hover .border-rotate {
-  animation: rotateBorder 5s linear infinite;
+  animation: rotateBorder 8s linear infinite;
 }
 
 .non-rotating-button {

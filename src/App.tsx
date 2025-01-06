@@ -24,7 +24,7 @@ function App() {
 
   const [userId, setUserId] = useState<string | null>(null);
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
       
   useEffect(() =>{
       if (location.pathname === '/' || location.pathname === 'signup'){
