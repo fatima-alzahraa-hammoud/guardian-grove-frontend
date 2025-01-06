@@ -17,7 +17,7 @@ export const requestApi = async ({ route, method = "GET", body }: RequestApiPara
             data: body,
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + localStorage.getItem("token"),
+                Authorization: "Bearer " + sessionStorage.getItem("token"),
             },
         });
 

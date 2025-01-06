@@ -51,7 +51,7 @@ function App() {
           }
           fetchUsers();
       }
-  }, [token]);
+  }, []);
 
   return (
     <>
