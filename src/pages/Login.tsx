@@ -40,7 +40,6 @@ const Login : React.FC = () => {
 
             if (response && response.token) {
                 toast.success('Login successful!');
-                localStorage.setItem("token", response.token);
                 dispatch(setToken(response.token));
 
                 navigate("/dashboard");

@@ -39,7 +39,6 @@ const Signup : React.FC = () => {
 
             if (response && response.token) {
                 toast.success('SignUp successful!');
-                localStorage.setItem("token", response.token);
                 dispatch(setToken(response.token));
 
                 navigate("/dashboard");
@@ -48,7 +47,8 @@ const Signup : React.FC = () => {
             }
         } catch (error : any ) {
             const errorMessage = error.response?.data?.error || 'An unexpected error occurred';
-            toast.error(errorMessage);        }
+            toast.error(errorMessage);        
+        }
     }
 
     const logoRef = useRef<HTMLDivElement>(null);
