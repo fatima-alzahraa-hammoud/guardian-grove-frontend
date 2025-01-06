@@ -7,3 +7,12 @@ interface UserState {
     stars: number | 0;
 }
 
+const initialState: UserState = {
+    id: null,
+    name: null,
+    email: null,
+    avatar: null,
+    gender: null,
+    stars: 0,
+}
+
