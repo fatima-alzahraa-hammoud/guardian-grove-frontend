@@ -45,6 +45,18 @@ const Sidebar :React.FC = () => {
                     )}
                 </div>
 
+                {/* Sidebar Items */}
+                <nav className="flex flex-col space-y-5 mt-5">
+                    <SidebarItem icon={<User />} label="My Profile" collapsed={collapsed} />
+                    <SidebarItem icon={<NotebookPen />} label="My Notes" collapsed={collapsed} />
+                    <SidebarItem icon={<Users />} label="Family" collapsed={collapsed} />
+                    <SidebarItem icon={<Bell />} label="AI Tips & Alerts" collapsed={collapsed} />
+                    <SidebarItem icon={<Map />} label="Adventures & Goals" collapsed={collapsed} />
+                    <SidebarItem icon={<Trophy />} label="Achievements"  collapsed={collapsed} />
+                    <SidebarItem icon={<BookOpen />} label="Explore & Learn" collapsed={collapsed} />
+                    <SidebarItem icon={<Gamepad2 />} label="Fun Zone" collapsed={collapsed} />
+                    <SidebarItem icon={<CalendarDays />} label="Calendar" collapsed={collapsed} />
+                </nav>
             </div>
         </div>
     );
