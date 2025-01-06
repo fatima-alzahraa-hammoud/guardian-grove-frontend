@@ -17,6 +17,7 @@ import { requestMethods } from "../libs/enum/requestMethods";
 import { useDispatch } from "react-redux";
 import "../styles/global.css";
 import { setToken } from "../redux/slices/authSlice";
+import { setUser } from "../redux/slices/userSlice";
 
 const Login : React.FC = () => {
     const dispatch = useDispatch();
@@ -41,6 +42,7 @@ const Login : React.FC = () => {
             if (response && response.token) {
                 toast.success('Login successful!');
                 dispatch(setToken(response.token));
+                dispatch(setUser(response.user));
 
                 navigate("/dashboard");
             } else {

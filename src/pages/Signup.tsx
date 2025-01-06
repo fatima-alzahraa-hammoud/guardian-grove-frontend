@@ -14,6 +14,7 @@ import { requestMethods } from "../libs/enum/requestMethods";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setToken } from "../redux/slices/authSlice";
+import { setUser } from "../redux/slices/userSlice";
 
 const Signup : React.FC = () => {
 
@@ -40,6 +41,7 @@ const Signup : React.FC = () => {
             if (response && response.token) {
                 toast.success('SignUp successful!');
                 dispatch(setToken(response.token));
+                dispatch(setUser(response.user));
 
                 navigate("/dashboard");
             } else {
