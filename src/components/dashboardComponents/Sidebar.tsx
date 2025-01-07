@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   ChevronLeft,
   ChevronRight,
@@ -25,14 +25,18 @@ import calendarImage from '../../assets/images/dashboard/calendar.png';
 import settingsImage from '../../assets/images/dashboard/settings.svg';
 import logoutImage from '../../assets/images/dashboard/logout.svg';
 import infoImage from '../../assets/images/dashboard/badge-info.svg';
-
 import "../../styles/sidebar.css";
 import { useSelector } from 'react-redux';
 import { selectAvatar, selectName } from '../../redux/slices/userSlice';
 
-const Sidebar: React.FC = () => {
-    const [collapsed, setCollapsed] = useState<boolean>(false);
-    const [activeSection, setActiveSection] = useState<string>('profile');
+interface SidebarProps {
+    activeSection: string;
+    setActiveSection: React.Dispatch<React.SetStateAction<string>>;
+    collapsed: boolean;
+    setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({activeSection, setActiveSection, collapsed, setCollapsed }) => {
 
     const avatar = useSelector(selectAvatar);
     const name = useSelector(selectName)
