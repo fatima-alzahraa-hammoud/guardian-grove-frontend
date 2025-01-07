@@ -2,7 +2,6 @@ import './styles/App.css';
 import Login from './pages/Login';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Signup from './pages/Signup';
-import LandinPageNavbar from './components/common/LandingPageNavbar';
 import Main from './pages/MainDashboard';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -11,6 +10,7 @@ import { requestApi } from './libs/requestApi';
 import { requestMethods } from './libs/enum/requestMethods';
 import { setUser } from './redux/slices/userSlice';
 import ProtectedRoute from './components/ProtectedRoute';
+import LandingPage from './pages/LandingPage';
 
 interface DecodedToken {
   userId: string;
@@ -59,7 +59,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Login />}/>
           <Route path='/signup' element={<Signup />}/>
-          <Route path='/landingPage' element={<LandinPageNavbar />}/>
+          <Route path='/landingPage' element={<LandingPage />}/>
           <Route path='/dashboard' element={ <ProtectedRoute> <Main /> </ProtectedRoute> } />
         </Routes>
       </div>

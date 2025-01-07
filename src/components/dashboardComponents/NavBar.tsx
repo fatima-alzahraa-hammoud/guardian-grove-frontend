@@ -13,7 +13,7 @@ import { Search, ShoppingCart, Star } from "lucide-react";
 import "../../styles/global.css";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectAvatar, selectStars } from "../../redux/slices/userSlice";
+import { selectStars } from "../../redux/slices/userSlice";
 
 // Classnames utility function
 function classNames(...classes: string[]) {
@@ -23,7 +23,6 @@ function classNames(...classes: string[]) {
 const Navbar: React.FC= () => {
 
     const stars = useSelector(selectStars);
-    const avatar = useSelector(selectAvatar);
 
     const navigate = useNavigate();
 

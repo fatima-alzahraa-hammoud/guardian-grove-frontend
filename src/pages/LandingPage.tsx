@@ -1,11 +1,11 @@
 import React from "react";
-import LandinPageNavbar from "../components/common/LandingPageNavbar";
+import LandingPageNavbar from "../components/landingPageComponents/LandingPageNavbar";
 
 const LandingPage : React.FC = () => {
 
     return(
         <div>
-            <LandinPageNavbar />
+            <LandingPageNavbar />
         </div>
     );
 }

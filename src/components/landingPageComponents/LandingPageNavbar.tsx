@@ -24,7 +24,7 @@ function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
 
-const LandinPageNavbar: React.FC = () => {
+const LandingPageNavbar: React.FC = () => {
     const userId = useSelector(selectUserId);
     const stars = useSelector(selectStars);
     const avatar = useSelector(selectAvatar);
@@ -223,4 +223,4 @@ const LandinPageNavbar: React.FC = () => {
     );
 };
 
-export default LandinPageNavbar;
+export default LandingPageNavbar;

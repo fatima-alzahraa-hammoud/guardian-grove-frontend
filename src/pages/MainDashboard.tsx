@@ -1,6 +1,6 @@
 import React from "react";
-import Navbar from "../components/common/NavBar";
-import Sidebar from "../components/common/Sidebar";
+import Navbar from "../components/dashboardComponents/NavBar";
+import Sidebar from "../components/dashboardComponents/Sidebar";
 const Main : React.FC = () => {
 
     return(
