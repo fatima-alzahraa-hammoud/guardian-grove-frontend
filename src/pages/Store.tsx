@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/dashboardComponents/NavBar";
 import coinIcon from "../assets/images/coins.png";
 import { Button } from "../components/ui/button";
@@ -8,16 +8,45 @@ import picture1 from "../assets/images/avatars/parent/avatar1.png";
 import picture2 from "../assets/images/avatars/parent/avatar2.png";
 import picture3 from "../assets/images/avatars/parent/avatar3.png";
 import picture4 from "../assets/images/avatars/parent/avatar4.png";
-import { useSelector } from "react-redux";
-import { selectCoins } from "../redux/slices/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCoins, selectPurchasedItems, setPurchasedItems } from "../redux/slices/userSlice";
+import { requestApi } from "../libs/requestApi";
+import { requestMethods } from "../libs/enum/requestMethods";
+
+interface StoreItemType {
+    _id: string;
+    name: string;
+    price: number;
+    image: string;
+    type: string;
+}
 
 const Store: React.FC = () => {
 
     const coins = useSelector(selectCoins);
-
+    const dispatch = useDispatch();
+    let purchasedItems;
     const [activeFilter, setActiveFilter] = useState<string>("All");
 
-    const filters = ["All", "Garden Items", "Pets", "Themes", "Gifts", "Games"];
+    const filters = ["All", "Garden Items", "Pets", "Themes", "Gifts", "Games", "Purchased"];
+
+    useEffect(() =>{
+        const fetchPurchasedItems = async () => {
+            try {
+                const response = await requestApi({
+                    route: '/users/purchasedItems',
+                    method: requestMethods.GET,
+                });
+                if (response){
+                    dispatch(setPurchasedItems(response.purchasedItems));
+                    purchasedItems = useSelector(selectPurchasedItems);
+                }
+            } catch (error) {
+                console.log("error fetching purchased items");
+            }
+        }
+        fetchPurchasedItems();
+    }, []);
 
     return (
         <div className="h-screen flex flex-col">
