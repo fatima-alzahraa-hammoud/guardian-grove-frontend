@@ -25,7 +25,7 @@ const Store: React.FC = () => {
 
     const coins = useSelector(selectCoins);
     const dispatch = useDispatch();
-    let purchasedItems;
+    let purchasedItems =useSelector(selectPurchasedItems); ;
     const [storeItems, setStoreItems] = useState<StoreItemType[]>([]);
     const [activeFilter, setActiveFilter] = useState<string>("All");
 
@@ -65,6 +65,16 @@ const Store: React.FC = () => {
         }
         fetchStoreItems();
     }, []);
+
+    const filteredItems = storeItems.filter((item) => {
+        if (activeFilter === "Purchased") {
+            return purchasedItems.includes(item._id);
+        }
+        if (activeFilter === "All") {
+            return true;
+        }
+        return item.type === activeFilter;
+    });
 
     return (
         <div className="h-screen flex flex-col">
