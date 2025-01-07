@@ -5,7 +5,7 @@ import { Button } from "../components/ui/button";
 import { cn } from "../lib/utils";
 import StoreItem from "../components/storeComponents/StoreItem";
 import { useDispatch, useSelector } from "react-redux";
-import { selectCoins, selectPurchasedItems, setPurchasedItems } from "../redux/slices/userSlice";
+import { selectCoins, selectPurchasedItems, setCoins, setPurchasedItems } from "../redux/slices/userSlice";
 import { requestApi } from "../libs/requestApi";
 import { requestMethods } from "../libs/enum/requestMethods";
 
@@ -71,6 +71,23 @@ const Store: React.FC = () => {
         }
         return item.type === activeFilter;
     });
+
+    const handleBuy = async(itemId: string, price: number) =>{
+        try{
+            const response = await requestApi({
+                route: '/store/buy',
+                method: requestMethods.POST,
+                body: {itemId}
+            });
+            if(response){
+                dispatch(setPurchasedItems([...purchasedItems, response.item._id]));
+                // Update the user's coin balance
+                dispatch(setCoins(coins - price));
+            }
+        }catch(error){
+            console.log("Error buying item", error);
+        }
+    }
 
     return (
         <div className="h-screen flex flex-col">
