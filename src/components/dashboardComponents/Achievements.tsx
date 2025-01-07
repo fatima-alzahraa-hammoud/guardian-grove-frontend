@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import sortImage from "../../assets/images/sort.png";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
+import AchievementCard from "../cards/achievementCard";
+import notesImage from '../../assets/images/dashboard/notes.png';
 
 const Achievements : React.FC = () => {
 
@@ -37,6 +39,19 @@ const Achievements : React.FC = () => {
                             {filter}
                         </Button>
                     ))}
+                </div>
+
+                {/* Item Cards Section */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-5">
+                        <AchievementCard
+                            title="hello"
+                            photo={notesImage}
+                            description="mmmm"
+                            starsReward={0}
+                            coinsReward={0}
+                            criteria="kdkjs"
+                            isLocked= {true}
+                        />
                 </div>
             </div>
         </div>
