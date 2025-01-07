@@ -5,6 +5,20 @@ import { Button } from "../ui/button";
 import AchievementCard from "../cards/AchievementCard";
 import notesImage from '/assets/images/dashboard/notes.png';
 
+interface Achievement {
+    _id: string;
+    title: string;
+    description: string;
+    photo: string;
+    starsReward: number;
+    coinsReward: number;
+    criteria: string;
+    isLocked: boolean;
+    unlockedAt?: Date;
+    type: "personal" | "family";
+}
+
+
 const Achievements : React.FC = () => {
 
     const [activeFilter, setActiveFilter] = useState<string>("My Achievements");
