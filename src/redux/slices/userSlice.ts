@@ -8,6 +8,7 @@ interface UserState {
     gender: string | null;
     stars: number | 0;
     coins: number | 0;
+    purchasedItems: string[];
 }
 
 const initialState: UserState = {
@@ -17,7 +18,8 @@ const initialState: UserState = {
     avatar: null,
     gender: null,
     stars: 0,
-    coins: 0
+    coins: 0,
+    purchasedItems: []
 }
 
 const userSlice = createSlice({
@@ -26,6 +28,9 @@ const userSlice = createSlice({
     reducers: {
         setUser: (state, action: PayloadAction<UserState>) => {
             return {...state, ...action.payload}
+        },
+        updatePurchasedItems: (state, action: PayloadAction<string[]>) => {
+            state.purchasedItems = action.payload;
         },
         clearUser: () => initialState,
     },
@@ -38,5 +43,6 @@ export const selectAvatar = (state: { user: UserState }) => state.user.avatar;
 export const selectUserId = (state: { user: UserState }) => state.user._id;
 export const selectName = (state: { user: UserState }) => state.user.name;
 export const selectCoins = (state: { user: UserState }) => state.user.coins;
+export const selectPurchasedItems = (state: { user: UserState }) => state.user.purchasedItems;
 
 export default userSlice.reducer;
