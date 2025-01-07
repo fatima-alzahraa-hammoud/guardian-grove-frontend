@@ -27,10 +27,15 @@ import logoutImage from '../../assets/images/dashboard/logout.svg';
 import infoImage from '../../assets/images/dashboard/badge-info.svg';
 
 import "../../styles/sidebar.css";
+import { useSelector } from 'react-redux';
+import { selectAvatar, selectName } from '../../redux/slices/userSlice';
 
 const Sidebar: React.FC = () => {
     const [collapsed, setCollapsed] = useState<boolean>(false);
     const [activeSection, setActiveSection] = useState<string>('profile');
+
+    const avatar = useSelector(selectAvatar);
+    const name = useSelector(selectName)
 
     const toggleSidebar = () => {
         setCollapsed(!collapsed);
@@ -60,10 +65,10 @@ const Sidebar: React.FC = () => {
                     {/* User Info */}
                     <div className="flex flex-col items-center mt-4">
                         <div className="w-14 h-14 bg-white rounded-full mb-2">
-                            <img src={profileImage} alt="User Profile" className="w-full h-full rounded-full" />
+                            <img src={avatar || profileImage} alt="User Profile" className="w-full h-full rounded-full" />
                         </div>
                         {!collapsed && (
-                            <h1 className="text-md font-semibold">Name</h1>
+                            <h1 className="text-md font-semibold">{name}</h1>
                         )}
                     </div>
 

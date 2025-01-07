@@ -39,5 +39,6 @@ export const { setUser, clearUser } = userSlice.actions;
 export const selectStars = (state: { user: UserState }) => state.user.stars;
 export const selectAvatar = (state: { user: UserState }) => state.user.avatar;
 export const selectUserId = (state: { user: UserState }) => state.user._id;
+export const selectName = (state: { user: UserState }) => state.user.name;
 
 export default userSlice.reducer;
