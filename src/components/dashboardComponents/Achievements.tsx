@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import sortImage from "/assets/images/sort.png";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import AchievementCard from "../cards/AchievementCard";
 import notesImage from '/assets/images/dashboard/notes.png';
+import { requestApi } from "../../libs/requestApi";
+import { requestMethods } from "../../libs/enum/requestMethods";
+import { toast } from "react-toastify";
 
 interface Achievement {
     _id: string;
@@ -22,7 +25,42 @@ interface Achievement {
 const Achievements : React.FC = () => {
 
     const [activeFilter, setActiveFilter] = useState<string>("My Achievements");
+    const [achievements, setAchievements] = useState<Achievement[]>([]);
+    const [filteredAchievements, setFilteredAchievements] = useState<Achievement[]>([]);
     const filters = ["My Achievements", "Family Achievements", "Locked Achievements"];
+
+    useEffect(() => {
+        const fetchAchievements = async () => {
+            try {
+                const [lockedRes, unlockedRes] = await Promise.all([
+                    requestApi({
+                        route:"/achievements/locked",
+                        method: requestMethods.GET
+                    }),
+                    requestApi({
+                        route:"/achievements/unlocked",
+                        method: requestMethods.GET
+                    }),
+                ]);
+    
+                const locked = lockedRes.data.achievements.map((ach: Achievement) => ({
+                    ...ach,
+                    isLocked: true,
+                }));
+                const unlocked = unlockedRes.data.achievements.map((ach: Achievement) => ({
+                    ...ach,
+                    isLocked: false,
+                }));
+                setAchievements([...locked, ...unlocked]);
+            } catch (error) {
+                console.error("Error fetching achievements:", error);
+                toast.error("Failed to load achievements. Please try again later.");
+            }
+        }
+
+        fetchAchievements();
+    }, [])
+
 
     return(
         <div className="pt-20 h-screen flex flex-col">
