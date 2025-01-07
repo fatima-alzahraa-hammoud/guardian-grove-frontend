@@ -32,11 +32,14 @@ const userSlice = createSlice({
         setPurchasedItems: (state, action: PayloadAction<string[]>) => {
             state.purchasedItems = action.payload;
         },
+        setCoins(state, action: PayloadAction<number>) {
+            state.coins = action.payload;
+        },
         clearUser: () => initialState,
     },
 });
 
-export const { setUser, clearUser, setPurchasedItems } = userSlice.actions;
+export const { setUser, clearUser, setPurchasedItems, setCoins } = userSlice.actions;
 
 export const selectStars = (state: { user: UserState }) => state.user.stars;
 export const selectAvatar = (state: { user: UserState }) => state.user.avatar;
