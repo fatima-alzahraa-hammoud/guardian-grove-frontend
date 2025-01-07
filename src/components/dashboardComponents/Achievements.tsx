@@ -42,15 +42,26 @@ const Achievements : React.FC = () => {
                 </div>
 
                 {/* Item Cards Section */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-5">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-5">
                         <AchievementCard
                             title="hello"
                             photo={notesImage}
-                            description="mmmm"
-                            starsReward={0}
-                            coinsReward={0}
-                            criteria="kdkjs"
+                            description="You’ve earned 500 stars! Keep shining and reaching for more milestones."
+                            starsReward={3}
+                            coinsReward={22}
+                            criteria="Reach 500 stars!"
                             isLocked= {false}
+                            unlockedAt= {new Date('1991-09-08')}
+                        />
+
+                        <AchievementCard
+                            title="hello"
+                            photo={notesImage}
+                            description="You’ve earned 500 stars! Keep shining and reaching for more milestones."
+                            starsReward={3}
+                            coinsReward={22}
+                            criteria="Reach 500 stars!"
+                            isLocked= {true}
                             unlockedAt= {new Date('1991-09-08')}
                         />
                 </div>
