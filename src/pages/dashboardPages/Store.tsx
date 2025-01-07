@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import coinIcon from "../../assets/images/coins.png";
 import { Button } from "../../components/ui/button";
 import { cn } from "../../lib/utils";
-import StoreItem from "../../components/storeComponents/StoreItem";
+import StoreItem from "../../components/cards/StoreItem";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCoins, selectPurchasedItems, setCoins, setPurchasedItems } from "../../redux/slices/userSlice";
 import { requestApi } from "../../libs/requestApi";
