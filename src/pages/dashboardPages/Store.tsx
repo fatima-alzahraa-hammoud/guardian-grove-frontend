@@ -105,7 +105,7 @@ const Store: React.FC = () => {
                     </div>
 
                     {/* Coin Button */}
-                    <div className="flex items-center justify-between bg-[#FFC85B] px-5 py-2 rounded-full shadow cursor-pointer hover:bg-yellow-300 transition">
+                    <div className="flex items-center justify-between bg-[#FFC85B] px-5 py-2 rounded-full cursor-pointer hover:bg-yellow-300 transition">
                         <img src={coinIcon} alt="coin" className="w-6 h-6 mr-2" />
                         <span className="font-semibold text-lg ml-2">{coins}</span>
                     </div>
