@@ -1,6 +1,6 @@
 import React from "react";
 
-const store: React.FC = () => {
+const Store: React.FC = () => {
 
     return(
         <div className="h-screen">
@@ -28,4 +28,4 @@ const store: React.FC = () => {
     );
 };
 
-export default store;
+export default Store;
