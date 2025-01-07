@@ -50,7 +50,8 @@ const Achievements : React.FC = () => {
                             starsReward={0}
                             coinsReward={0}
                             criteria="kdkjs"
-                            isLocked= {true}
+                            isLocked= {false}
+                            unlockedAt= {new Date('1991-09-08')}
                         />
                 </div>
             </div>
