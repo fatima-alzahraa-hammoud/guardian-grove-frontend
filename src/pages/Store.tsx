@@ -1,8 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "../components/dashboardComponents/NavBar";
 import coinIcon from "../assets/images/coins.png";
+import { Button } from "../components/ui/button";
+import { cn } from "../lib/utils";
 
 const Store: React.FC = () => {
+
+    const [activeFilter, setActiveFilter] = useState<string>("All");
+
+    const filters = ["All", "Garden Items", "Pets", "Themes", "Gifts", "Games"];
+
+
 
     return (
         <div className="h-screen flex flex-col">
@@ -13,7 +21,7 @@ const Store: React.FC = () => {
             <div className="flex-grow pt-20 px-6 font-poppins">
                 <div className="max-w-5xl mx-auto">
                     {/* Header */}
-                    <div className="mb-10 flex items-center justify-between">
+                    <div className="mb-10 mt-5 flex items-center justify-between">
                         <div className="text-left">
                             <h2 className="text-3xl font-bold font-comic">Welcome to your Magic Store</h2>
                             <p className="text-gray-600 mt-2 text-base">
@@ -29,8 +37,20 @@ const Store: React.FC = () => {
                     </div>
 
                     {/* Filters Section */}
-                    <div className="mb-8">
-                        {/* Add filter buttons or dropdowns here */}
+                    <div className="flex flex-wrap gap-2">
+                        {filters.map((filter) => (
+                            <Button
+                                key={filter}
+                                variant="secondary"
+                                className={cn(
+                                    "bg-[#E3F2FD] hover:bg-[#d7edfd] w-32 text-black",
+                                    activeFilter === filter && "bg-[#3A8EBA] text-white hover:bg-[#347ea5]"
+                                )}
+                                onClick={() => setActiveFilter(filter)}
+                            >
+                                {filter}
+                            </Button>
+                        ))}
                     </div>
 
                     {/* Item Cards Section */}
