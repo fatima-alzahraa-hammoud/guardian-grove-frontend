@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import sortImage from "../../assets/images/sort.png";
+import { cn } from "../../lib/utils";
+import { Button } from "../ui/button";
 
 const Achievements : React.FC = () => {
+
+    const [activeFilter, setActiveFilter] = useState<string>("My Achievements");
+    const filters = ["My Achievements", "Family Achievements", "Locked Achievements"];
+
     return(
         <div className="pt-20 h-screen flex flex-col">
             <div className="max-w-5xl px-6 flex-grow font-poppins">
@@ -15,6 +21,22 @@ const Achievements : React.FC = () => {
                         <img src={sortImage} alt="Sort" className="w-4 h-4 mr-1"/>
                         <span className="font-semibold text-sm ml-2 text-white">Sort</span>
                     </button>
+                </div>
+
+                {/* Filters Section */}
+                <div className="flex flex-wrap gap-3 mt-10">
+                    {filters.map((filter) => (
+                        <Button
+                            key={filter}
+                            variant="secondary"
+                            className={cn(
+                                "bg-[#E3F2FD] hover:bg-[#d7edfd] w-44 text-black",
+                                activeFilter === filter && "bg-[#3A8EBA] text-white hover:bg-[#347ea5]"
+                            )}
+                        >
+                            {filter}
+                        </Button>
+                    ))}
                 </div>
             </div>
         </div>

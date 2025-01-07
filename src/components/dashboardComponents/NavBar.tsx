@@ -58,6 +58,9 @@ const Navbar: React.FC= () => {
     };
 
     useEffect(() => {
+        if(location.pathname === '/dashboard'){
+            return;
+        }
         if (location.pathname === '/dashboard/store'){
             setIsStoreActive(true);
         }

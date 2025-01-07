@@ -112,7 +112,7 @@ const Store: React.FC = () => {
                 </div>
 
                 {/* Filters Section */}
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                     {filters.map((filter) => (
                         <Button
                             key={filter}
