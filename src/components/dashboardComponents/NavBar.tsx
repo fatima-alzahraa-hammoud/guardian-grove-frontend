@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Disclosure,
     DisclosureButton,
@@ -11,7 +11,7 @@ import {
 import { Button } from "../ui/button";
 import { Search, ShoppingCart, Star } from "lucide-react";
 import "../../styles/global.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectStars } from "../../redux/slices/userSlice";
 import logo from "../../assets/logo/GuardianGrove_logo_NoText.png";
@@ -25,6 +25,8 @@ const Navbar: React.FC= () => {
 
     const [isStoreActive, setIsStoreActive] = useState(false);
     const stars = useSelector(selectStars);
+
+    const location = useLocation();
 
     const navigate = useNavigate();
 
@@ -54,6 +56,17 @@ const Navbar: React.FC= () => {
         setIsStoreActive(true);
         navigate("/dashboard/store");
     };
+
+    useEffect(() => {
+        if (location.pathname === '/dashboard/store'){
+            setIsStoreActive(true);
+        }
+        const updatedNavigation = navigation.map(item => ({
+            ...item,
+            current: item.link === location.pathname
+        }));
+        setNavigation(updatedNavigation);
+    }, [location]);
 
     return (
         <Disclosure as="nav" className='bg-purple-100 fixed top-0 left-0 w-full z-50'>
