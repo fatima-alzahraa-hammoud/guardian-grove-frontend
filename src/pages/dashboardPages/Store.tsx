@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/dashboardComponents/NavBar";
-import coinIcon from "../assets/images/coins.png";
-import { Button } from "../components/ui/button";
-import { cn } from "../lib/utils";
-import StoreItem from "../components/storeComponents/StoreItem";
+import coinIcon from "../../assets/images/coins.png";
+import { Button } from "../../components/ui/button";
+import { cn } from "../../lib/utils";
+import StoreItem from "../../components/storeComponents/StoreItem";
 import { useDispatch, useSelector } from "react-redux";
-import { selectCoins, selectPurchasedItems, setCoins, setPurchasedItems } from "../redux/slices/userSlice";
-import { requestApi } from "../libs/requestApi";
-import { requestMethods } from "../libs/enum/requestMethods";
+import { selectCoins, selectPurchasedItems, setCoins, setPurchasedItems } from "../../redux/slices/userSlice";
+import { requestApi } from "../../libs/requestApi";
+import { requestMethods } from "../../libs/enum/requestMethods";
 import { toast, ToastContainer } from "react-toastify";
 
 interface StoreItemType {
@@ -95,9 +94,7 @@ const Store: React.FC = () => {
     return (
         <div className="h-screen flex flex-col">
             <ToastContainer className='text-xs'/>
-            {/* Navbar */}
-            <Navbar />
-            
+                        
             {/* Main Content */}
             <div className="flex-grow pt-20 px-6 font-poppins">
                 <div className="max-w-5xl mx-auto">

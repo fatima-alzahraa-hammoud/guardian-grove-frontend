@@ -2,7 +2,6 @@ import './styles/App.css';
 import Login from './pages/Login';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Signup from './pages/Signup';
-import Main from './pages/MainDashboard';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
@@ -11,7 +10,7 @@ import { requestMethods } from './libs/enum/requestMethods';
 import { setUser } from './redux/slices/userSlice';
 import ProtectedRoute from './components/ProtectedRoute';
 import LandingPage from './pages/LandingPage';
-import Store from './pages/Store';
+import Dashboard from './pages/Dashboard';
 
 interface DecodedToken {
   userId: string;
@@ -61,8 +60,7 @@ function App() {
           <Route path='/' element={<Login />}/>
           <Route path='/signup' element={<Signup />}/>
           <Route path='/landingPage' element={<LandingPage />}/>
-          <Route path='/dashboard' element={ <ProtectedRoute> <Main /> </ProtectedRoute> } />
-          <Route path='/store' element={ <ProtectedRoute> <Store /> </ProtectedRoute> } />
+          <Route path='/dashboard/*' element={ <ProtectedRoute> <Dashboard /> </ProtectedRoute> } />
         </Routes>
       </div>
     </>

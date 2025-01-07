@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     Disclosure,
     DisclosureButton,
@@ -11,9 +11,10 @@ import {
 import { Button } from "../ui/button";
 import { Search, ShoppingCart, Star } from "lucide-react";
 import "../../styles/global.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectStars } from "../../redux/slices/userSlice";
+import logo from "../../assets/logo/GuardianGrove_logo_NoText.png";
 
 // Classnames utility function
 function classNames(...classes: string[]) {
@@ -28,10 +29,10 @@ const Navbar: React.FC= () => {
     const navigate = useNavigate();
 
     const [navigation, setNavigation] = useState([
-        { name: "Main", link: "/dashboard", current: true },
-        { name: "AI Friend", link: "/AIFriend", current: false },
-        { name: "Magic garden", link: "/MagicGarden", current: false },
-        { name: "Leaderboard", link: "/Leaderboard", current: false },
+        { name: "Main", link: "/dashboard/", current: true },
+        { name: "AI Friend", link: "/dashboard/AIFriend", current: false },
+        { name: "Magic garden", link: "/dashboard/MagicGarden", current: false },
+        { name: "Leaderboard", link: "/dashboard/Leaderboard", current: false },
     ]);
 
     const handleNavigationClick = (clickedItem: { name: string; link: string }) => {
@@ -51,7 +52,7 @@ const Navbar: React.FC= () => {
             prevNav.map(item => ({ ...item, current: false }))
         );
         setIsStoreActive(true);
-        navigate("/store");
+        navigate("/dashboard/store");
     };
 
     return (
@@ -70,7 +71,7 @@ const Navbar: React.FC= () => {
                         <div className="flex shrink-0 items-center">
                             <img
                                 className="h-12 w-auto"
-                                src="src/assets/logo/GuardianGrove_logo_NoText.png"
+                                src={logo}
                                 alt="Your Company"
                             />
                         </div>
