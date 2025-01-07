@@ -52,6 +52,7 @@ const Achievements : React.FC = () => {
                     isLocked: false,
                 }));
                 setAchievements([...locked, ...unlocked]);
+                handleFilterChange(activeFilter);
             } catch (error) {
                 console.error("Error fetching achievements:", error);
                 toast.error("Failed to load achievements. Please try again later.");
@@ -59,7 +60,19 @@ const Achievements : React.FC = () => {
         }
 
         fetchAchievements();
-    }, [])
+    }, []);
+
+    const handleFilterChange = (filter: string) => {
+
+        setActiveFilter(filter);
+        if (filter === "My Achievements") {
+            setFilteredAchievements(achievements.filter((ach) => ach.type === "personal" && !ach.isLocked));
+        } else if (filter === "Family Achievements") {
+            setFilteredAchievements(achievements.filter((ach) => ach.type === "family" && !ach.isLocked));
+        } else {
+            setFilteredAchievements(achievements.filter((ach) => ach.isLocked));
+        }
+    };
 
 
     return(
