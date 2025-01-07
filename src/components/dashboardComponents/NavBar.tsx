@@ -88,18 +88,6 @@ const Navbar: React.FC= () => {
                         <div className="ml-auto flex items-center space-x-4">
 
                             <div className="relative p-[2px] rounded-full border-rotate-wrapper">
-                                <div className="border-[1.5px] border-dashed border-[#FFC85B] rounded-full border-rotate h-10 w-10"></div>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="p-1 focus:outline-none relative h-8 w-8 rounded-full bg-[#FFC85B] hover:bg-[#FFC85B] non-rotating-button"
-                                >
-                                    <ShoppingCart className="h-6 w-6 text-white fill-white" />
-                                    <span className="sr-only">Shopping cart</span>
-                                </Button>
-                            </div>
-
-                            <div className="relative p-[2px] rounded-full border-rotate-wrapper">
                                 <div className="border-[1.5px] border-dashed border-[#FA9DB7] rounded-full border-rotate h-10 w-10"></div>
                                 <Button
                                     variant="ghost"
@@ -107,6 +95,19 @@ const Navbar: React.FC= () => {
                                     className="p-1 h-8 w-8 rounded-full bg-[#FA9DB7] hover:bg-[#FA9DB7] non-rotating-button"
                                 >
                                     <Search className="h-6 w-6 text-white" />
+                                </Button>
+                            </div>
+
+                            <div className="relative p-[2px] rounded-full border-rotate-wrapper">
+                                <div className="border-[1.5px] border-dashed border-[#FFC85B] rounded-full border-rotate h-10 w-10"></div>
+                                <Button
+                                    onClick={() => navigate("/store")}
+                                    variant="ghost"
+                                    size="icon"
+                                    className="p-1 focus:outline-none relative h-8 w-8 rounded-full bg-[#FFC85B] hover:bg-[#FFC85B] non-rotating-button"
+                                >
+                                    <ShoppingCart className="h-6 w-6 text-white fill-white" />
+                                    <span className="sr-only">Shopping cart</span>
                                 </Button>
                             </div>
 

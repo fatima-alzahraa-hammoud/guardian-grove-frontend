@@ -106,6 +106,7 @@ const LandingPageNavbar: React.FC = () => {
                                     <div className="relative p-[2px] rounded-full border-rotate-wrapper">
                                         <div className="border-[1.5px] border-dashed border-[#FFC85B] rounded-full border-rotate h-10 w-10"></div>
                                         <Button
+                                            onClick={() => navigate("/store")}
                                             variant="ghost"
                                             size="icon"
                                             className="p-1 focus:outline-none relative h-8 w-8 rounded-full bg-[#FFC85B] hover:bg-[#FFC85B] non-rotating-button"
