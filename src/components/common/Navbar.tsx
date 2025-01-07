@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     Disclosure,
     DisclosureButton,
@@ -87,14 +87,6 @@ const Navbar: React.FC= () => {
                     </div>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                         <div className="ml-auto flex items-center space-x-4">
-                            <Button
-                                variant="ghost"
-                                className="flex h-7 items-center gap-3 rounded-full bg-white px-2 text-[#FFC044] justify-center pt-3 pb-3 hover:bg-[#fcf7ef] hover:text-[#FFC044]"
-                                size="sm"
-                            >
-                                <Star className="h-4 w-4" />
-                                <span className="text-[13px] font-medium">{stars}</span>
-                            </Button>
 
                             <div className="relative p-[2px] rounded-full border-rotate-wrapper">
                                 <div className="border-[1.5px] border-dashed border-[#FFC85B] rounded-full border-rotate h-10 w-10"></div>
@@ -119,20 +111,15 @@ const Navbar: React.FC= () => {
                                 </Button>
                             </div>
 
-                        </div>
+                            <Button
+                                variant="ghost"
+                                className="flex h-7 items-center gap-3 rounded-full bg-white px-2 text-[#FFC044] justify-center pt-3 pb-3 hover:bg-[#fcf7ef] hover:text-[#FFC044]"
+                                size="sm"
+                            >
+                                <Star className="h-4 w-4" />
+                                <span className="text-[13px] font-medium">{stars}</span>
+                            </Button>
 
-                        {/* Profile dropdown */}
-                        <div className="relative ml-4">
-                            <div className="relative flex rounded-full bg-[#F3E5F5] text-sm focus:outline-none">
-                                <div className="relative p-[2px] rounded-full border-rotate-wrapper">
-                                    <div className="border-[1.5px] border-dashed border-[#1140A6] rounded-full border-rotate h-12 w-12"></div>
-                                    <img
-                                        className="avatar-image h-10 w-10 rounded-full"
-                                        src={avatar || "src/assets/image/parent/avatar1.png"}
-                                        alt=""
-                                    />
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
