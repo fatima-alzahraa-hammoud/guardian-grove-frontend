@@ -8,8 +8,12 @@ import picture1 from "../assets/images/avatars/parent/avatar1.png";
 import picture2 from "../assets/images/avatars/parent/avatar2.png";
 import picture3 from "../assets/images/avatars/parent/avatar3.png";
 import picture4 from "../assets/images/avatars/parent/avatar4.png";
+import { useSelector } from "react-redux";
+import { selectCoins } from "../redux/slices/userSlice";
 
 const Store: React.FC = () => {
+
+    const coins = useSelector(selectCoins);
 
     const [activeFilter, setActiveFilter] = useState<string>("All");
 
@@ -35,7 +39,7 @@ const Store: React.FC = () => {
                         {/* Coin Button */}
                         <div className="flex items-center justify-between bg-[#FFC85B] px-5 py-2 rounded-full shadow cursor-pointer hover:bg-yellow-300 transition">
                             <img src={coinIcon} alt="coin" className="w-6 h-6 mr-2" />
-                            <span className="font-semibold text-lg ml-2">{0}</span>
+                            <span className="font-semibold text-lg ml-2">{coins}</span>
                         </div>
                     </div>
 
