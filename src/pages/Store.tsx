@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectCoins, selectPurchasedItems, setCoins, setPurchasedItems } from "../redux/slices/userSlice";
 import { requestApi } from "../libs/requestApi";
 import { requestMethods } from "../libs/enum/requestMethods";
+import { toast, ToastContainer } from "react-toastify";
 
 interface StoreItemType {
     _id: string;
@@ -21,7 +22,7 @@ const Store: React.FC = () => {
 
     const coins = useSelector(selectCoins);
     const dispatch = useDispatch();
-    let purchasedItems =useSelector(selectPurchasedItems); ;
+    let purchasedItems = useSelector(selectPurchasedItems); ;
     const [storeItems, setStoreItems] = useState<StoreItemType[]>([]);
     const [activeFilter, setActiveFilter] = useState<string>("All");
 
@@ -36,7 +37,6 @@ const Store: React.FC = () => {
                 });
                 if (response){
                     dispatch(setPurchasedItems(response.purchasedItems));
-                    purchasedItems = useSelector(selectPurchasedItems);
                 }
             } catch (error) {
                 console.log("error fetching purchased items");
@@ -84,6 +84,9 @@ const Store: React.FC = () => {
                 // Update the user's coin balance
                 dispatch(setCoins(coins - price));
             }
+            else{
+                toast.error(response.error);
+            }
         }catch(error){
             console.log("Error buying item", error);
         }
@@ -91,6 +94,7 @@ const Store: React.FC = () => {
 
     return (
         <div className="h-screen flex flex-col">
+            <ToastContainer className='text-xs'/>
             {/* Navbar */}
             <Navbar />
             
@@ -139,6 +143,7 @@ const Store: React.FC = () => {
                                 name={item.name}
                                 price={item.price}
                                 purchased={purchasedItems.includes(item._id)}
+                                onBuy={() => handleBuy(item._id, item.price)}
                             />
                         ))}
                     </div>

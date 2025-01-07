@@ -7,9 +7,10 @@ interface StoreItemProps {
     price: number
     image: string
     purchased?: boolean
+    onBuy: () => void;
 }
 
-const StoreItem: React.FC<StoreItemProps> = ({ name, price, image, purchased }) => {
+const StoreItem: React.FC<StoreItemProps> = ({ name, price, image, purchased, onBuy }) => {
     return (
         <div className="border border-[#3A8EBA] rounded-md hover:shadow-md transition font-poppins">
             <div className="p-5 flex flex-col items-center gap-4">
@@ -39,6 +40,7 @@ const StoreItem: React.FC<StoreItemProps> = ({ name, price, image, purchased }) 
 
                 {/* Buy Now Button */}
                 <button
+                    onClick={onBuy}
                     className={cn(
                         "w-3/4 rounded-full font-semibold py-2 text-sm",
                         purchased
