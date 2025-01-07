@@ -3,14 +3,17 @@ import Navbar from "../components/dashboardComponents/NavBar";
 import coinIcon from "../assets/images/coins.png";
 import { Button } from "../components/ui/button";
 import { cn } from "../lib/utils";
+import StoreItem from "../components/storeComponents/StoreItem";
+import picture1 from "../assets/images/avatars/parent/avatar1.png";
+import picture2 from "../assets/images/avatars/parent/avatar2.png";
+import picture3 from "../assets/images/avatars/parent/avatar3.png";
+import picture4 from "../assets/images/avatars/parent/avatar4.png";
 
 const Store: React.FC = () => {
 
     const [activeFilter, setActiveFilter] = useState<string>("All");
 
     const filters = ["All", "Garden Items", "Pets", "Themes", "Gifts", "Games"];
-
-
 
     return (
         <div className="h-screen flex flex-col">
@@ -54,8 +57,17 @@ const Store: React.FC = () => {
                     </div>
 
                     {/* Item Cards Section */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {/* Item cards will be mapped here */}
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mt-5">
+                        <StoreItem image={coinIcon} name="coinn" price={10} purchased={false}/>
+                        <StoreItem image={picture1} name="coinn" price={10} purchased={false}/>
+                        <StoreItem image={picture2} name="coinn" price={10} purchased={false}/>
+                        <StoreItem image={picture3} name="coinn" price={10} purchased={false}/>
+                        <StoreItem image={picture4} name="coinn" price={10} purchased={true}/>
+                        <StoreItem image={coinIcon} name="coinn" price={10} purchased={false}/>
+                        <StoreItem image={coinIcon} name="coinn" price={10} purchased={true}/>
+                        <StoreItem image={coinIcon} name="coinn" price={10} purchased={false}/>
+                        <StoreItem image={coinIcon} name="coinn" price={10} purchased={false}/>
+                        <StoreItem image={coinIcon} name="coinn" price={10} purchased={false}/>
                     </div>
                 </div>
             </div>
