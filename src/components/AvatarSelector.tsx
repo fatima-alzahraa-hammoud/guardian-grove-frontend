@@ -3,29 +3,29 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Avatar from "@mui/material/Avatar";
 
 const parentAvatars = [
-  { id: 1, src: "src/assets/images/avatars/parent/avatar1.png" },
-  { id: 2, src: "src/assets/images/avatars/parent/avatar2.png" },
-  { id: 3, src: "src/assets/images/avatars/parent/avatar3.png" },
-  { id: 4, src: "src/assets/images/avatars/parent/avatar4.png" },
-  { id: 5, src: "src/assets/images/avatars/parent/avatar5.png" },
-  { id: 6, src: "src/assets/images/avatars/parent/avatar6.png" },
-  { id: 7, src: 'src/assets/images/avatars/parent/avatar7.png' },
-  { id: 8, src: 'src/assets/images/avatars/parent/avatar8.png' },
-  { id: 9, src: 'src/assets/images/avatars/parent/avatar9.png' },
+  { id: 1, src: "/assets/images/avatars/parent/avatar1.png" },
+  { id: 2, src: "/assets/images/avatars/parent/avatar2.png" },
+  { id: 3, src: "/assets/images/avatars/parent/avatar3.png" },
+  { id: 4, src: "/assets/images/avatars/parent/avatar4.png" },
+  { id: 5, src: "/assets/images/avatars/parent/avatar5.png" },
+  { id: 6, src: "/assets/images/avatars/parent/avatar6.png" },
+  { id: 7, src: '/assets/images/avatars/parent/avatar7.png' },
+  { id: 8, src: '/assets/images/avatars/parent/avatar8.png' },
+  { id: 9, src: '/assets/images/avatars/parent/avatar9.png' },
 ];
 
 const familyAvatars = [
-  { id: 1, src: "src/assets/images/avatars/family/avatar1.png" },
-  { id: 2, src: "src/assets/images/avatars/family/avatar2.png" },
-  { id: 3, src: "src/assets/images/avatars/family/avatar3.png" },
-  { id: 4, src: "src/assets/images/avatars/family/avatar4.png" },
-  { id: 5, src: "src/assets/images/avatars/family/avatar5.png" },
-  { id: 6, src: "src/assets/images/avatars/family/avatar6.png" },
-  { id: 7, src: 'src/assets/images/avatars/family/avatar7.png' },
-  { id: 8, src: 'src/assets/images/avatars/family/avatar8.png' },
-  { id: 9, src: 'src/assets/images/avatars/family/avatar9.png' },
-  { id: 10, src: 'src/assets/images/avatars/family/avatar10.png' },
-  { id: 11, src: 'src/assets/images/avatars/family/avatar11.png' },
+  { id: 1, src: "/assets/images/avatars/family/avatar1.png" },
+  { id: 2, src: "/assets/images/avatars/family/avatar2.png" },
+  { id: 3, src: "/assets/images/avatars/family/avatar3.png" },
+  { id: 4, src: "/assets/images/avatars/family/avatar4.png" },
+  { id: 5, src: "/assets/images/avatars/family/avatar5.png" },
+  { id: 6, src: "/assets/images/avatars/family/avatar6.png" },
+  { id: 7, src: '/assets/images/avatars/family/avatar7.png' },
+  { id: 8, src: '/assets/images/avatars/family/avatar8.png' },
+  { id: 9, src: '/assets/images/avatars/family/avatar9.png' },
+  { id: 10, src: '/assets/images/avatars/family/avatar10.png' },
+  { id: 11, src: '/assets/images/avatars/family/avatar11.png' },
 ];
 
 interface AvatarSelectorProps {

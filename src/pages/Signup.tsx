@@ -2,8 +2,8 @@
 
 import React, { useEffect, useRef } from "react";
 import "../styles/global.css";
-import logo from '../assets/logo/GuardianGrove_logo_Text.png';
-import img from '../assets/images/family-signup1.png';
+import logo from '/assets/logo/GuardianGrove_logo_Text.png';
+import img from '/assets/images/family-signup1.png';
 import { gsap } from "gsap";
 import FirstSignUpForm from "../components/SignUp Components/FirstSignUpForm";
 import { toast, ToastContainer } from "react-toastify";

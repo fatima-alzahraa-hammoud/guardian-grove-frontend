@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import coinIcon from "../../assets/images/coins.png";
+import coinIcon from "/assets/images/coins.png";
 import { Button } from "../../components/ui/button";
 import { cn } from "../../lib/utils";
 import StoreItem from "../../components/cards/StoreItem";

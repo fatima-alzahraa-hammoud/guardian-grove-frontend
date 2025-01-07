@@ -13,18 +13,18 @@ import {
 } from '../ui/dropdown-menu';
 
 // Custom Icons
-import profileImage from '../../assets/images/dashboard/profile.png';
-import notesImage from '../../assets/images/dashboard/notes.png';
-import familyImage from '../../assets/images/dashboard/family.png';
-import tipsImage from '../../assets/images/dashboard/tips.png';
-import adventureImage from '../../assets/images/dashboard/adventures.png';
-import achievementsImage from '../../assets/images/dashboard/achievements.png';
-import exploreImage from '../../assets/images/dashboard/exploreAndLearn.png';
-import funImage from '../../assets/images/dashboard/funZone.png';
-import calendarImage from '../../assets/images/dashboard/calendar.png';
-import settingsImage from '../../assets/images/dashboard/settings.svg';
-import logoutImage from '../../assets/images/dashboard/logout.svg';
-import infoImage from '../../assets/images/dashboard/badge-info.svg';
+import profileImage from '/assets/images/dashboard/profile.png';
+import notesImage from '/assets/images/dashboard/notes.png';
+import familyImage from '/assets/images/dashboard/family.png';
+import tipsImage from '/assets/images/dashboard/tips.png';
+import adventureImage from '/assets/images/dashboard/adventures.png';
+import achievementsImage from '/assets/images/dashboard/achievements.png';
+import exploreImage from '/assets/images/dashboard/exploreAndLearn.png';
+import funImage from '/assets/images/dashboard/funZone.png';
+import calendarImage from '/assets/images/dashboard/calendar.png';
+import settingsImage from '/assets/images/dashboard/settings.svg';
+import logoutImage from '/assets/images/dashboard/logout.svg';
+import infoImage from '/assets/images/dashboard/badge-info.svg';
 import "../../styles/sidebar.css";
 import { useSelector } from 'react-redux';
 import { selectAvatar, selectName } from '../../redux/slices/userSlice';

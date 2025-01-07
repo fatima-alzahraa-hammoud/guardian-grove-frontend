@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import sortImage from "../../assets/images/sort.png";
+import sortImage from "/assets/images/sort.png";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
-import AchievementCard from "../cards/achievementCard";
-import notesImage from '../../assets/images/dashboard/notes.png';
+import AchievementCard from "../cards/AchievementCard";
+import notesImage from '/assets/images/dashboard/notes.png';
 
 const Achievements : React.FC = () => {
 

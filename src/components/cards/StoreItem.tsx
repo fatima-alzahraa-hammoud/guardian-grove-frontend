@@ -1,6 +1,6 @@
 import React from "react";
 import { cn } from "../../lib/utils";
-import coinImage from "../../assets/images/coin.png";
+import coinImage from "/assets/images/coin.png";
 
 interface StoreItemProps {
     name: string

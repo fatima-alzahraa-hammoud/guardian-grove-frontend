@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useEffect, useRef } from "react";
-import logo from '../assets/logo/GuardianGrove_logo_Text.png';
-import img from '../assets/images/family-login.png';
+import logo from '/assets/logo/GuardianGrove_logo_Text.png';
+import img from '/assets/images/family-login.png';
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { gsap } from "gsap";

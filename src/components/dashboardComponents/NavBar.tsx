@@ -14,7 +14,7 @@ import "../../styles/global.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectStars } from "../../redux/slices/userSlice";
-import logo from "../../assets/logo/GuardianGrove_logo_NoText.png";
+import logo from "/assets/logo/GuardianGrove_logo_NoText.png";
 
 // Classnames utility function
 function classNames(...classes: string[]) {

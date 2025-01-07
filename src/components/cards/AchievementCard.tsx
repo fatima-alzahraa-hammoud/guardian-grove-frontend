@@ -1,6 +1,6 @@
 import React from "react";
-import coinImage from "../../assets/images/coins.png";
-import starsImage from "../../assets/images/stars.png";
+import coinImage from "/assets/images/coins.png";
+import starsImage from "/assets/images/stars.png";
 
 interface AchievementCardProps {
     title: string;
