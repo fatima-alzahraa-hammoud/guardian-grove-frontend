@@ -32,25 +32,28 @@ const Achievements : React.FC = () => {
     useEffect(() => {
         const fetchAchievements = async () => {
             try {
-                const [lockedRes, unlockedRes] = await Promise.all([
-                    requestApi({
+                const [lockedAchievements, unlockedAchievements] = await Promise.all([
+                    await requestApi({
                         route:"/achievements/locked",
                         method: requestMethods.GET
                     }),
-                    requestApi({
+                    await requestApi({
                         route:"/achievements/unlocked",
                         method: requestMethods.GET
                     }),
                 ]);
     
-                const locked = lockedRes.data.achievements.map((ach: Achievement) => ({
+                const locked = lockedAchievements?.achievements?.map((ach: Achievement) => ({
                     ...ach,
                     isLocked: true,
-                }));
-                const unlocked = unlockedRes.data.achievements.map((ach: Achievement) => ({
+                })) || [];
+    
+                const unlocked = unlockedAchievements?.achievements?.map((ach: Achievement) => ({
                     ...ach,
                     isLocked: false,
-                }));
+                })) || [];    
+
+                console.log(locked);
                 setAchievements([...locked, ...unlocked]);
                 handleFilterChange(activeFilter);
             } catch (error) {
@@ -95,6 +98,7 @@ const Achievements : React.FC = () => {
                     {filters.map((filter) => (
                         <Button
                             key={filter}
+                            onClick={() => handleFilterChange(filter)}
                             variant="secondary"
                             className={cn(
                                 "bg-[#E3F2FD] hover:bg-[#d7edfd] w-44 text-black",
@@ -108,27 +112,23 @@ const Achievements : React.FC = () => {
 
                 {/* Item Cards Section */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-5">
-                        <AchievementCard
-                            title="hello"
-                            photo={notesImage}
-                            description="You’ve earned 500 stars! Keep shining and reaching for more milestones."
-                            starsReward={3}
-                            coinsReward={22}
-                            criteria="Reach 500 stars!"
-                            isLocked= {false}
-                            unlockedAt= {new Date('1991-09-08')}
-                        />
-
-                        <AchievementCard
-                            title="hello"
-                            photo={notesImage}
-                            description="You’ve earned 500 stars! Keep shining and reaching for more milestones."
-                            starsReward={3}
-                            coinsReward={22}
-                            criteria="Reach 500 stars!"
-                            isLocked= {true}
-                            unlockedAt= {new Date('1991-09-08')}
-                        />
+                    {filteredAchievements.length > 0 ? (
+                        filteredAchievements.map((achievement) => (
+                            <AchievementCard
+                                key={achievement._id}
+                                title={achievement.title}
+                                photo={achievement.photo || notesImage}
+                                description={achievement.description}
+                                starsReward={achievement.starsReward}
+                                coinsReward={achievement.coinsReward}
+                                criteria={achievement.criteria}
+                                isLocked={achievement.isLocked}
+                                unlockedAt={achievement.unlockedAt}
+                            />
+                        ))
+                    ) : (
+                        <p className="text-center text-sm">No achievements found.</p>
+                    )}
                 </div>
             </div>
         </div>
