@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectAvatar, selectBirthday, selectCoins, selectEmail, selectMmeberSince, selectName, selectRank } from "../../redux/slices/userSlice";
 import uploadImage from "/assets/images/camera.svg";
+import coinImage from "/assets/images/coins.png";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { toast } from "react-toastify";
@@ -45,9 +46,7 @@ const MyProfile : React.FC = () => {
                 setAge(age);
             }
         }
-    }, [birthday]);
 
-    useEffect(() => {
         // Format memberSince date correctly
         if (memberSince) {
             console.log(memberSince)
@@ -59,6 +58,10 @@ const MyProfile : React.FC = () => {
                 console.error("Invalid memberSince date:", memberSince);
             }
         }
+        
+    }, [birthday]);
+
+    useEffect(() => {
         const fetchFamilyNameAndNbMembers = async () => {
             try {
                 const response = await requestApi({
@@ -121,10 +124,14 @@ const MyProfile : React.FC = () => {
                     </div>
                 </div>
                 <div className="bg-[#FDE4CF] p-6 w-2/5 rounded-lg text-xs flex flex-col justify-between">
-                    <p><span className="font-bold p-3">Your Family:</span>{familyName} {' ( '} {nbOfMembers} {' members)'}</p>
-                    <p><span className="font-bold pr-3">Total Family Stars:</span>{totalStars}</p>
-                    <p><span className="font-bold pr-3">Your Total Coins: </span>{coins}</p>
-                    <p><span className="font-bold pr-3">Your Rank:</span>{rank}</p>
+                    <p><span className="font-bold p-3">Your Family:</span>{familyName} {' ( '} <span className="text-sm">{nbOfMembers}</span> {' members)'}</p>
+                    <p><span className="font-bold pr-3">Total Family Stars:</span><span className="text-sm">{totalStars}</span></p>
+                    <p className="flex items-center">
+                        <span className="font-bold pr-4">Your Total Coins: </span>
+                        <img src={coinImage} alt="Coin" className="w-5 h-5 mr-3"/>
+                        <span className="text-sm">{coins}</span>
+                    </p>
+                    <p><span className="font-bold pr-3">Your Rank in Family:</span><span className="text-sm">{rank}</span></p>
                 </div>
             </div>
             {/* Daily message */}
