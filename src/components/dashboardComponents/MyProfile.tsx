@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectAvatar, selectName } from "../../redux/slices/userSlice";
+import { selectAvatar, selectBirthday, selectEmail, selectMmeberSince, selectName } from "../../redux/slices/userSlice";
 import uploadImage from "/assets/images/camera.svg";
 
 const MyProfile : React.FC = () => {
 
     const name = useSelector(selectName);
     const avatar = useSelector(selectAvatar);
+    const email = useSelector(selectEmail);
+    const birthday = useSelector(selectBirthday);
+    const memberSince = useSelector(selectMmeberSince);
     const [currentDate, setCurrentDate] = useState<string>("");
+    const [age, setAge] = useState<number>();
 
     useEffect(() => {
         const today = new Date();
@@ -18,8 +22,21 @@ const MyProfile : React.FC = () => {
             day: 'numeric'
         });
         setCurrentDate(formattedDate);
-    }, []);
 
+        // Calculate age
+        if (birthday) {
+            const birthDate = new Date(birthday);
+            const age = today.getFullYear() - birthDate.getFullYear();
+            const monthDifference = today.getMonth() - birthDate.getMonth();
+            const dayDifference = today.getDate() - birthDate.getDate();
+
+            if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
+                setAge(age - 1);
+            } else {
+                setAge(age);
+            }
+        }
+    }, [birthday]);
 
     return(
         <div className="pt-20 h-screen flex flex-col font-poppins max-w-5xl px-6 flex-grow">
@@ -56,7 +73,7 @@ const MyProfile : React.FC = () => {
                     {/* Details */}
                     <div className="text-white text-xs space-y-3 pl-4 pt-1">
                         <p className="font-bold">{name}</p>
-                        <p><span className="font-bold">Birthday: </span></p>
+                        <p><span className="font-bold pr-3">Age:</span>{age}</p>
                         <p><span className="font-bold">Member since: </span></p>
                         <p><span className="font-bold">Family email: </span></p>
                         <button className="pl-3 pr-3 pt-2 pb-2 bg-white rounded-full text-black border-[1px] border-[#FDE4CF] focus:outline-none">Update Your Personal Details</button>
