@@ -146,6 +146,18 @@ const MyProfile : React.FC = () => {
 
             {/*Personal progress */}
 
+            <div className="mt-10">
+                <h3 className="font-comic font-extrabold mb-2 text-md">Personal Progress</h3>
+                <div className="flex gap-5">
+                    <div className="bg-[#FDEBE3] w-52 h-72 rounded-md p-5">
+                        <h4 className="font-comic text-[16px] font-extrabold text-center">Tasks & Goals</h4>
+                        <p className="text-xs text-left pt-10">This month</p>
+                    </div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+
             {/* Connect to AI */}
             <div className="mt-10">
                 <h3 className="font-comic font-extrabold mb-2">Need help or guidance today? I’m here for you!</h3>
