@@ -92,7 +92,7 @@ const MyProfile : React.FC = () => {
             </div>
 
             {/* Info */}
-            <div className="flex space-x-6 pt-10">
+            <div className="flex space-x-6 mt-10">
                 <div className="flex bg-[#3A8EBA] p-6 rounded-lg w-3/5">
 
                     <div className="flex flex-col pl-1 items-center">
@@ -137,7 +137,7 @@ const MyProfile : React.FC = () => {
             </div>
             {/* Daily message */}
 
-            <div className="pt-10">
+            <div className="mt-10">
                 <h3 className="font-comic font-extrabold mb-2 text-md">Daily Message</h3>
                 <div className="w-full bg-[#E3F2FD] border-[1px] border-[#3A8EBA] focus:outline-none h-16 rounded-md p-2 text-xs font-poppins">
                     {dailyMessage}
@@ -146,7 +146,11 @@ const MyProfile : React.FC = () => {
 
             {/*Personal progress */}
 
-            {/* Need help */}
+            {/* Connect to AI */}
+            <div className="mt-10">
+                <h3 className="font-comic font-extrabold mb-2">Need help or guidance today? I’m here for you!</h3>
+                <button className="p-2 mt-3 mb-10 bg-[#3A8EBA] rounded-full text-sm text-white">Talk to me, your AI friend</button>
+            </div>
         </div>
     );
 };
