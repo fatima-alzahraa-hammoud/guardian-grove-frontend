@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectAvatar, selectBirthday, selectEmail, selectMmeberSince, selectName } from "../../redux/slices/userSlice";
+import { selectAvatar, selectBirthday, selectCoins, selectEmail, selectMmeberSince, selectName, selectRank } from "../../redux/slices/userSlice";
 import uploadImage from "/assets/images/camera.svg";
 
 const MyProfile : React.FC = () => {
@@ -10,6 +10,8 @@ const MyProfile : React.FC = () => {
     const email = useSelector(selectEmail);
     const birthday = useSelector(selectBirthday);
     const memberSince = useSelector(selectMmeberSince);
+    const coins = useSelector(selectCoins);
+    const rank = useSelector(selectRank);
     const [currentDate, setCurrentDate] = useState<string>("");
     const [age, setAge] = useState<number>();
     const [formattedMemberSince, setFormattedMemberSince] = useState<string>("");
@@ -92,8 +94,11 @@ const MyProfile : React.FC = () => {
                         <button className="pl-3 pr-3 pt-2 pb-2 bg-white rounded-full text-black border-[1px] border-[#FDE4CF] focus:outline-none">Update Your Personal Details</button>
                     </div>
                 </div>
-                <div className="bg-[#FDE4CF] p-6 w-2/5 rounded-lg">
-                    <div></div>
+                <div className="bg-[#FDE4CF] p-6 w-2/5 rounded-lg text-xs flex flex-col justify-between">
+                    <p><span className="font-bold">Your Family:</span></p>
+                    <p><span className="font-bold">Total Family Stars:</span></p>
+                    <p><span className="font-bold pr-3">Your Total Coins: </span>{coins}</p>
+                    <p><span className="font-bold pr-3">Your Rank:</span>{rank}</p>
                 </div>
             </div>
             {/* Daily message */}
