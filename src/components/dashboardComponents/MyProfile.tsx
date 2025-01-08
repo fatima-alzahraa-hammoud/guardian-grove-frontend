@@ -6,6 +6,7 @@ import coinImage from "/assets/images/coins.png";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { toast } from "react-toastify";
+import ProgressBar from "../common/ProgressBar";
 
 const MyProfile : React.FC = () => {
 
@@ -23,7 +24,7 @@ const MyProfile : React.FC = () => {
     const [nbOfMembers, setNumberOfMembers] = useState<number>();
     const [totalStars, setTotalStars] = useState<number>();
     const [dailyMessage, setDailyMessage] = useState<string> ('You are shining!');
-
+  
     useEffect(() => {
         const today = new Date();
         const formattedDate = today.toLocaleDateString(undefined, {
@@ -149,9 +150,9 @@ const MyProfile : React.FC = () => {
             <div className="mt-10">
                 <h3 className="font-comic font-extrabold mb-2 text-md">Personal Progress</h3>
                 <div className="flex gap-5">
-                    <div className="bg-[#FDEBE3] w-52 h-72 rounded-md p-5">
+                    <div className="bg-[#FDEBE3] w-56 h-72 rounded-md p-5">
                         <h4 className="font-comic text-[16px] font-extrabold text-center">Tasks & Goals</h4>
-                        <p className="text-xs text-left pt-10">This month</p>
+                        <p className="text-xs text-left pt-10 font-bold">This month</p>
                     </div>
                     <div></div>
                     <div></div>
