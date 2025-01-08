@@ -7,6 +7,7 @@ interface UserState {
     birthday: Date;
     avatar: string | null;
     gender: string | null;
+    role: string | null;
     stars: number | 0;
     coins: number | 0;
     rankInFamily: number | 0;
@@ -21,6 +22,7 @@ const initialState: UserState = {
     birthday: new Date('1940-01-01'),
     avatar: null,
     gender: null,
+    role: null,
     stars: 0,
     coins: 0,
     rankInFamily: 0,
@@ -57,5 +59,6 @@ export const selectMmeberSince = (state: { user: UserState }) => state.user.memb
 export const selectCoins = (state: { user: UserState }) => state.user.coins;
 export const selectRank = (state: { user: UserState }) => state.user.rankInFamily;
 export const selectPurchasedItems = (state: { user: UserState }) => state.user.purchasedItems;
+export const selectRole = (state: { user: UserState }) => state.user.role;
 
 export default userSlice.reducer;

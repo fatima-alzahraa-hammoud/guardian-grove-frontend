@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectAvatar, selectBirthday, selectCoins, selectEmail, selectMmeberSince, selectName, selectRank } from "../../redux/slices/userSlice";
+import { selectAvatar, selectBirthday, selectCoins, selectEmail, selectMmeberSince, selectName, selectRank, selectRole } from "../../redux/slices/userSlice";
 import uploadImage from "/assets/images/camera.svg";
 import coinImage from "/assets/images/coins.png";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { toast } from "react-toastify";
 import ProgressBar from "../common/ProgressBar";
-import "../../styles/card.css"
-import "../../styles/global.css"
+import "../../styles/card.css";
+import "../../styles/global.css";
+import { FaPlus } from "react-icons/fa";
+
 
 const MyProfile : React.FC = () => {
 
@@ -19,6 +21,7 @@ const MyProfile : React.FC = () => {
     const memberSince = useSelector(selectMmeberSince);
     const coins = useSelector(selectCoins);
     const rank = useSelector(selectRank);
+    const role = useSelector(selectRole);
     const [currentDate, setCurrentDate] = useState<string>("");
     const [age, setAge] = useState<number>();
     const [formattedMemberSince, setFormattedMemberSince] = useState<string>("");
@@ -90,11 +93,25 @@ const MyProfile : React.FC = () => {
 
     return(
         <div className="pt-20 h-screen flex flex-col font-poppins max-w-5xl px-6 flex-grow">
+            
             {/* Header */}
-            <div className="text-left">
-                <h1 className="font-comic font-extrabold mb-2 text-lg">Hi, {name}</h1>
-                <p className="text-sm">{currentDate}</p>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="font-comic font-extrabold text-lg">Hi, {name}</h1>
+                {role === 'parent' && (
+                    <button 
+                        className="bg-[#3A8EBA] text-white px-3 py-2 rounded-full text-sm flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round-plus mr-2">
+                            <path d="M2 21a8 8 0 0 1 13.292-6"/>
+                            <circle cx="10" cy="8" r="5"/>
+                            <path d="M19 16v6"/>
+                            <path d="M22 19h-6"/>
+                        </svg>                        
+                        Add Family Member
+                    </button>
+                )}
             </div>
+            <p className="text-sm">{currentDate}</p>
+            
 
             {/* Info */}
             <div className="flex space-x-6 mt-10">
@@ -107,17 +124,12 @@ const MyProfile : React.FC = () => {
                                 className="w-20 h-20 bg-purple-100 rounded-full"
                                 src={avatar || "https://via.placeholder.com/150"}
                                 alt="User Avatar"
-                            />
-                            <span className="absolute bottom-2 right-0.5 transform translate-y-1/4 w-5 h-5 bg-white rounded-full flex items-center justify-center z-10">
-                                <img
-                                    src={uploadImage}
-                                    alt="Camera Icon"
-                                    className="w-4 h-4"
-                                />
-                            </span>       
+                            />       
                         </div>
                         <p className="pt-3 text-sm text-white">Child</p>
                     </div>
+
+                    
 
                     
                     {/* Details */}
