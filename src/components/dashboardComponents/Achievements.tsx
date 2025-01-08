@@ -29,6 +29,8 @@ const Achievements : React.FC = () => {
     const [achievements, setAchievements] = useState<Achievement[]>([]);
     const [filteredAchievements, setFilteredAchievements] = useState<Achievement[]>([]);
     const filters = ["My Achievements", "Family Achievements", "Locked Achievements"];
+    const [sortBy, setSortBy] = useState<keyof Achievement | null>(null);
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
     useEffect(() => {
         const fetchAchievements = async () => {
@@ -68,16 +70,45 @@ const Achievements : React.FC = () => {
 
     const handleFilterChange = (filter: string) => {
 
-        setActiveFilter(filter);
+        let filtered;
         if (filter === "My Achievements") {
-            setFilteredAchievements(achievements.filter((ach) => ach.type === "personal" && !ach.isLocked));
+            filtered = achievements.filter((ach) => ach.type === "personal" && !ach.isLocked);
         } else if (filter === "Family Achievements") {
-            setFilteredAchievements(achievements.filter((ach) => ach.type === "family" && !ach.isLocked));
+            filtered = achievements.filter((ach) => ach.type === "family" && !ach.isLocked);
         } else {
-            setFilteredAchievements(achievements.filter((ach) => ach.isLocked));
+            filtered = achievements.filter((ach) => ach.isLocked);
+        }
+
+        // Apply sorting if selected
+        if (sortBy) {
+            sortAchievements(filtered, sortBy);
+        } else {
+            setFilteredAchievements(filtered);
         }
     };
 
+    const sortAchievements = (data: Achievement[], property: keyof Achievement) => {
+        const sorted = [...data].sort((a, b) => {
+            const valueA = a[property];
+            const valueB = b[property];
+
+            if (typeof valueA === "string" && typeof valueB === "string") {
+                return sortOrder === "asc" ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+            }
+
+            if (typeof valueA === "number" && typeof valueB === "number") {
+                return sortOrder === "asc" ? valueA - valueB : valueB - valueA;
+            }
+
+            if (valueA instanceof Date && valueB instanceof Date) {
+                return sortOrder === "asc" ? +valueA - +valueB : +valueB - +valueA;
+            }
+
+            return 0;
+        });
+
+        setFilteredAchievements(sorted);
+    };
 
     return(
         <div className="pt-20 h-screen flex flex-col">
