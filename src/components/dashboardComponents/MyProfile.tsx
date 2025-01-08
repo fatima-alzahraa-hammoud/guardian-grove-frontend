@@ -179,7 +179,20 @@ const MyProfile : React.FC = () => {
                             "Keep up the great work!"
                         </p>
                     </div>
-                    <div></div>
+
+                    {/* Magic Garden */}
+                    <div className=" flex flex-col bg-[#FDE3EC] w-56 h-72 rounded-md p-5 items-center justify-between">
+                        <h4 className="font-comic text-[16px] font-extrabold text-center">Magic Garden</h4>
+                        <div className="flex gap-3 items-center justify-center mx-auto">
+                            <img src={coinImage} alt="" className="w-5 h-5" />
+                            <p className="text-xs">
+                                You’ve grown 5 new flowers this week!
+                            </p>
+                        </div>
+                        <p className="text-center text-sm font-comic mb-3 font-extrabold">
+                            "Keep up the great work!"
+                        </p>
+                    </div>
                 </div>
             </div>
 
