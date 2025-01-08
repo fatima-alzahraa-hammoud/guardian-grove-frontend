@@ -116,15 +116,16 @@ const Achievements : React.FC = () => {
     };
 
     
-const toggleSortOrder = () => {
-    const newOrder = sortOrder === "asc" ? "desc" : "asc";
-    setSortOrder(newOrder);
-    // Re-sort with the new order and current filter
-    if (sortBy) {
-        const currentFiltered = filteredAchievements.length > 0 ? filteredAchievements : achievements;
-        sortAchievements(currentFiltered, sortBy as keyof Achievement);
-    }
-};
+    const toggleSortOrder = () => {
+        const newOrder = (sortOrder === "asc" ? "desc" : "asc");
+        setSortOrder(newOrder);
+    };
+
+    useEffect(() => {
+        if (sortBy) {
+            sortAchievements(filteredAchievements, sortBy);
+        }
+    }, [sortOrder, sortBy, filteredAchievements]);
 
     return(
         <div className="pt-20 h-screen flex flex-col">
