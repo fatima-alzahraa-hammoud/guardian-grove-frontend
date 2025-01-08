@@ -12,6 +12,7 @@ const MyProfile : React.FC = () => {
     const memberSince = useSelector(selectMmeberSince);
     const [currentDate, setCurrentDate] = useState<string>("");
     const [age, setAge] = useState<number>();
+    const [formattedMemberSince, setFormattedMemberSince] = useState<string>("");
 
     useEffect(() => {
         const today = new Date();
@@ -36,6 +37,18 @@ const MyProfile : React.FC = () => {
                 setAge(age);
             }
         }
+
+        // Format memberSince date correctly
+        if (memberSince) {
+            console.log(memberSince)
+            const memberDate = new Date(memberSince);
+            if (memberDate instanceof Date && !isNaN(memberDate.getTime())) {
+                const formattedDate = `${memberDate.getDate()}, ${memberDate.getMonth() + 1}, ${memberDate.getFullYear()}`;
+                setFormattedMemberSince(formattedDate);
+            } else {
+                console.error("Invalid memberSince date:", memberSince);
+            }
+        }
     }, [birthday]);
 
     return(
@@ -50,7 +63,7 @@ const MyProfile : React.FC = () => {
             <div className="flex space-x-6 pt-10">
                 <div className="flex bg-[#3A8EBA] p-6 rounded-lg w-3/5">
 
-                    <div className="flex flex-col pl-2 items-center">
+                    <div className="flex flex-col pl-1 items-center">
                         {/* Image */}
                         <div className="relative">
                             <img 
@@ -71,11 +84,11 @@ const MyProfile : React.FC = () => {
 
                     
                     {/* Details */}
-                    <div className="text-white text-xs space-y-3 pl-4 pt-1">
+                    <div className="text-white text-xs space-y-3 pl-3 pt-1">
                         <p className="font-bold">{name}</p>
                         <p><span className="font-bold pr-3">Age:</span>{age}</p>
-                        <p><span className="font-bold">Member since: </span></p>
-                        <p><span className="font-bold">Family email: </span></p>
+                        <p><span className="font-bold pr-3">Member since: </span>{formattedMemberSince}</p>
+                        <p><span className="font-bold pr-1">Family email: </span>{email}</p>
                         <button className="pl-3 pr-3 pt-2 pb-2 bg-white rounded-full text-black border-[1px] border-[#FDE4CF] focus:outline-none">Update Your Personal Details</button>
                     </div>
                 </div>
