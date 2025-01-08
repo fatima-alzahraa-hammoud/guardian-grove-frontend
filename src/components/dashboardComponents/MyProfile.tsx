@@ -22,6 +22,7 @@ const MyProfile : React.FC = () => {
     const [familyName, setFamilyName] = useState<string>("");
     const [nbOfMembers, setNumberOfMembers] = useState<number>();
     const [totalStars, setTotalStars] = useState<number>();
+    const [dailyMessage, setDailyMessage] = useState<string> ('You are shining!');
 
     useEffect(() => {
         const today = new Date();
@@ -58,7 +59,7 @@ const MyProfile : React.FC = () => {
                 console.error("Invalid memberSince date:", memberSince);
             }
         }
-        
+
     }, [birthday]);
 
     useEffect(() => {
@@ -135,6 +136,13 @@ const MyProfile : React.FC = () => {
                 </div>
             </div>
             {/* Daily message */}
+
+            <div className="pt-10">
+                <h3 className="font-comic font-extrabold mb-2 text-md">Daily Message</h3>
+                <div className="w-full bg-[#E3F2FD] border-[1px] border-[#3A8EBA] focus:outline-none h-16 rounded-md p-2 text-xs font-poppins">
+                    {dailyMessage}
+                </div>
+            </div>
 
             {/*Personal progress */}
 
