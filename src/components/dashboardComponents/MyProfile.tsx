@@ -24,6 +24,8 @@ const MyProfile : React.FC = () => {
     const [nbOfMembers, setNumberOfMembers] = useState<number>();
     const [totalStars, setTotalStars] = useState<number>();
     const [dailyMessage, setDailyMessage] = useState<string> ('You are shining!');
+    const goals = { completed: 20, total: 100 };
+    const tasks = { completed: 60, total: 100 };
   
     useEffect(() => {
         const today = new Date();
@@ -153,6 +155,14 @@ const MyProfile : React.FC = () => {
                     <div className="bg-[#FDEBE3] w-56 h-72 rounded-md p-5">
                         <h4 className="font-comic text-[16px] font-extrabold text-center">Tasks & Goals</h4>
                         <p className="text-xs text-left pt-10 font-bold">This month</p>
+                        <div>
+                            <ProgressBar completed={tasks.completed} total={tasks.total} label="Tasks" />
+                            <ProgressBar completed={goals.completed} total={goals.total} label="Goals" />
+                        </div>
+
+                        <p className="text-center text-sm font-comic mt-7 mb-3 font-extrabold">
+                            "Keep up the great work!"
+                        </p>
                     </div>
                     <div></div>
                     <div></div>
