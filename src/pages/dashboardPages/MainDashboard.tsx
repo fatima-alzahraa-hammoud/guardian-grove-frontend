@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Sidebar from "../../components/dashboardComponents/Sidebar";
 import Achievements from "../../components/dashboardComponents/Achievements";
+import MyProfile from "../../components/dashboardComponents/MyProfile";
 
 const Main : React.FC = () => {
 
@@ -10,7 +11,7 @@ const Main : React.FC = () => {
     const renderContent = () => {
         switch (activeSection) {
             case 'profile':
-                return <div className="pt-20">Profile Content</div>;
+                return <MyProfile />;
             case 'notes':
                 return <div className="pt-20">Notes Content</div>;
             case 'achievements':
