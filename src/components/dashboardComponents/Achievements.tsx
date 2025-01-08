@@ -69,7 +69,7 @@ const Achievements : React.FC = () => {
     }, []);
 
     const handleFilterChange = (filter: string) => {
-
+        setActiveFilter(filter);
         let filtered;
         if (filter === "My Achievements") {
             filtered = achievements.filter((ach) => ach.type === "personal" && !ach.isLocked);
@@ -110,6 +110,22 @@ const Achievements : React.FC = () => {
         setFilteredAchievements(sorted);
     };
 
+    const handleSortSelect = (property: keyof Achievement) => {
+        setSortBy(property);
+        sortAchievements(filteredAchievements, property as keyof Achievement);
+    };
+
+    
+const toggleSortOrder = () => {
+    const newOrder = sortOrder === "asc" ? "desc" : "asc";
+    setSortOrder(newOrder);
+    // Re-sort with the new order and current filter
+    if (sortBy) {
+        const currentFiltered = filteredAchievements.length > 0 ? filteredAchievements : achievements;
+        sortAchievements(currentFiltered, sortBy as keyof Achievement);
+    }
+};
+
     return(
         <div className="pt-20 h-screen flex flex-col">
             <div className="max-w-5xl px-6 flex-grow font-poppins">
@@ -126,26 +142,26 @@ const Achievements : React.FC = () => {
                             >
                                 <img src={sortImage} alt="Sort" className="w-4 h-4 mr-1" />
                                 <span className="text-sm font-semibold text-white">
-                                    Sort by 
+                                    Sort by {sortBy ? ` ${sortBy} (${sortOrder})` : ""} 
                                 </span>
                             </Button>
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent>
-                            <DropdownMenuItem >
+                            <DropdownMenuItem onClick={() => handleSortSelect("starsReward")}>
                                 Stars
                             </DropdownMenuItem>
-                            <DropdownMenuItem >
+                            <DropdownMenuItem onClick={() => handleSortSelect("coinsReward")}>
                                 Coins
                             </DropdownMenuItem>
-                            <DropdownMenuItem >
+                            <DropdownMenuItem onClick={() => handleSortSelect("title")}>
                                 Title
                             </DropdownMenuItem>
-                            <DropdownMenuItem >
+                            <DropdownMenuItem onClick={() => handleSortSelect("unlockedAt")}>
                                 Date
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                Sort Order: 
+                            <DropdownMenuItem onClick={toggleSortOrder}>
+                                Sort Order: {sortOrder === "asc" ? "Ascending" : "Descending"}
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
