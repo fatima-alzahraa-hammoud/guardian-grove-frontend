@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
-import Avatar from "@mui/material/Avatar";
+import {Avatar, AvatarImage} from "./ui/avatar";
 
 const parentAvatars = [
   { id: 1, src: "/assets/images/avatars/parent/avatar1.png" },
@@ -51,15 +51,18 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({ selectedAvatar, onAvata
         {avatars.map((avatar) => (
           <CarouselItem key={avatar.id} className="pl-1 basis-14">
             <Avatar
-              alt="avatar"
-              src={avatar.src}
-              sx={{
+              style={{
                 border: selectedAvatar === avatar.src ? '3px solid #1976d2' : '2px solid #ddd',
                 cursor: 'pointer',
                 transition: 'border-color 0.3s ease',
               }}
-              onClick={() => onAvatarClick(avatar.src)}
-            />
+            >
+              <AvatarImage
+                alt="avatar"
+                src={avatar.src}
+                onClick={() => onAvatarClick(avatar.src)}
+              />
+            </Avatar>
           </CarouselItem>
         ))}
       </CarouselContent>

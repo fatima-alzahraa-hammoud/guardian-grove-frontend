@@ -218,7 +218,7 @@ const CarouselPrevious = React.forwardRef<
       onClick={handleClick}
       {...props}
     >
-      <img src="src/assets/images/previous.png" className="w-4 h-4"/>
+      <img src="/assets/images/previous.png" className="w-4 h-4"/>
       <span className="sr-only">Previous slide</span>
     </Button>
   )
@@ -252,7 +252,7 @@ const CarouselNext = React.forwardRef<
       onClick={handleClick}
       {...props}
     >
-      <img src="src/assets/images/next.png" className="w-4 h-4"/>
+      <img src="/assets/images/next.png" className="w-4 h-4"/>
       <span className="sr-only">Next slide</span>
     </Button>
   )

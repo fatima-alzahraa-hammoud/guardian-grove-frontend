@@ -28,7 +28,16 @@ const MyProfile : React.FC = () => {
             </div>
 
             {/* Info */}
-
+            <div>
+                <div>
+                    {/* Image */}
+                    <div></div>
+                    
+                    {/* Details */}
+                    <div></div>
+                </div>
+                <div></div>
+            </div>
             {/* Daily message */}
 
             {/*Personal progress */}
