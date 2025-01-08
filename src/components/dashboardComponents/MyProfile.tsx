@@ -151,7 +151,8 @@ const MyProfile : React.FC = () => {
 
             <div className="mt-10">
                 <h3 className="font-comic font-extrabold mb-2 text-md">Personal Progress</h3>
-                <div className="flex gap-5">
+                <div className="flex justify-between">
+                    {/* Tasks & Goals*/}
                     <div className="bg-[#FDEBE3] w-56 h-72 rounded-md p-5">
                         <h4 className="font-comic text-[16px] font-extrabold text-center">Tasks & Goals</h4>
                         <p className="text-xs text-left pt-10 font-bold">This month</p>
@@ -164,7 +165,20 @@ const MyProfile : React.FC = () => {
                             "Keep up the great work!"
                         </p>
                     </div>
-                    <div></div>
+
+                    {/* Achievements */}
+                    <div className="group flex flex-col bg-[#E3F2FD] w-56 h-72 rounded-md p-5 items-center justify-between relative overflow-hidden">
+                        <h4 className="font-comic text-[16px] font-extrabold text-center">Achievements</h4>
+                        <img src={coinImage} alt="" className="w-12 center" />
+                        <p className="text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            Achievement title
+                        </p>
+                        <p className="text-xs text-center">Unlocked on: Dec, 19, 2024</p>
+                        <p className="text-xs text-center">You helped your family complete 20 collaborative tasks this month.</p>
+                        <p className="text-center text-sm font-comic mb-3 font-extrabold">
+                            "Keep up the great work!"
+                        </p>
+                    </div>
                     <div></div>
                 </div>
             </div>
