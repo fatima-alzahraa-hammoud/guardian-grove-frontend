@@ -7,6 +7,8 @@ import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { toast } from "react-toastify";
 import ProgressBar from "../common/ProgressBar";
+import "../../styles/card.css"
+import "../../styles/global.css"
 
 const MyProfile : React.FC = () => {
 
@@ -151,23 +153,34 @@ const MyProfile : React.FC = () => {
 
             <div className="mt-10">
                 <h3 className="font-comic font-extrabold mb-2 text-md">Personal Progress</h3>
+                
                 <div className="flex justify-between">
-                    {/* Tasks & Goals*/}
-                    <div className="bg-[#FDEBE3] w-56 h-72 rounded-md p-5">
-                        <h4 className="font-comic text-[16px] font-extrabold text-center">Tasks & Goals</h4>
-                        <p className="text-xs text-left pt-10 font-bold">This month</p>
-                        <div>
-                            <ProgressBar completed={tasks.completed} total={tasks.total} label="Tasks" />
-                            <ProgressBar completed={goals.completed} total={goals.total} label="Goals" />
-                        </div>
+                    {/* Tasks & Goals */}
+                    <div className="group relative bg-[#FDEBE3] w-56 h-72 rounded-md p-3 overflow-hidden">
+                        {/* Dashed Border */}
+                        <div className="absolute inset-0 m-[8px] border-[1.5px] border-dashed border-[#FF9800] rounded-md pointer-events-none opacity-0 group-hover:opacity-100 border-rotate"></div>
 
-                        <p className="text-center text-sm font-comic mt-7 mb-3 font-extrabold">
-                            "Keep up the great work!"
-                        </p>
+                        {/* Card Content */}
+                        <div className="relative w-full h-full bg-[#FDEBE3] rounded-md p-2">
+                            <h4 className="font-comic text-[16px] font-extrabold text-center">Tasks & Goals</h4>
+                            <p className="text-xs text-left pt-10 font-bold">This month</p>
+                            <div>
+                                <ProgressBar completed={tasks.completed} total={tasks.total} label="Tasks" />
+                                <ProgressBar completed={goals.completed} total={goals.total} label="Goals" />
+                            </div>
+                            <p className="text-center text-sm font-comic mt-7 mb-3 font-extrabold">
+                                "Keep up the great work!"
+                            </p>
+                        </div>
                     </div>
+
+                    
 
                     {/* Achievements */}
                     <div className="group flex flex-col bg-[#E3F2FD] w-56 h-72 rounded-md p-5 items-center justify-between relative overflow-hidden">
+                        {/* Moving Border */}
+                        <div className="absolute inset-0 m-[8px] border-[1.5px] border-dashed border-[#2196F3] rounded-md pointer-events-none opacity-0 group-hover:opacity-100 animate-borderMovement"></div>
+
                         <h4 className="font-comic text-[16px] font-extrabold text-center">Achievements</h4>
                         <img src={coinImage} alt="" className="w-12 center" />
                         <p className="text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -181,7 +194,10 @@ const MyProfile : React.FC = () => {
                     </div>
 
                     {/* Magic Garden */}
-                    <div className=" flex flex-col bg-[#FDE3EC] w-56 h-72 rounded-md p-5 items-center justify-between">
+                    <div className="group flex flex-col bg-[#FDE3EC] w-56 h-72 rounded-md p-5 items-center justify-between relative overflow-hidden">
+                        {/* Moving Border */}
+                        <div className="absolute inset-0 m-[8px] border-[1.5px] border-dashed border-[#FF4081] rounded-md pointer-events-none opacity-0 group-hover:opacity-100 animate-borderMovement"></div>
+
                         <h4 className="font-comic text-[16px] font-extrabold text-center">Magic Garden</h4>
                         <div className="flex gap-3 items-center justify-center mx-auto">
                             <img src={coinImage} alt="" className="w-5 h-5" />
