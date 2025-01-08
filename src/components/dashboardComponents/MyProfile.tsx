@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectAvatar, selectBirthday, selectCoins, selectEmail, selectMmeberSince, selectName, selectRank } from "../../redux/slices/userSlice";
 import uploadImage from "/assets/images/camera.svg";
+import { requestApi } from "../../libs/requestApi";
+import { requestMethods } from "../../libs/enum/requestMethods";
+import { toast } from "react-toastify";
 
 const MyProfile : React.FC = () => {
 
@@ -15,6 +18,9 @@ const MyProfile : React.FC = () => {
     const [currentDate, setCurrentDate] = useState<string>("");
     const [age, setAge] = useState<number>();
     const [formattedMemberSince, setFormattedMemberSince] = useState<string>("");
+    const [familyName, setFamilyName] = useState<string>("");
+    const [nbOfMembers, setNumberOfMembers] = useState<number>();
+    const [totalStars, setTotalStars] = useState<number>();
 
     useEffect(() => {
         const today = new Date();
@@ -39,7 +45,9 @@ const MyProfile : React.FC = () => {
                 setAge(age);
             }
         }
+    }, [birthday]);
 
+    useEffect(() => {
         // Format memberSince date correctly
         if (memberSince) {
             console.log(memberSince)
@@ -51,7 +59,25 @@ const MyProfile : React.FC = () => {
                 console.error("Invalid memberSince date:", memberSince);
             }
         }
-    }, [birthday]);
+        const fetchFamilyNameAndNbMembers = async () => {
+            try {
+                const response = await requestApi({
+                    route: "/family/someFamilydetails",
+                    method: requestMethods.GET
+                });
+
+                if (response){
+                    setFamilyName(response.familyName);
+                    setNumberOfMembers(response.numberOfMembers);
+                    setTotalStars(response.stars);
+                }
+            } catch (error) {
+                console.log(error);
+                toast.error("Error getting family name and number of members")
+            }
+        }
+        fetchFamilyNameAndNbMembers();
+    }, [])
 
     return(
         <div className="pt-20 h-screen flex flex-col font-poppins max-w-5xl px-6 flex-grow">
@@ -90,13 +116,13 @@ const MyProfile : React.FC = () => {
                         <p className="font-bold">{name}</p>
                         <p><span className="font-bold pr-3">Age:</span>{age}</p>
                         <p><span className="font-bold pr-3">Member since: </span>{formattedMemberSince}</p>
-                        <p><span className="font-bold pr-1">Family email: </span>{email}</p>
+                        <p className="pb-1"><span className="font-bold pr-1">Family email: </span>{email}</p>
                         <button className="pl-3 pr-3 pt-2 pb-2 bg-white rounded-full text-black border-[1px] border-[#FDE4CF] focus:outline-none">Update Your Personal Details</button>
                     </div>
                 </div>
                 <div className="bg-[#FDE4CF] p-6 w-2/5 rounded-lg text-xs flex flex-col justify-between">
-                    <p><span className="font-bold">Your Family:</span></p>
-                    <p><span className="font-bold">Total Family Stars:</span></p>
+                    <p><span className="font-bold p-3">Your Family:</span>{familyName} {' ( '} {nbOfMembers} {' members)'}</p>
+                    <p><span className="font-bold pr-3">Total Family Stars:</span>{totalStars}</p>
                     <p><span className="font-bold pr-3">Your Total Coins: </span>{coins}</p>
                     <p><span className="font-bold pr-3">Your Rank:</span>{rank}</p>
                 </div>
