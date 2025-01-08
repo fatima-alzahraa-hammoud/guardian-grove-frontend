@@ -62,6 +62,9 @@ const MyProfile : React.FC = () => {
                         <button className="pl-3 pr-3 pt-2 pb-2 bg-white rounded-full text-black border-[1px] border-[#FDE4CF] focus:outline-none">Update Your Personal Details</button>
                     </div>
                 </div>
+                <div className="bg-[#FDE4CF] p-6 w-2/5 rounded-lg">
+                    <div></div>
+                </div>
             </div>
             {/* Daily message */}
 
