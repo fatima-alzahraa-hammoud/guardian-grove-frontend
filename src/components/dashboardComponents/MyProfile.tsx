@@ -27,8 +27,10 @@ const MyProfile : React.FC = () => {
     const [totalStars, setTotalStars] = useState<number>();
     const [dailyMessage, setDailyMessage] = useState<string> ('You are shining!');
     const [lastUnlocked, setLastUnlocked] = useState<{title: string, photo: string, description: string, unlockedAt: Date}> ();
-    const goals = { completed: 20, total: 100 };
-    const tasks = { completed: 60, total: 100 };
+    const [goals, setGoals] = useState<{completedGoals: number, totalGoals: number}>();
+    const [tasks, setTasks] = useState<{completedTasks: number, totalTasks: number}>();
+    //const goals = { completed: 20, total: 100 };
+    //const tasks = { completed: 60, total: 100 };
   
     useEffect(() => {
         const today = new Date();
@@ -106,6 +108,27 @@ const MyProfile : React.FC = () => {
             }
         }
         fetchLastUnlockedAchievement();
+    }, []);
+
+    useEffect(() => {
+        const fetchMonthlyStats = async() => {
+            try {
+                const response = await requestApi({
+                    route: "/userGoals/monthlyStats",
+                    method: requestMethods.GET
+                });
+
+                if(response){
+                    const { completedGoals, totalGoals, completedTasks, totalTasks } = response;
+                    setGoals({ completedGoals, totalGoals }); 
+                    setTasks({ completedTasks, totalTasks }); 
+                }
+            } catch (error) {
+                console.log(error);
+                toast.error("Error fetching monthly stats")
+            }
+        }
+        fetchMonthlyStats();
     }, [])
 
     return(
@@ -145,11 +168,8 @@ const MyProfile : React.FC = () => {
                                 alt="User Avatar"
                             />       
                         </div>
-                        <p className="pt-3 text-sm text-white">Child</p>
+                        <p className="pt-3 text-sm text-white">{role}</p>
                     </div>
-
-                    
-
                     
                     {/* Details */}
                     <div className="text-white text-xs space-y-3 pl-3 pt-1">
@@ -171,6 +191,7 @@ const MyProfile : React.FC = () => {
                     <p><span className="font-bold pr-3">Your Rank in Family:</span><span className="text-sm">{rank}</span></p>
                 </div>
             </div>
+
             {/* Daily message */}
 
             <div className="mt-10">
@@ -196,8 +217,8 @@ const MyProfile : React.FC = () => {
                             <h4 className="font-comic text-[16px] font-extrabold text-center">Tasks & Goals</h4>
                             <p className="text-xs text-left pt-10 font-bold">This month</p>
                             <div>
-                                <ProgressBar completed={tasks.completed} total={tasks.total} label="Tasks" />
-                                <ProgressBar completed={goals.completed} total={goals.total} label="Goals" />
+                                <ProgressBar completed={tasks?.completedTasks || 0} total={tasks?.totalTasks || 0} label="Tasks" />
+                                <ProgressBar completed={goals?.completedGoals || 0} total={goals?.totalGoals || 0} label="Goals" />
                             </div>
                             <p className="text-center text-sm font-comic mt-7 mb-3 font-extrabold">
                                 "Keep up the great work!"
@@ -205,9 +226,8 @@ const MyProfile : React.FC = () => {
                         </div>
                     </div>
 
-                    
-
                     {/* Achievements */}
+
                     <div className="group flex flex-col bg-[#E3F2FD] w-56 h-72 rounded-md p-5 items-center justify-between relative overflow-hidden">
                         {/* Moving Border */}
                         <div className="absolute inset-0 m-[8px] border-[1.5px] border-dashed border-[#2196F3] rounded-md pointer-events-none opacity-0 group-hover:opacity-100 animate-borderMovement"></div>

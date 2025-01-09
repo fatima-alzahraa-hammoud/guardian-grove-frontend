@@ -21,7 +21,11 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ completed, total, label }) =>
         <div className="pt-5">
             <div className="flex justify-between">
                 {label && <p className="text-xs">{label}</p>}
-                <p className="text-xs">{`${completed}/${total}`}</p>
+                {total === 0 ? (
+                    <p className="text-xs">0/0</p>
+                ) :
+                    <p className="text-xs">{`${completed}/${total}`}</p>
+                }
             </div>
             <div className="w-full bg-white rounded-full h-2 mt-3">
                 <div
