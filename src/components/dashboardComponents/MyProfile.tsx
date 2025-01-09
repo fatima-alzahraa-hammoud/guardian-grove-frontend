@@ -24,7 +24,6 @@ const MyProfile : React.FC = () => {
     const coins = useSelector(selectCoins);
     const rank = useSelector(selectRank);
     const role = useSelector(selectRole);
-    const gender = useSelector(selectGender);
     const [currentDate, setCurrentDate] = useState<string>("");
     const [age, setAge] = useState<number>();
     const [formattedMemberSince, setFormattedMemberSince] = useState<string>("");
