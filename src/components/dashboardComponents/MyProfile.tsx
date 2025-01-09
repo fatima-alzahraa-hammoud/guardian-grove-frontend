@@ -134,13 +134,13 @@ const MyProfile : React.FC = () => {
     }, [])
 
     return(
-        <div className="container mx-auto px-4 max-w-5xl pt-20 h-screen flex flex-col font-poppins flex-grow">
+        <div className="mx-auto px-4 max-w-5xl pt-20 h-screen flex flex-col font-poppins flex-grow">
             
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h1 className="font-comic font-extrabold text-lg">Hi, {name}</h1>
-                    <p className="text-sm">{currentDate}</p>
+                    <p className="text-sm mt-3">{currentDate}</p>
                 </div>
                 {role === 'parent' && (
                     <button 
@@ -182,11 +182,11 @@ const MyProfile : React.FC = () => {
                     </div>
                     
                     {/* Details */}
-                    <div className="text-white text-xs space-y-3 pl-3 pt-1">
+                    <div className="text-white text-xs space-y-3 pl-12 pt-1">
                         <p className="font-bold">{name}</p>
                         <p><span className="font-bold pr-3">Age:</span>{age}</p>
                         <p><span className="font-bold pr-3">Member since: </span>{formattedMemberSince}</p>
-                        <p className="pb-1"><span className="font-bold pr-1">Family email: </span>{email}</p>
+                        <p className="pb-1 pr-3"><span className="font-bold pr-1">Family email: </span>{email}</p>
                         <button className="pl-3 pr-3 pt-2 pb-2 bg-white rounded-full text-black border-[1px] border-[#FDE4CF] focus:outline-none">Update Your Personal Details</button>
                     </div>
                 </div>
