@@ -60,5 +60,6 @@ export const selectCoins = (state: { user: UserState }) => state.user.coins;
 export const selectRank = (state: { user: UserState }) => state.user.rankInFamily;
 export const selectPurchasedItems = (state: { user: UserState }) => state.user.purchasedItems;
 export const selectRole = (state: { user: UserState }) => state.user.role;
+export const selectGender = (state: { user: UserState }) => state.user.gender;
 
 export default userSlice.reducer;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectAvatar, selectBirthday, selectCoins, selectEmail, selectMmeberSince, selectName, selectRank, selectRole } from "../../redux/slices/userSlice";
+import { selectAvatar, selectBirthday, selectCoins, selectEmail, selectGender, selectMmeberSince, selectName, selectRank, selectRole } from "../../redux/slices/userSlice";
 import coinImage from "/assets/images/coins.png";
 import starsImage from "/assets/images/stars.png";
 import rankImage from "/assets/images/rank.png";
@@ -22,6 +22,7 @@ const MyProfile : React.FC = () => {
     const coins = useSelector(selectCoins);
     const rank = useSelector(selectRank);
     const role = useSelector(selectRole);
+    const gender = useSelector(selectGender);
     const [currentDate, setCurrentDate] = useState<string>("");
     const [age, setAge] = useState<number>();
     const [formattedMemberSince, setFormattedMemberSince] = useState<string>("");
@@ -205,10 +206,14 @@ const MyProfile : React.FC = () => {
                             isOpen={isDialogOpen}
                             onClose={handleDialogClose}
                             onConfirm={handleDialogConfirm}
-                            title="Confirmation"
+                            title="Update Personal Details"
                             confirmText="Save"
                             cancelText="Cancel"
-                            role = {role || 'parent'}
+                            role = {role || ''}
+                            name = {name || ''}
+                            gender = {gender || ''}
+                            birthday = {birthday}
+                            email= {email || ''}
                         />
                     </div>
                 </div>

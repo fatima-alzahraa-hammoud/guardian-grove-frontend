@@ -65,10 +65,10 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({ selectedAvatar, onAvata
               <img
                 src={uploadedAvatar}
                 alt="Uploaded avatar"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover border-[3px] border-[#1976d2] rounded-full"
               />
             ) : (
-              <span className="text-gray-500 text-xl text-center pb-0.5">
+              <span className="text-gray-500 text-xl text-center">
                 +
               </span>
             )}
