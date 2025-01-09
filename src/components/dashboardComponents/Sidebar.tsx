@@ -24,7 +24,7 @@ import logoutImage from '/assets/images/dashboard/logout.svg';
 import infoImage from '/assets/images/dashboard/badge-info.svg';
 import "../../styles/sidebar.css";
 import { useSelector } from 'react-redux';
-import { selectAvatar, selectName } from '../../redux/slices/userSlice';
+import { selectAvatar, selectGender, selectName } from '../../redux/slices/userSlice';
 
 interface SidebarProps {
   activeSection: string;
@@ -33,8 +33,13 @@ interface SidebarProps {
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+function classNames(...classes: string[]) {
+    return classes.filter(Boolean).join(" ");
+}
+
 const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, collapsed, setCollapsed }) => {
   const [isFamilyOpen, setIsFamilyOpen] = useState(false);
+  const gender = useSelector(selectGender);
 
   const avatar = useSelector(selectAvatar);
   const name = useSelector(selectName);
@@ -46,10 +51,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, coll
   return (
     <div className="flex">
       <div
-        className={`h-[calc(100vh-4rem)] bg-purple-100 ${
-          collapsed ? 'w-20' : 'w-64'
-        } transition-all duration-300 flex flex-col justify-between fixed top-16 left-0`}
-      >
+        className={classNames(
+            "h-[calc(100vh-4rem)] transition-all duration-300 flex flex-col justify-between fixed top-16 left-0",
+            collapsed ? "w-20" : "w-64",
+            gender === "female" ? "bg-purple-100" : "bg-[#E3F2FD]"
+          )}        
+        >
         <div>
           <div className="pt-4 flex justify-end pr-2">
             <Button

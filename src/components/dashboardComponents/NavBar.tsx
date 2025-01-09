@@ -13,7 +13,7 @@ import { Search, ShoppingCart, Star } from "lucide-react";
 import "../../styles/global.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectStars } from "../../redux/slices/userSlice";
+import { selectGender, selectStars } from "../../redux/slices/userSlice";
 import logo from "/assets/logo/GuardianGrove_logo_NoText.png";
 
 // Classnames utility function
@@ -23,10 +23,11 @@ function classNames(...classes: string[]) {
   
 const Navbar: React.FC= () => {
 
+    const location = useLocation();
+
+    const gender = useSelector(selectGender);
     const [isStoreActive, setIsStoreActive] = useState(false);
     const stars = useSelector(selectStars);
-
-    const location = useLocation();
 
     const navigate = useNavigate();
 
@@ -72,7 +73,15 @@ const Navbar: React.FC= () => {
     }, [location]);
 
     return (
-        <Disclosure as="nav" className='bg-purple-100 fixed top-0 left-0 w-full z-50'>
+        <Disclosure as="nav" className={classNames(
+            "fixed top-0 left-0 w-full z-50",
+            location.pathname === "/dashboard/AIFriend"
+              ? "bg-[#B2D1F1]"
+              : gender === "female"
+              ? "bg-purple-100"
+              : "bg-[#E3F2FD]"
+          )}
+        >
             <div className="mx-auto max-w-7xl lg:px-2">
                 <div className="relative flex items-center justify-between h-16">
                     <div className="absolute inset-y-0 left-0 flex items-center sm:hidden justify-center">

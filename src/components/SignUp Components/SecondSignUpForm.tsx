@@ -212,7 +212,6 @@ const SecondSignUpForm: React.FC<SecondSignUpFormProps> = ({onSubmit}) => {
                                         <SelectContent>
                                             <SelectItem value="child" className="text-xs">Child</SelectItem>
                                             <SelectItem value="parent" className="text-xs">Parent</SelectItem>
-                                            <SelectItem value="grandParent" className="text-xs">GrandParent</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </FormControl>
