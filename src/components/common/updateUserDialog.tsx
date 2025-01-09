@@ -12,6 +12,7 @@ import { cn } from '../../lib/utils';
 import { Calendar } from '../ui/calendar';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '../ui/select';
 
 interface DialogProps {
     isOpen: boolean;
@@ -73,6 +74,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                     </div>
                 </div>
 
+                {/* Name */}
                 <form  className="space-y-3 w-full">
                     <div className="mx-3 relative">
                         <Label htmlFor="name" className="block text-xs font-medium text-gray-700 text-left mb-1">
@@ -96,7 +98,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                     </div>    
 
                     {/* Birthday Picker */}
-                    <div className="mx-11 relative">
+                    <div className="mx-3 relative">
                         <div className="block text-xs font-medium text-gray-700 text-left mb-1">
                             Date of Birth
                         </div>
@@ -125,6 +127,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0 justify-center">
                                 <Calendar
+                                    {...register("birthday")}
                                     mode="single"
                                     selected={selectedDate}
                                     onSelect={onDateSelect}
@@ -138,6 +141,40 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                         </Popover>
                     </div>
 
+                    {/* Gender */}
+
+                    <div className="mx-3 relative">
+                        <label className="block text-xs font-medium text-gray-700 text-left mb-1">
+                            Select Gender
+                        </label>
+                        <Select
+                            value={watch("gender")}
+                            onValueChange={(value) => setValue("gender", value)}
+                            aria-label="Gender Selection"
+                        >
+                            <SelectTrigger className="w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] text-xs">
+                                <span className={!watch("gender") ? "text-gray-500 text-[10px]" : ""}>
+                                    {watch("gender") || "Select gender"}
+                                </span>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="male" className="text-xs">
+                                    Male
+                                </SelectItem>
+                                <SelectItem value="female" className="text-xs">
+                                    Female
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {/* email */}
+
+                    {/* Family name */ }
+
+                    {/* Family avatar */}
+
+                    {/* submit */}
                 </form>
 
             </DialogContent>
