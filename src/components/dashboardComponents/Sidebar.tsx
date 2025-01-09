@@ -77,8 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({activeSection, setActiveSection, colla
                     </div>
 
                     {/* Sidebar Items */}
-                    <nav className="flex flex-col space-y-2 mt-6 overflow-y-auto custom-scrollbar"
-                        style={{ maxHeight: '50vh' }}>
+                    <nav className="flex flex-col space-y-2 mt-6 overflow-y-auto md:custom-scrollbar md:max-h-[50vh] lg:max-h-screen" >
                         <SidebarItem  icon={profileImage} label="My Profile" collapsed={collapsed} onClick={() => setActiveSection('profile')} isActive={activeSection === 'profile'} />
                         <SidebarItem icon={notesImage} label="My Notes" collapsed={collapsed} onClick={() => setActiveSection('notes')} isActive={activeSection === 'notes'} />
 
