@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import ProgressBar from "../common/ProgressBar";
 import "../../styles/card.css";
 import "../../styles/global.css";
-import DialogComponent from "../common/updateDetailsDialog";
+import DialogComponent from "../common/updateUserDialog";
 
 const MyProfile : React.FC = () => {
 
@@ -32,6 +32,20 @@ const MyProfile : React.FC = () => {
     const [lastUnlocked, setLastUnlocked] = useState<{title: string, photo: string, description: string, unlockedAt: Date}> ();
     const [goals, setGoals] = useState<{completedGoals: number, totalGoals: number}>();
     const [tasks, setTasks] = useState<{completedTasks: number, totalTasks: number}>();
+    const [isDialogOpen, setDialogOpen] = useState(false);
+
+    const handleDialogOpen = () => {
+        setDialogOpen(true);
+      };
+    
+      const handleDialogClose = () => {
+        setDialogOpen(false);
+      };
+    
+      const handleDialogConfirm = () => {
+        setDialogOpen(false);
+        console.log("Confirmed!");
+      };
   
     useEffect(() => {
         const today = new Date();
@@ -186,8 +200,16 @@ const MyProfile : React.FC = () => {
                         <p><span className="font-bold pr-3">Age:</span>{age}</p>
                         <p><span className="font-bold pr-3">Member since: </span>{formattedMemberSince}</p>
                         <p className="pb-1 pr-3"><span className="font-bold pr-1">Family email: </span>{email}</p>
-                        <button className="pl-3 pr-3 pt-2 pb-2 bg-white rounded-full text-black border-[1px] border-[#FDE4CF] focus:outline-none">Update Your Personal Details</button>
-
+                        <button onClick={handleDialogOpen} className="pl-3 pr-3 pt-2 pb-2 bg-white rounded-full text-black border-[1px] border-[#FDE4CF] focus:outline-none">Update Your Personal Details</button>
+                        <DialogComponent
+                            isOpen={isDialogOpen}
+                            onClose={handleDialogClose}
+                            onConfirm={handleDialogConfirm}
+                            title="Confirmation"
+                            confirmText="Save"
+                            cancelText="Cancel"
+                            role = {role || 'parent'}
+                        />
                     </div>
                 </div>
                 <div className="bg-[#FDE4CF] p-6 w-2/5 rounded-lg text-xs flex flex-col justify-between">
