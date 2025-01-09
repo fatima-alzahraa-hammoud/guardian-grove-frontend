@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectAvatar, selectBirthday, selectCoins, selectEmail, selectMmeberSince, selectName, selectRank, selectRole } from "../../redux/slices/userSlice";
 import coinImage from "/assets/images/coins.png";
+import starsImage from "/assets/images/stars.png";
+import rankImage from "/assets/images/rank.png";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { toast } from "react-toastify";
@@ -181,14 +183,22 @@ const MyProfile : React.FC = () => {
                     </div>
                 </div>
                 <div className="bg-[#FDE4CF] p-6 w-2/5 rounded-lg text-xs flex flex-col justify-between">
-                    <p><span className="font-bold p-3 text-left">Your Family:</span>{familyName} {' ( '} <span className="text-sm">{nbOfMembers}</span> {' members)'}</p>
-                    <p><span className="font-bold pr-3">Total Family Stars:</span><span className="text-sm">{totalStars}</span></p>
+                    <p><span className="font-bold pr-3 text-left">Your Family:</span>{familyName} {' ( '} <span className="text-sm">{nbOfMembers}</span> {' members)'}</p>
                     <p className="flex items-center">
-                        <span className="font-bold pr-4">Your Total Coins: </span>
+                        <span className="font-bold pr-5">Total Family Stars:</span>
+                        <img src={starsImage} alt="Stars" className="w-5 h-5 mr-3"/>
+                        <span className="text-sm">{totalStars}</span>
+                    </p>
+                    <p className="flex items-center">
+                        <span className="font-bold pr-8">Your Total Coins: </span>
                         <img src={coinImage} alt="Coin" className="w-5 h-5 mr-3"/>
                         <span className="text-sm">{coins}</span>
                     </p>
-                    <p><span className="font-bold pr-3">Your Rank in Family:</span><span className="text-sm">{rank}</span></p>
+                    <p className="flex items-center">
+                        <span className="font-bold pr-3">Your Rank in Family:</span>
+                        <img src={rankImage} alt="ranks" className="w-5 h-5 mr-3"/>
+                        <span className="text-sm">{rank}</span>
+                    </p>
                 </div>
             </div>
 
