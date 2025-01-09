@@ -26,6 +26,7 @@ const MyProfile : React.FC = () => {
     const [nbOfMembers, setNumberOfMembers] = useState<number>();
     const [totalStars, setTotalStars] = useState<number>();
     const [dailyMessage, setDailyMessage] = useState<string> ('You are shining!');
+    const [lastUnlocked, setLastUnlocked] = useState<{title: string, photo: string, description: string, unlockedAt: Date}> ();
     const goals = { completed: 20, total: 100 };
     const tasks = { completed: 60, total: 100 };
   
@@ -82,10 +83,29 @@ const MyProfile : React.FC = () => {
                 }
             } catch (error) {
                 console.log(error);
-                toast.error("Error getting family name and number of members")
+                toast.error("Error getting family name and number of members and stars")
             }
         }
         fetchFamilyNameAndNbMembers();
+    }, []);
+
+    useEffect(() => {
+        const fetchLastUnlockedAchievement = async () => {
+            try {
+                const response = await requestApi({
+                    route: "/achievements/lastUnlocked",
+                    method: requestMethods.GET
+                });
+
+                if (response){
+                    setLastUnlocked(response.lastUnlockedAchievement);
+                }
+            } catch (error) {
+                console.log(error);
+                toast.error("Error getting last unlocked achievemnt")
+            }
+        }
+        fetchLastUnlockedAchievement();
     }, [])
 
     return(
@@ -193,12 +213,21 @@ const MyProfile : React.FC = () => {
                         <div className="absolute inset-0 m-[8px] border-[1.5px] border-dashed border-[#2196F3] rounded-md pointer-events-none opacity-0 group-hover:opacity-100 animate-borderMovement"></div>
 
                         <h4 className="font-comic text-[16px] font-extrabold text-center">Achievements</h4>
-                        <img src={coinImage} alt="" className="w-12 center" />
+                        <img src={lastUnlocked?.photo || "https://via.placeholder.com/150"} alt="" className="w-12 center" />
                         <p className="text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            Achievement title
+                            {lastUnlocked?.title}
                         </p>
-                        <p className="text-xs text-center">Unlocked on: Dec, 19, 2024</p>
-                        <p className="text-xs text-center">You helped your family complete 20 collaborative tasks this month.</p>
+                        <p className="text-xs text-center">Unlocked on: {' '}
+                            {lastUnlocked?.unlockedAt 
+                                ? new Date(lastUnlocked.unlockedAt).toLocaleDateString(undefined, {
+                                    month: "short",
+                                    day: "numeric",
+                                    year: "numeric",
+                                }) 
+                                : "N/A"
+                            }
+                        </p>
+                        <p className="text-xs text-center">{lastUnlocked?.description}</p>
                         <p className="text-center text-sm font-comic mb-3 font-extrabold">
                             "Keep up the great work!"
                         </p>
