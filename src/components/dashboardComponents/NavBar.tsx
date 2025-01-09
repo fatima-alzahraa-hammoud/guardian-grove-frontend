@@ -73,7 +73,7 @@ const Navbar: React.FC= () => {
 
     return (
         <Disclosure as="nav" className='bg-purple-100 fixed top-0 left-0 w-full z-50'>
-            <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-12">
+            <div className="mx-auto max-w-7xl lg:px-2">
                 <div className="relative flex items-center justify-between h-16">
                     <div className="absolute inset-y-0 left-0 flex items-center sm:hidden justify-center">
                         {/* Mobile menu button */}
@@ -91,7 +91,7 @@ const Navbar: React.FC= () => {
                                 alt="Your Company"
                             />
                         </div>
-                        <div className="hidden sm:flex justify-center items-center sm:ml-10"> 
+                        <div className="hidden sm:flex justify-center items-center sm:ml-28"> 
                             <div className="flex space-x-4">
                                 {navigation.map((item) => (
                                     <button
@@ -111,11 +111,11 @@ const Navbar: React.FC= () => {
                             </div>
                         </div>
                     </div>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                        <div className="ml-auto flex items-center space-x-4">
+                    <div className="absolute inset-y-0 right-0 flex items-center sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                        <div className="ml-16 flex items-center space-x-4">
 
                             <div className="relative p-[2px] rounded-full border-rotate-wrapper">
-                                <div className="border-[1.5px] border-dashed border-[#FA9DB7] rounded-full border-rotate h-10 w-10"></div>
+                                <div className="border-[1.8px] border-dashed border-[#FA9DB7] rounded-full border-rotate h-10 w-10"></div>
                                 <Button
                                     variant="ghost"
                                     size="icon"
@@ -126,7 +126,7 @@ const Navbar: React.FC= () => {
                             </div>
 
                             <div className="relative p-[2px] rounded-full border-rotate-wrapper">
-                                <div className="border-[1.5px] border-dashed border-[#FFC85B] rounded-full border-rotate h-10 w-10"></div>
+                                <div className="border-[1.8px] border-dashed border-[#FFC85B] rounded-full border-rotate h-10 w-10"></div>
                                 <Button
                                     onClick={handleStoreClick}
                                     variant="ghost"

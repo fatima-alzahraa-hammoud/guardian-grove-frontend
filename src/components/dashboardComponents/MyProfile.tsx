@@ -134,7 +134,7 @@ const MyProfile : React.FC = () => {
     }, [])
 
     return(
-        <div className="pt-20 h-screen flex flex-col font-poppins max-w-5xl px-6 flex-grow">
+        <div className="container mx-auto px-4 max-w-5xl pt-20 h-screen flex flex-col font-poppins flex-grow">
             
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
@@ -215,9 +215,9 @@ const MyProfile : React.FC = () => {
             <div className="mt-10">
                 <h3 className="font-comic font-extrabold mb-2 text-base">Personal Progress</h3>
                 
-                <div className="flex justify-between">
+                <div className="flex gap-10 mt-5">
                     {/* Tasks & Goals */}
-                    <div className="group relative bg-[#FDEBE3] w-56 h-72 rounded-md p-3 overflow-hidden">
+                    <div className="group relative bg-[#FDEBE3] w-1/3 h-80 rounded-md p-3 overflow-hidden">
                         {/* Dashed Border */}
                         <div className="absolute inset-0 m-[8px] border-[1.5px] border-dashed border-[#FF9800] rounded-md pointer-events-none opacity-0 group-hover:opacity-100 border-rotate"></div>
 
@@ -237,7 +237,7 @@ const MyProfile : React.FC = () => {
 
                     {/* Achievements */}
 
-                    <div className="group flex flex-col bg-[#E3F2FD] w-56 h-72 rounded-md p-5 items-center justify-between relative overflow-hidden">
+                    <div className="group flex flex-col bg-[#E3F2FD] w-1/3 h-80 rounded-md p-5 items-center justify-between relative overflow-hidden">
                         {/* Moving Border */}
                         <div className="absolute inset-0 m-[8px] border-[1.5px] border-dashed border-[#2196F3] rounded-md pointer-events-none opacity-0 group-hover:opacity-100 animate-borderMovement"></div>
 
@@ -263,7 +263,7 @@ const MyProfile : React.FC = () => {
                     </div>
 
                     {/* Magic Garden */}
-                    <div className="group flex flex-col bg-[#FDE3EC] w-56 h-72 rounded-md p-5 items-center justify-between relative overflow-hidden">
+                    <div className="group flex flex-col bg-[#FDE3EC] w-1/3 h-80 rounded-md p-5 items-center justify-between relative overflow-hidden">
                         {/* Moving Border */}
                         <div className="absolute inset-0 m-[8px] border-[1.5px] border-dashed border-[#FF4081] rounded-md pointer-events-none opacity-0 group-hover:opacity-100 animate-borderMovement"></div>
 
