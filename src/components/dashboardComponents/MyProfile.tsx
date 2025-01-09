@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { selectAvatar, selectBirthday, selectCoins, selectEmail, selectGender, selectMmeberSince, selectName, selectRank, selectRole } from "../../redux/slices/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectAvatar, selectBirthday, selectCoins, selectEmail, selectGender, selectMmeberSince, selectName, selectRank, selectRole, setEmail, setUser } from "../../redux/slices/userSlice";
 import coinImage from "/assets/images/coins.png";
 import starsImage from "/assets/images/stars.png";
 import rankImage from "/assets/images/rank.png";
@@ -11,9 +11,11 @@ import ProgressBar from "../common/ProgressBar";
 import "../../styles/card.css";
 import "../../styles/global.css";
 import DialogComponent from "../common/updateUserDialog";
+import { TUpdate } from "../../libs/types/updateTypes";
 
 const MyProfile : React.FC = () => {
 
+    const dispatch = useDispatch();
     const name = useSelector(selectName);
     const avatar = useSelector(selectAvatar);
     const email = useSelector(selectEmail);
@@ -37,16 +39,30 @@ const MyProfile : React.FC = () => {
 
     const handleDialogOpen = () => {
         setDialogOpen(true);
-      };
-    
-      const handleDialogClose = () => {
+    };
+
+    const handleDialogClose = () => {
         setDialogOpen(false);
-      };
-    
-      const handleDialogConfirm = () => {
+    };
+
+    const handleDialogConfirm = async(data: TUpdate) => {
         setDialogOpen(false);
         console.log("Confirmed!");
-      };
+        
+        try {
+            const response = await requestApi({
+                route: "/users/",
+                method: requestMethods.PUT,
+                body: data
+            });
+
+            if (response){
+                dispatch(setUser(response.user));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
   
     useEffect(() => {
         const today = new Date();

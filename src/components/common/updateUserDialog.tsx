@@ -35,6 +35,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
     const birthday = useSelector(selectBirthday);
     const avatar = useSelector(selectAvatar);
     const role = useSelector(selectRole);
+    const familyAvatar = "/assets/images/stars.png";
 
     const {
         register,
@@ -85,17 +86,16 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
     };
 
     const handleConfirm = handleSubmit((data) => {
-        // Only proceed if there are no validation errors
-        const formData: TUpdate = {
-            name: data.name,
-            email: data.email,
-            avatar: data.avatar,
-            birthday: data.birthday,
-            gender: data.gender,
-            familyName: data.familyName,
-            familyAvatar: data.familyAvatar,
-        };
-    
+        const formData = {} as TUpdate;
+
+        if (data.name !== name) formData.name = data.name;
+        if (data.email !== email && role === "parent") formData.email = data.email;
+        if (data.avatar !== avatar) formData.avatar = data.avatar;
+        if (data.birthday !== birthday) formData.birthday = data.birthday;
+        if (data.gender !== gender) formData.gender = data.gender;
+        if (data.familyName !== familyName  && role === "parent") formData.familyName = data.familyName;
+        if (data.familyAvatar !== familyAvatar  && role === "parent") formData.familyAvatar = data.familyAvatar;
+        
         // Call onConfirm with valid data
         onConfirm(formData);
         onClose();
@@ -236,6 +236,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                         id="email"   
                                         type="text" 
                                         {...register("email")}
+                                        disabled={role !== 'parent'} 
                                         placeholder={email || ''} 
                                         className="flex-1 h-9 bg-transparent px-3 py-1 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-xs file:font-medium file:text-foreground disabled:cursor-not-allowed disabled:opacity-50 pl-8 mt-1 placeholder:text-xs placeholder:text-black rounded-md border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] sm:text-xs md:text-xs lg:text-xs" 
                                     />
@@ -257,6 +258,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                         id="familyName"   
                                         type="text" 
                                         {...register("familyName")}
+                                        disabled={role !== 'parent'} 
                                         placeholder={familyName} 
                                         className="flex-1 h-9 bg-transparent px-3 py-1 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-xs file:font-medium file:text-foreground disabled:cursor-not-allowed disabled:opacity-50 pl-8 mt-1 placeholder:text-xs placeholder:text-black rounded-md border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] sm:text-xs md:text-xs lg:text-xs" 
                                     />
