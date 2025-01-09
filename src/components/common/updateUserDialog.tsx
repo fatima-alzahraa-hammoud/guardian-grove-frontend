@@ -148,6 +148,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                             Select Gender
                         </label>
                         <Select
+                            {...register("gender")}
                             value={watch("gender")}
                             onValueChange={(value) => setValue("gender", value)}
                             aria-label="Gender Selection"
@@ -169,6 +170,31 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                     </div>
 
                     {/* email */}
+                    {role === 'parent' ? (
+                            <div className="mx-3 relative">
+                                <Label htmlFor="email" className="block text-xs font-medium text-gray-700 text-left mb-1">
+                                    Email
+                                </Label>
+                                <div className="relative">
+                                    <Input
+                                        {...register("email")}
+                                        id="email"   
+                                        type="text" 
+                                        placeholder={email} 
+                                        className="flex-1 h-9 bg-transparent px-3 py-1 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-xs file:font-medium file:text-foreground disabled:cursor-not-allowed disabled:opacity-50 pl-8 mt-1 placeholder:text-[10px] placeholder:text-black rounded-md border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] sm:text-xs md:text-xs lg:text-xs" 
+                                    />
+                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail text-gray-500">
+                                            <rect width="20" height="16" x="2" y="4" rx="2"/>
+                                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <></>
+                        )
+                    }
 
                     {/* Family name */ }
 
