@@ -13,6 +13,8 @@ import { Calendar } from '../ui/calendar';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '../ui/select';
+import { useSelector } from 'react-redux';
+import { selectAvatar, selectBirthday, selectEmail, selectGender, selectName, selectRole } from '../../redux/slices/userSlice';
 
 interface DialogProps {
     isOpen: boolean;
@@ -21,16 +23,17 @@ interface DialogProps {
     title: string;
     confirmText?: string;
     cancelText?: string;
-    role: string;
-    name: string;
     familyName: string;
-    avatar: string;
-    gender: string;
-    birthday: Date;
-    email: string;
 }
 
-const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, title, confirmText = "Confirm", cancelText = "Cancel", role, name, gender, birthday, email, avatar, familyName }) => {
+const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, title, confirmText = "Confirm", cancelText = "Cancel", familyName }) => {
+
+    const name = useSelector(selectName);
+    const email = useSelector(selectEmail);
+    const gender = useSelector(selectGender);
+    const birthday = useSelector(selectBirthday);
+    const avatar = useSelector(selectAvatar);
+    const role = useSelector(selectRole);
 
     const {
         register,
@@ -41,12 +44,13 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
     } = useForm<TUpdate>({
         resolver: zodResolver(updateSchema),
         defaultValues: {
-            name: name,
-            email: email,
-            gender: gender,
-            avatar: avatar,
+            name: name || "",
+            email: email || "",
+            gender: gender || "",
+            avatar: avatar || "",
             birthday: birthday || null,
             familyName: familyName,
+            familyAvatar: "/assets/images/stars.png" // fex later the family avatar from the family
         },
     });
 
@@ -71,7 +75,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                             {...register("avatar")}
                             selectedAvatar={watch("avatar")}
                             onAvatarClick={(src) => setValue("avatar", src, { shouldValidate: true })}
-                            role={role}
+                            role={role || ''}
                         />
                     </div>
                 </div>
@@ -87,7 +91,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                 {...register("name")}
                                 id="name"   
                                 type="text" 
-                                placeholder={name} 
+                                placeholder={name || ''} 
                                 className="flex-1 h-9 bg-transparent px-3 py-1 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-xs file:font-medium file:text-foreground disabled:cursor-not-allowed disabled:opacity-50 pl-8 mt-1 placeholder:text-xs placeholder:text-black rounded-md border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] sm:text-xs md:text-xs lg:text-xs" 
                             />
                             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -186,7 +190,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                         {...register("email")}
                                         id="email"   
                                         type="text" 
-                                        placeholder={email} 
+                                        placeholder={email || ''} 
                                         className="flex-1 h-9 bg-transparent px-3 py-1 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-xs file:font-medium file:text-foreground disabled:cursor-not-allowed disabled:opacity-50 pl-8 mt-1 placeholder:text-xs placeholder:text-black rounded-md border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] sm:text-xs md:text-xs lg:text-xs" 
                                     />
                                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -239,9 +243,6 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                             <></>
                         )
                     }
-
-
-                    {/* Family avatar */}
 
                     {/* submit */}
                 </form>
