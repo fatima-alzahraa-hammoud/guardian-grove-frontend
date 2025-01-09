@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
 import AvatarSelector from '../AvatarSelector';
 import { Label } from '../ui/label';
@@ -19,7 +19,7 @@ import { selectAvatar, selectBirthday, selectEmail, selectGender, selectName, se
 interface DialogProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: () => void;
+    onConfirm: (data: TUpdate) => void; 
     title: string;
     confirmText?: string;
     cancelText?: string;
@@ -41,24 +41,66 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
         setValue,
         watch,
         formState: { errors },
+        reset
     } = useForm<TUpdate>({
         resolver: zodResolver(updateSchema),
-        defaultValues: {
+    });
+
+    const selectedDate = watch("birthday");
+
+    // Set initial values when the dialog opens
+    useEffect(() => {
+        if (isOpen) {
+            const initialValues = {
+                name: name || "",
+                email: email || "",
+                gender: gender || "",
+                avatar: avatar || "",
+                birthday: birthday || null,
+                familyName: familyName,
+                familyAvatar: "/assets/images/stars.png",
+            };
+            reset(initialValues);
+        }
+    }, [isOpen, name, email, gender, birthday, avatar, familyName, reset]);
+
+
+    const onDateSelect = (date: Date | undefined) => {
+        setValue("birthday", date || new Date("1900-01-01"), { shouldValidate: true });
+    };
+
+    const handleCancel = () => {
+        reset({
             name: name || "",
             email: email || "",
             gender: gender || "",
             avatar: avatar || "",
             birthday: birthday || null,
             familyName: familyName,
-            familyAvatar: "/assets/images/stars.png" // fex later the family avatar from the family
-        },
-    });
+            familyAvatar: "/assets/images/stars.png"
+        });
 
-    const selectedDate = watch("birthday");
-
-    const onDateSelect = (date: Date | undefined) => {
-        setValue("birthday", date || new Date("1900-01-01"), { shouldValidate: true });
+        onClose();
     };
+
+    const handleConfirm = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // Prevent default form submission behavior, if needed
+    event.preventDefault();
+
+    // Access the form data and pass it to onConfirm
+    const formData: TUpdate = {
+        name: watch("name"),
+        email: watch("email"),
+        avatar: watch("avatar"),
+        birthday: watch("birthday"),
+        gender: watch("gender"),
+        familyName: watch("familyName"),
+        familyAvatar: watch("familyAvatar"),
+    };
+
+    onConfirm(formData); // Pass form data to onConfirm
+    onClose(); // Close the dialog
+};
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -72,7 +114,6 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                     <h4 className="mb-2 text-xs font-medium -mx-[30px]">Change your avatar</h4>
                     <div className="flex">
                         <AvatarSelector
-                            {...register("avatar")}
                             selectedAvatar={watch("avatar")}
                             onAvatarClick={(src) => setValue("avatar", src, { shouldValidate: true })}
                             role={role || ''}
@@ -88,9 +129,9 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                         </Label>
                         <div className="relative">
                             <Input
-                                {...register("name")}
                                 id="name"   
                                 type="text" 
+                                {...register("name")}
                                 placeholder={name || ''} 
                                 className="flex-1 h-9 bg-transparent px-3 py-1 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-xs file:font-medium file:text-foreground disabled:cursor-not-allowed disabled:opacity-50 pl-8 mt-1 placeholder:text-xs placeholder:text-black rounded-md border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] sm:text-xs md:text-xs lg:text-xs" 
                             />
@@ -136,7 +177,6 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                 style={{ pointerEvents: "auto" }} // Ensure it captures interaction
                             >
                                 <Calendar
-                                    {...register("birthday")}
                                     mode="single"
                                     selected={selectedDate}
                                     onSelect={onDateSelect}
@@ -157,7 +197,6 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                             Gender
                         </label>
                         <Select
-                            {...register("gender")}
                             value={watch("gender")}
                             onValueChange={(value) => setValue("gender", value)}
                             aria-label="Gender Selection"
@@ -187,9 +226,9 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                 </Label>
                                 <div className="relative">
                                     <Input
-                                        {...register("email")}
                                         id="email"   
                                         type="text" 
+                                        {...register("email")}
                                         placeholder={email || ''} 
                                         className="flex-1 h-9 bg-transparent px-3 py-1 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-xs file:font-medium file:text-foreground disabled:cursor-not-allowed disabled:opacity-50 pl-8 mt-1 placeholder:text-xs placeholder:text-black rounded-md border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] sm:text-xs md:text-xs lg:text-xs" 
                                     />
@@ -208,9 +247,9 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                 </Label>
                                 <div className="relative">
                                     <Input
-                                        {...register("familyName")}
                                         id="familyName"   
                                         type="text" 
+                                        {...register("familyName")}
                                         placeholder={familyName} 
                                         className="flex-1 h-9 bg-transparent px-3 py-1 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-xs file:font-medium file:text-foreground disabled:cursor-not-allowed disabled:opacity-50 pl-8 mt-1 placeholder:text-xs placeholder:text-black rounded-md border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] sm:text-xs md:text-xs lg:text-xs" 
                                     />
@@ -229,7 +268,6 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                     <h4 className="mb-2 text-xs font-medium -mx-[30px]">Change your family avatar</h4>
                                     <div className="flex justify-center items-center">
                                         <AvatarSelector
-                                            {...register("familyAvatar")}
                                             selectedAvatar={watch("familyAvatar")}
                                             onAvatarClick={(src) => setValue("familyAvatar", src, { shouldValidate: true })}
                                             role='family'
@@ -244,8 +282,16 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                         )
                     }
 
-                    {/* submit */}
                 </form>
+
+                <DialogFooter>
+                    <Button onClick={handleCancel} variant="outline">
+                        {cancelText}
+                    </Button>
+                    <Button onClick={handleConfirm}>
+                        {confirmText}
+                    </Button>
+                </DialogFooter>
 
             </DialogContent>
         </Dialog>
