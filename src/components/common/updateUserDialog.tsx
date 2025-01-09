@@ -23,13 +23,14 @@ interface DialogProps {
     cancelText?: string;
     role: string;
     name: string;
+    familyName: string;
     avatar: string;
     gender: string;
     birthday: Date;
     email: string;
 }
 
-const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, title, confirmText = "Confirm", cancelText = "Cancel", role, name, gender, birthday, email, avatar }) => {
+const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, title, confirmText = "Confirm", cancelText = "Cancel", role, name, gender, birthday, email, avatar, familyName }) => {
 
     const {
         register,
@@ -45,6 +46,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
             gender: gender,
             avatar: avatar,
             birthday: birthday || null,
+            familyName: familyName,
         },
     });
 
@@ -112,7 +114,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                             !selectedDate && "text-gray-500"
                                         )}
                                         style={{ backgroundColor: "transparent" }}
-                                        type="button" // Set type="button" to prevent form submission
+                                        type="button"
                                     >
                                         {selectedDate ? (
                                             format(selectedDate, "PPP")
@@ -125,7 +127,10 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                     </Button>
                                 </div>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 justify-center">
+                            <PopoverContent
+                                className="w-auto p-0 justify-center bg-white z-50 shadow-md rounded-md"
+                                style={{ pointerEvents: "auto" }} // Ensure it captures interaction
+                            >
                                 <Calendar
                                     {...register("birthday")}
                                     mode="single"
@@ -171,6 +176,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
 
                     {/* email */}
                     {role === 'parent' ? (
+                        <div className='space-y-3'>
                             <div className="mx-3 relative">
                                 <Label htmlFor="email" className="block text-xs font-medium text-gray-700 text-left mb-1">
                                     Email
@@ -191,6 +197,29 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                     </div>
                                 </div>
                             </div>
+
+                            <div className="mx-3 relative">
+                                <Label htmlFor="familyName" className="block text-xs font-medium text-gray-700 text-left mb-1">
+                                    Family Name
+                                </Label>
+                                <div className="relative">
+                                    <Input
+                                        {...register("familyName")}
+                                        id="familyName"   
+                                        type="text" 
+                                        placeholder={familyName} 
+                                        className="flex-1 h-9 bg-transparent px-3 py-1 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-xs file:font-medium file:text-foreground disabled:cursor-not-allowed disabled:opacity-50 pl-8 mt-1 placeholder:text-[10px] placeholder:text-black rounded-md border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] sm:text-xs md:text-xs lg:text-xs" 
+                                    />
+                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round text-gray-500">
+                                            <circle cx="12" cy="8" r="5"/>
+                                            <path d="M20 21a8 8 0 0 0-16 0"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            
                         ) : (
                             <></>
                         )

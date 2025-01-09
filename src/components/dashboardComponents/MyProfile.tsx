@@ -215,6 +215,7 @@ const MyProfile : React.FC = () => {
                             gender = {gender || ''}
                             birthday = {birthday}
                             email= {email || ''}
+                            familyName={familyName || ''}
                         />
                     </div>
                 </div>
