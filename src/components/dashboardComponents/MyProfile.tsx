@@ -156,6 +156,14 @@ const MyProfile : React.FC = () => {
                 )}
             </div>
             
+            {/* Daily message */}
+
+            <div className="mt-5">
+                <h3 className="font-comic font-extrabold mb-2 text-base">Daily Message</h3>
+                <div className="w-full max-h-16 text-[13px] font-poppins mt-3">
+                    {dailyMessage}
+                </div>
+            </div>
 
             {/* Info */}
             <div className="flex space-x-6 mt-10">
@@ -202,19 +210,10 @@ const MyProfile : React.FC = () => {
                 </div>
             </div>
 
-            {/* Daily message */}
-
-            <div className="mt-10">
-                <h3 className="font-comic font-extrabold mb-2 text-md">Daily Message</h3>
-                <div className="w-full bg-[#E3F2FD] border-[1px] border-[#3A8EBA] focus:outline-none h-16 rounded-md p-2 text-xs font-poppins">
-                    {dailyMessage}
-                </div>
-            </div>
-
             {/*Personal progress */}
 
             <div className="mt-10">
-                <h3 className="font-comic font-extrabold mb-2 text-md">Personal Progress</h3>
+                <h3 className="font-comic font-extrabold mb-2 text-base">Personal Progress</h3>
                 
                 <div className="flex justify-between">
                     {/* Tasks & Goals */}
