@@ -46,38 +46,39 @@ const MyProfile : React.FC = () => {
     };
 
     const handleDialogConfirm = async(data: TUpdate) => {
-        setDialogOpen(false);
-        console.log("Confirmed!");
-        
-        try {
-            const response = await requestApi({
-                route: "/users/",
-                method: requestMethods.PUT,
-                body: data
-            });
+        setDialogOpen(false);   
 
-            if (response){
-                dispatch(setUser(response.user));
-            }
-        } catch (error) {
-            console.log(error);
-        }
-
-        if (data.familyName || data.familyAvatar || data.familyName){
+        if (data){
             try {
                 const response = await requestApi({
-                    route: "/family/",
+                    route: "/users/",
                     method: requestMethods.PUT,
                     body: data
                 });
-    
+
                 if (response){
-                    dispatch(setEmail(response.family.email));
-                    // save family name in familySlice
-                    setFamilyName(familyName);
+                    dispatch(setUser(response.user));
                 }
             } catch (error) {
                 console.log(error);
+            }
+
+            if (data.email || data.familyAvatar || data.familyName){
+                try {
+                    const response = await requestApi({
+                        route: "/family/",
+                        method: requestMethods.PUT,
+                        body: data
+                    });
+        
+                    if (response){
+                        dispatch(setEmail(response.family.email));
+                        // save family name in familySlice
+                        setFamilyName(response.family.familyName);
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
             }
         }
     };
