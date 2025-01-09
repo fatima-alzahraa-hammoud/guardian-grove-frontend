@@ -209,6 +209,7 @@ const MyProfile : React.FC = () => {
                             title="Update Personal Details"
                             confirmText="Save"
                             cancelText="Cancel"
+                            avatar={avatar || ''}
                             role = {role || ''}
                             name = {name || ''}
                             gender = {gender || ''}

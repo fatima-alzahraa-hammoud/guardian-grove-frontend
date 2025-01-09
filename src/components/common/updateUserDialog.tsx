@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
 import AvatarSelector from '../AvatarSelector';
 import { Label } from '../ui/label';
@@ -6,6 +6,12 @@ import { Input } from '../ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TUpdate, updateSchema } from '../../libs/types/updateTypes';
+import { Popover, PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
+import { Button } from '../ui/button';
+import { cn } from '../../lib/utils';
+import { Calendar } from '../ui/calendar';
+import { CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
 
 interface DialogProps {
     isOpen: boolean;
@@ -16,26 +22,36 @@ interface DialogProps {
     cancelText?: string;
     role: string;
     name: string;
+    avatar: string;
     gender: string;
     birthday: Date;
     email: string;
 }
 
-const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, title, confirmText = "Confirm", cancelText = "Cancel", role, name, gender, birthday, email }) => {
+const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, title, confirmText = "Confirm", cancelText = "Cancel", role, name, gender, birthday, email, avatar }) => {
 
-    const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
-    const [editName, setName] = useState<string>('');
-    const [editEmail, setEmail] = useState<string>('');
-    const [editGender, setGender] = useState<string>('');
-    const [editBirthday, setBirthday] = useState<Date | null>();
-
-    const { 
-        register, 
+    const {
+        register,
         handleSubmit,
-        formState: { errors }
+        setValue,
+        watch,
+        formState: { errors },
     } = useForm<TUpdate>({
-        resolver: zodResolver(updateSchema)
+        resolver: zodResolver(updateSchema),
+        defaultValues: {
+            name: name,
+            email: email,
+            gender: gender,
+            avatar: avatar,
+            birthday: birthday || null,
+        },
     });
+
+    const selectedDate = watch("birthday");
+
+    const onDateSelect = (date: Date | undefined) => {
+        setValue("birthday", date || new Date("1900-01-01"), { shouldValidate: true });
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -50,10 +66,8 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                     <div className="flex">
                         <AvatarSelector
                             {...register("avatar")}
-                            selectedAvatar={selectedAvatar} 
-                            onAvatarClick={(src) => {
-                                setSelectedAvatar(src)
-                            }} 
+                            selectedAvatar={watch("avatar")}
+                            onAvatarClick={(src) => setValue("avatar", src, { shouldValidate: true })}
                             role={role}
                         />
                     </div>
@@ -79,7 +93,51 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                 </svg>
                             </div>
                         </div>
+                    </div>    
+
+                    {/* Birthday Picker */}
+                    <div className="mx-11 relative">
+                        <div className="block text-xs font-medium text-gray-700 text-left mb-1">
+                            Date of Birth
+                        </div>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <div>
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                            "w-full pl-3 pr-3 mt-1 placeholder:text-[10px] placeholder:text-gray-500 rounded-md border border-[#3A8EBA] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3A8EBA] text-xs flex justify-between items-center font-normal font-poppins",
+                                            !selectedDate && "text-gray-500"
+                                        )}
+                                        style={{ backgroundColor: "transparent" }}
+                                        type="button" // Set type="button" to prevent form submission
+                                    >
+                                        {selectedDate ? (
+                                            format(selectedDate, "PPP")
+                                        ) : (
+                                            <span className="text-gray-500 font-normal text-[10px]">
+                                                Pick a date
+                                            </span>
+                                        )}
+                                        <CalendarIcon className="ml-auto w-2 h-2 opacity-60 text-gray-500" />
+                                    </Button>
+                                </div>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 justify-center">
+                                <Calendar
+                                    mode="single"
+                                    selected={selectedDate}
+                                    onSelect={onDateSelect}
+                                    disabled={(date) =>
+                                        date > new Date() || date < new Date("1900-01-01")
+                                    }
+                                    initialFocus
+                                    className="rounded-md justify-center items-center bg-white"
+                                />
+                            </PopoverContent>
+                        </Popover>
                     </div>
+
                 </form>
 
             </DialogContent>
