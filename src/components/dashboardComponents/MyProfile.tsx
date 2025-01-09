@@ -62,6 +62,24 @@ const MyProfile : React.FC = () => {
         } catch (error) {
             console.log(error);
         }
+
+        if (data.familyName || data.familyAvatar || data.familyName){
+            try {
+                const response = await requestApi({
+                    route: "/family/",
+                    method: requestMethods.PUT,
+                    body: data
+                });
+    
+                if (response){
+                    dispatch(setEmail(response.family.email));
+                    // save family name in familySlice
+                    setFamilyName(familyName);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
     };
   
     useEffect(() => {
