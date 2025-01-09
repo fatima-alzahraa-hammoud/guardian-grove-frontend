@@ -58,14 +58,14 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className='flex flex-col items-center font-poppins'>
+            <DialogContent className='flex flex-col items-center justify-center font-poppins max-h-screen'>
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                 </DialogHeader>
 
                 {/* Avatar Selection */}
-                <div className="mb-4 mt-10">
-                    <h4 className="mb-2 text-sm -mx-[30px]">Choose an Avatar</h4>
+                <div className="mt-10">
+                    <h4 className="mb-2 text-xs font-medium -mx-[30px]">Change your avatar</h4>
                     <div className="flex">
                         <AvatarSelector
                             {...register("avatar")}
@@ -77,7 +77,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                 </div>
 
                 {/* Name */}
-                <form  className="space-y-3 w-full">
+                <form  className="space-y-3 w-full flex- flex-col items-center justify-center">
                     <div className="mx-3 relative">
                         <Label htmlFor="name" className="block text-xs font-medium text-gray-700 text-left mb-1">
                             Name
@@ -150,7 +150,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
 
                     <div className="mx-3 relative">
                         <label className="block text-xs font-medium text-gray-700 text-left mb-1">
-                            Select Gender
+                            Gender
                         </label>
                         <Select
                             {...register("gender")}
@@ -176,7 +176,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
 
                     {/* email */}
                     {role === 'parent' ? (
-                        <div className='space-y-3'>
+                        <div className='space-y-5'>
                             <div className="mx-3 relative">
                                 <Label htmlFor="email" className="block text-xs font-medium text-gray-700 text-left mb-1">
                                     Email
@@ -218,6 +218,21 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                     </div>
                                 </div>
                             </div>
+
+                            <div className="mx-3 relative flex justify-center items-center">
+                                 {/* Avatar Selection */}
+                                <div className="mb-4">
+                                    <h4 className="mb-2 text-xs font-medium -mx-[30px]">Change your family avatar</h4>
+                                    <div className="flex justify-center items-center">
+                                        <AvatarSelector
+                                            {...register("familyAvatar")}
+                                            selectedAvatar={watch("familyAvatar")}
+                                            onAvatarClick={(src) => setValue("familyAvatar", src, { shouldValidate: true })}
+                                            role='family'
+                                        />
+                                    </div>
+                                </div>    
+                            </div>
                         </div>
                             
                         ) : (
@@ -225,7 +240,6 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                         )
                     }
 
-                    {/* Family name */ }
 
                     {/* Family avatar */}
 
