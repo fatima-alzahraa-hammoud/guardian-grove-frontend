@@ -120,7 +120,6 @@ const MyProfile : React.FC = () => {
                 }
             } catch (error) {
                 console.log(error);
-                toast.error("Error getting last unlocked achievemnt")
             }
         }
         fetchLastUnlockedAchievement();
@@ -240,7 +239,7 @@ const MyProfile : React.FC = () => {
                 
                 <div className="flex gap-10 mt-5">
                     {/* Tasks & Goals */}
-                    <div className="group relative bg-[#FDEBE3] w-1/3 h-80 rounded-md p-3 overflow-hidden">
+                    <div className=" group relative bg-[#FDEBE3] w-1/3 h-80 rounded-md p-3 overflow-hidden">
                         {/* Dashed Border */}
                         <div className="absolute inset-0 m-[8px] border-[1.5px] border-dashed border-[#FF9800] rounded-md pointer-events-none opacity-0 group-hover:opacity-100 border-rotate"></div>
 
@@ -252,7 +251,7 @@ const MyProfile : React.FC = () => {
                                 <ProgressBar completed={tasks?.completedTasks || 0} total={tasks?.totalTasks || 0} label="Tasks" />
                                 <ProgressBar completed={goals?.completedGoals || 0} total={goals?.totalGoals || 0} label="Goals" />
                             </div>
-                            <p className="text-center text-sm font-comic mt-7 mb-3 font-extrabold">
+                            <p className="text-center text-sm font-comic mb-3 mt-14 font-extrabold">
                                 "Keep up the great work!"
                             </p>
                         </div>

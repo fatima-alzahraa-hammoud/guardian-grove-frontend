@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '../ui/select';
 import { useSelector } from 'react-redux';
 import { selectAvatar, selectBirthday, selectEmail, selectGender, selectName, selectRole } from '../../redux/slices/userSlice';
+import { toast, ToastContainer } from 'react-toastify';
 
 interface DialogProps {
     isOpen: boolean;
@@ -56,7 +57,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                 email: email || "",
                 gender: gender || "",
                 avatar: avatar || "",
-                birthday: birthday || null,
+                birthday: birthday ? new Date(birthday) : undefined,
                 familyName: familyName,
                 familyAvatar: "/assets/images/stars.png",
             };
@@ -75,7 +76,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
             email: email || "",
             gender: gender || "",
             avatar: avatar || "",
-            birthday: birthday || null,
+            birthday: birthday ? new Date(birthday) : undefined,
             familyName: familyName,
             familyAvatar: "/assets/images/stars.png"
         });
@@ -83,27 +84,33 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
         onClose();
     };
 
-    const handleConfirm = (event: React.MouseEvent<HTMLButtonElement>) => {
-    // Prevent default form submission behavior, if needed
-    event.preventDefault();
+    const handleConfirm = handleSubmit((data) => {
+        // Only proceed if there are no validation errors
+        const formData: TUpdate = {
+            name: data.name,
+            email: data.email,
+            avatar: data.avatar,
+            birthday: data.birthday,
+            gender: data.gender,
+            familyName: data.familyName,
+            familyAvatar: data.familyAvatar,
+        };
+    
+        // Call onConfirm with valid data
+        onConfirm(formData);
+        onClose();
 
-    // Access the form data and pass it to onConfirm
-    const formData: TUpdate = {
-        name: watch("name"),
-        email: watch("email"),
-        avatar: watch("avatar"),
-        birthday: watch("birthday"),
-        gender: watch("gender"),
-        familyName: watch("familyName"),
-        familyAvatar: watch("familyAvatar"),
-    };
-
-    onConfirm(formData); // Pass form data to onConfirm
-    onClose(); // Close the dialog
-};
+    }, (error) => {
+        for (const [field, err] of Object.entries(error)) {
+            // Check for specific error message if available
+            const message = err?.message || `${field} is invalid`;
+            toast.error(message);
+        }
+    });
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+            <ToastContainer />
             <DialogContent className='flex flex-col items-center justify-center font-poppins max-h-screen'>
                 <DialogHeader>
                     <DialogTitle className='mt-2'>{title}</DialogTitle>
