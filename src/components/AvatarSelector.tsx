@@ -36,6 +36,7 @@ interface AvatarSelectorProps {
 
 const AvatarSelector: React.FC<AvatarSelectorProps> = ({ selectedAvatar, onAvatarClick, role }) => {
   const [avatars, setAvatars] = useState<{ id: number; src: string }[]>([]);
+  const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(null);
 
   useEffect(() => {
     if (role === "parent") {
@@ -45,9 +46,35 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({ selectedAvatar, onAvata
     }
   }, [role]);
 
+  const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      const avatarUrl = URL.createObjectURL(file);
+      setUploadedAvatar(avatarUrl);
+      onAvatarClick(avatarUrl);
+    }
+  };
+
   return (
     <Carousel className="w-full max-w-sm">
       <CarouselContent className="-ml-1">
+        <CarouselItem className="pl-1 basis-14">
+          <label className="cursor-pointer w-10 flex-shrink-0 h-10 flex items-center justify-center rounded-full border border-gray-300">
+            <input type="file" className="hidden" onChange={handleAvatarUpload} />
+            {uploadedAvatar ? (
+              <img
+                src={uploadedAvatar}
+                alt="Uploaded avatar"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-gray-500 text-xl text-center pb-0.5">
+                +
+              </span>
+            )}
+          </label>
+        </CarouselItem>
+      
         {avatars.map((avatar) => (
           <CarouselItem key={avatar.id} className="pl-1 basis-14">
             <Avatar

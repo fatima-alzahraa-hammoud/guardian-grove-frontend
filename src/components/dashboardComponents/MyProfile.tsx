@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import ProgressBar from "../common/ProgressBar";
 import "../../styles/card.css";
 import "../../styles/global.css";
+import DialogComponent from "../common/updateDetailsDialog";
 
 const MyProfile : React.FC = () => {
 
@@ -31,8 +32,6 @@ const MyProfile : React.FC = () => {
     const [lastUnlocked, setLastUnlocked] = useState<{title: string, photo: string, description: string, unlockedAt: Date}> ();
     const [goals, setGoals] = useState<{completedGoals: number, totalGoals: number}>();
     const [tasks, setTasks] = useState<{completedTasks: number, totalTasks: number}>();
-    //const goals = { completed: 20, total: 100 };
-    //const tasks = { completed: 60, total: 100 };
   
     useEffect(() => {
         const today = new Date();
@@ -188,6 +187,7 @@ const MyProfile : React.FC = () => {
                         <p><span className="font-bold pr-3">Member since: </span>{formattedMemberSince}</p>
                         <p className="pb-1 pr-3"><span className="font-bold pr-1">Family email: </span>{email}</p>
                         <button className="pl-3 pr-3 pt-2 pb-2 bg-white rounded-full text-black border-[1px] border-[#FDE4CF] focus:outline-none">Update Your Personal Details</button>
+
                     </div>
                 </div>
                 <div className="bg-[#FDE4CF] p-6 w-2/5 rounded-lg text-xs flex flex-col justify-between">
@@ -286,6 +286,7 @@ const MyProfile : React.FC = () => {
                 <h3 className="font-comic font-extrabold mb-2">Need help or guidance today? I’m here for you!</h3>
                 <button className="p-2 mt-3 mb-10 bg-[#3A8EBA] rounded-full text-sm text-white">Talk to me, your AI friend</button>
             </div>
+            
         </div>
     );
 };
