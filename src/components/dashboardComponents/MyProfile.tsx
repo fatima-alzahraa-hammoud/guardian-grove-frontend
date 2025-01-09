@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectAvatar, selectBirthday, selectCoins, selectEmail, selectMmeberSince, selectName, selectRank, selectRole } from "../../redux/slices/userSlice";
-import uploadImage from "/assets/images/camera.svg";
 import coinImage from "/assets/images/coins.png";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
@@ -9,8 +8,6 @@ import { toast } from "react-toastify";
 import ProgressBar from "../common/ProgressBar";
 import "../../styles/card.css";
 import "../../styles/global.css";
-import { FaPlus } from "react-icons/fa";
-
 
 const MyProfile : React.FC = () => {
 
@@ -96,7 +93,10 @@ const MyProfile : React.FC = () => {
             
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
-                <h1 className="font-comic font-extrabold text-lg">Hi, {name}</h1>
+                <div>
+                    <h1 className="font-comic font-extrabold text-lg">Hi, {name}</h1>
+                    <p className="text-sm">{currentDate}</p>
+                </div>
                 {role === 'parent' && (
                     <button 
                         className="bg-[#3A8EBA] text-white px-3 py-2 rounded-full text-sm flex items-center">
@@ -110,7 +110,6 @@ const MyProfile : React.FC = () => {
                     </button>
                 )}
             </div>
-            <p className="text-sm">{currentDate}</p>
             
 
             {/* Info */}
@@ -142,7 +141,7 @@ const MyProfile : React.FC = () => {
                     </div>
                 </div>
                 <div className="bg-[#FDE4CF] p-6 w-2/5 rounded-lg text-xs flex flex-col justify-between">
-                    <p><span className="font-bold p-3">Your Family:</span>{familyName} {' ( '} <span className="text-sm">{nbOfMembers}</span> {' members)'}</p>
+                    <p><span className="font-bold p-3 text-left">Your Family:</span>{familyName} {' ( '} <span className="text-sm">{nbOfMembers}</span> {' members)'}</p>
                     <p><span className="font-bold pr-3">Total Family Stars:</span><span className="text-sm">{totalStars}</span></p>
                     <p className="flex items-center">
                         <span className="font-bold pr-4">Your Total Coins: </span>
