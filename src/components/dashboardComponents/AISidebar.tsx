@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail, useSidebar } from "../ui/sidebar";
 import { Button } from "../ui/button";
 import { Bot, Calendar, ChevronLeft, ChevronRight, Layout, List, MessageCircle, MessageSquarePlus, Search, Timer } from "lucide-react";
@@ -8,6 +8,8 @@ const AISidebar : React.FC = () => {
 
     const { toggleSidebar, state } = useSidebar();
     const isCollapsed = state === "collapsed";
+
+    const [activeItem, setActiveItem] = useState<string | null>(null);
 
     const features = [
         { title: "Generate plans", icon: Calendar, url: "#" },
@@ -44,19 +46,31 @@ const AISidebar : React.FC = () => {
 
                 {/* features */}
                 <SidebarGroup>
-                    <SidebarGroupLabel className="text-black group-data-[collapsible=icon]:hidden font-comic font-bold text-base">Features</SidebarGroupLabel>
+                    <SidebarGroupLabel className="text-black group-data-[collapsible=icon]:hidden font-comic font-bold text-base">
+                        Features
+                    </SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                        {features.map((feature) => (
-                            <SidebarMenuItem key={feature.title}>
-                            <SidebarMenuButton asChild className="text-sky-800 hover:bg-[#3A8EBA] hover:text-white transition-colors duration-200 font-poppins text-xs">
-                                <a href={feature.url}>
-                                <feature.icon className="w-4 h-4" />
-                                <span className="group-data-[collapsible=icon]:hidden pl-1">{feature.title}</span>
-                                </a>
-                            </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        ))}
+                            {features.map((feature) => (
+                                <SidebarMenuItem key={feature.title}>
+                                    <SidebarMenuButton
+                                        asChild
+                                        className={`${
+                                            activeItem === feature.title
+                                                ? "bg-white text-sky-800 hover:text-sky-800"
+                                                : "text-sky-800 hover:bg-[#3A8EBA] hover:text-white"
+                                        } transition-colors duration-200 font-poppins text-xs`}
+                                        onClick={() => setActiveItem(feature.title)}
+                                    >
+                                        <a href={feature.url}>
+                                            <feature.icon className="w-4 h-4" />
+                                            <span className="group-data-[collapsible=icon]:hidden pl-1">
+                                                {feature.title}
+                                            </span>
+                                        </a>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
