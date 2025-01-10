@@ -1,5 +1,5 @@
 import React from "react";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, useSidebar } from "../ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail, useSidebar } from "../ui/sidebar";
 import { Button } from "../ui/button";
 import { Bot, Calendar, ChevronLeft, ChevronRight, Layout, List, MessageCircle, MessageSquarePlus, Search, Timer } from "lucide-react";
 import AIFriend from "/assets/images/ai-friend.png";
@@ -40,7 +40,27 @@ const AISidebar : React.FC = () => {
                     <span className=" text-sky-800">my friend</span>
                 </div>
             </SidebarHeader>
-            <SidebarContent className="bg-[#B2D1F1]">
+            <SidebarContent className="bg-[#B2D1F1] pt-5 pl-3">
+
+                {/* features */}
+                <SidebarGroup>
+                    <SidebarGroupLabel className="text-black group-data-[collapsible=icon]:hidden font-comic font-bold text-base">Features</SidebarGroupLabel>
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                        {features.map((feature) => (
+                            <SidebarMenuItem key={feature.title}>
+                            <SidebarMenuButton asChild className="text-sky-800 hover:bg-[#3A8EBA] hover:text-white transition-colors duration-200 font-poppins text-xs">
+                                <a href={feature.url}>
+                                <feature.icon className="w-4 h-4" />
+                                <span className="group-data-[collapsible=icon]:hidden pl-1">{feature.title}</span>
+                                </a>
+                            </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        ))}
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+
             </SidebarContent>
             <SidebarFooter className="bg-[#B2D1F1]">
             </SidebarFooter>
