@@ -117,50 +117,43 @@ const AISidebar : React.FC = () => {
                                         <CollapsibleContent>
                                             <SidebarMenuSub>
                                                 {chats.map((chat) => (
-                                                    <SidebarMenuSubItem key={chat.title}>
+                                                    <SidebarMenuSubItem key={chat.id}>
                                                         <SidebarMenuSubButton
                                                             asChild
-                                                            className={`group ${
-                                                                activeChat === chat.title
-                                                                    ? "bg-white text-sky-800 hover:text-sky-800"
-                                                                    : "text-sky-800 hover:bg-[#3A8EBA] hover:text-white"
-                                                            } transition-colors duration-200 font-poppins text-xs`}
+                                                            className={`group ${activeChat === chat.id ? "bg-white text-sky-800 hover:text-sky-800" : "text-sky-800 hover:bg-[#3A8EBA] hover:text-white"} transition-colors duration-200 font-poppins text-xs`}
                                                         >
-                                                            <a
-                                                                href={chat.url}
-                                                                className={`text-sky-800 font-poppins text-xs ${
-                                                                    activeChat === chat.title ? 'bg-white text-[#3A8EBA] hover:text-[#3A8EBA]' : ''
-                                                                }`}
-                                                                onClick={(e) => {
-                                                                    e.preventDefault();
-                                                                    setActiveChat(chat.title);
-                                                                }}
-                                                                onMouseEnter={() => setHoveredChat(chat.title)}
-                                                                onMouseLeave={() => setHoveredChat(null)}                                
-                                                            >
-                                                                <span className="group-data-[collapsible=icon]:hidden">{chat.title}</span>
-                                                                <DropdownMenu>
-                                                                    <DropdownMenuTrigger asChild>
-                                                                        <Button
-                                                                            variant="ghost"
-                                                                            size="icon"
-                                                                            className={`h-6 w-6 ml-auto ${hoveredChat === chat.title ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}
-                                                                            onClick={(e) => e.stopPropagation()}
-
-                                                                        >
-                                                                            <MoreHorizontal className="h-4 w-4" />
-                                                                        </Button>
-                                                                    </DropdownMenuTrigger>
-                                                                    <DropdownMenuContent align="end" className="w-40">
-                                                                        <DropdownMenuItem>Rename</DropdownMenuItem>
-                                                                        <DropdownMenuItem>Share</DropdownMenuItem>
-                                                                        <DropdownMenuSeparator />
-                                                                        <DropdownMenuItem className="text-red-600">
-                                                                            Delete
-                                                                        </DropdownMenuItem>
-                                                                    </DropdownMenuContent>
-                                                                </DropdownMenu>
-                                                            </a>
+                                                        <a
+                                                            href={chat.url}
+                                                            className={`text-sky-800 font-poppins text-xs ${activeChat === chat.id ? 'bg-white text-[#3A8EBA] hover:text-[#3A8EBA]' : ''}`}
+                                                            onClick={(e) => {
+                                                            e.preventDefault();
+                                                            setActiveChat(chat.id);
+                                                            }}
+                                                            onMouseEnter={() => setHoveredChat(chat.id)}
+                                                            onMouseLeave={() => setHoveredChat(null)} 
+                                                        >
+                                                            <span className="group-data-[collapsible=icon]:hidden">{chat.title}</span>
+                                                            <DropdownMenu>
+                                                                <DropdownMenuTrigger asChild>
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="icon"
+                                                                        className={`h-6 w-6 ml-auto ${hoveredChat === chat.id ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}
+                                                                        onClick={(e) => e.stopPropagation()}
+                                                                    >
+                                                                        <MoreHorizontal className="h-4 w-4" />
+                                                                    </Button>
+                                                                </DropdownMenuTrigger>
+                                                                <DropdownMenuContent align="end" className="w-40">
+                                                                    <DropdownMenuItem>Rename</DropdownMenuItem>
+                                                                    <DropdownMenuItem>Share</DropdownMenuItem>
+                                                                    <DropdownMenuSeparator />
+                                                                    <DropdownMenuItem className="text-red-600">
+                                                                        Delete
+                                                                    </DropdownMenuItem>
+                                                                </DropdownMenuContent>
+                                                            </DropdownMenu>
+                                                        </a>
                                                         </SidebarMenuSubButton>
                                                     </SidebarMenuSubItem>
                                                 ))}
@@ -172,6 +165,7 @@ const AISidebar : React.FC = () => {
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
+
             </SidebarContent>
             <SidebarFooter className="bg-[#B2D1F1]">
             </SidebarFooter>
