@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail, useSidebar } from "../ui/sidebar";
 import { Button } from "../ui/button";
-import { Bot, Calendar, ChevronLeft, ChevronRight, History, Layout, List, MessageCircle, MessageSquarePlus, MoreHorizontal, Search, Timer } from "lucide-react";
+import { Bot, Calendar, ChevronLeft, ChevronRight, History, Home, Layout, List, MessageCircle, MessageSquarePlus, MoreHorizontal, Search, Settings, Timer } from "lucide-react";
 import AIFriend from "/assets/images/ai-friend.png";
+import infoImage from '/assets/images/dashboard/badge-info-ai.svg';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
@@ -41,6 +42,8 @@ const AISidebar : React.FC = () => {
     return(
 
         <Sidebar collapsible="icon" className="h-[calc(100vh-4rem)] transition-all duration-300 ease-in-out border-r bg-[#B2D1F1] flex flex-col justify-between fixed top-16 left-0">
+            
+            {/* Sidebar header */}
             <SidebarHeader className="h-20 px-4 flex flex-col justify-center bg-[#B2D1F1] border-[#B2D1F1]">
                 <div className="flex items-center justify-between w-full">
                     <Button variant="ghost" size="icon" className="w-8 h-8" onClick={toggleSidebar}>
@@ -60,7 +63,9 @@ const AISidebar : React.FC = () => {
                     <span className=" text-sky-800">my friend</span>
                 </div>
             </SidebarHeader>
-            <SidebarContent className="bg-[#B2D1F1] pt-5 pl-3">
+
+            {/* Sidebar Content */}
+            <SidebarContent className="bg-[#B2D1F1] pt-3 pl-3">
 
                 {/* features */}
                 <SidebarGroup>
@@ -102,7 +107,7 @@ const AISidebar : React.FC = () => {
                                 <Collapsible key={period} className="group/collapsible">
                                     <SidebarMenuItem>
                                         <CollapsibleTrigger asChild>
-                                            <SidebarMenuButton className="text-sky-800 hover:bg-sky-300/50 transition-colors duration-200">
+                                            <SidebarMenuButton className="text-sky-800 hover:bg-[#3A8EBA] hover:text-white transition-colors duration-200">
                                                 <History className="w-4 h-4" />
                                                 <span className="group-data-[collapsible=icon]:hidden font-poppins text-xs">
                                                     {period === 'today'
@@ -167,7 +172,29 @@ const AISidebar : React.FC = () => {
                 </SidebarGroup>
 
             </SidebarContent>
-            <SidebarFooter className="bg-[#B2D1F1]">
+
+            {/* Sidebar footer */}
+            <SidebarFooter className="bg-[#B2D1F1] p-4 pt-6">
+                <div className="flex flex-col gap-4 group-data-[collapsible=icon]:hidden">
+                    <Button variant="secondary" className="w-full bg-[#3A8EBA] hover:bg-[#326E9F] text-white transition-colors duration-200">
+                        Quick Tip
+                    </Button>
+                </div>
+                <div className="flex items-center justify-around mt-4">
+                    <Button variant="ghost" size="icon" className="w-8 h-8">
+                        <Home className="w-4 h-4 text-[#0284c7]" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="w-8 h-8 group-data-[collapsible=icon]:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284c7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-badge-info text-[#0284c7]">
+                            <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
+                            <line x1="12" x2="12" y1="16" y2="12"/>
+                            <line x1="12" x2="12.01" y1="8" y2="8"/>
+                        </svg>
+                        </Button>
+                    <Button variant="ghost" size="icon" className="w-8 h-8">
+                        <Settings className="w-4 h-4 text-[#0284c7]" />
+                    </Button>
+                </div>
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>
