@@ -19,6 +19,20 @@ const AISidebar : React.FC = () => {
         { title: "View Tasks", icon: List, url: "#" },
         { title: "Progress Tracker", icon: Layout, url: "#" },
     ];
+
+    const chatHistory = {
+        today: [
+          { title: "Second chat", url: "#" },
+          { title: "First chat", url: "#" },
+        ],
+        previous7days: [
+          { title: "Second chat", url: "#" },
+          { title: "First chat", url: "#" },
+        ],
+        previous30days: [
+          { title: "First chat", url: "#" },
+        ],
+      }      
   
     return(
 
