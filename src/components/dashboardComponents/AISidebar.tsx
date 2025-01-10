@@ -26,17 +26,17 @@ const AISidebar : React.FC = () => {
 
     const chatHistory = {
         today: [
-          { title: "Second chat", url: "#" },
-          { title: "First chat", url: "#" },
+          { id: "chat1", title: "Second chat", url: "#" },
+          { id: "chat2", title: "First chat", url: "#" },
         ],
         previous7days: [
-          { title: "Second chat", url: "#" },
-          { title: "First chat", url: "#" },
+          { id: "chat3", title: "Second chat", url: "#" },
+          { id: "chat4", title: "First chat", url: "#" },
         ],
         previous30days: [
-          { title: "First chat", url: "#" },
+          { id: "chat5", title: "First chat", url: "#" },
         ],
-      }      
+    };    
   
     return(
 
