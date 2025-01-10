@@ -1,13 +1,22 @@
 import React from "react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, useSidebar } from "../ui/sidebar";
 import { Button } from "../ui/button";
-import { Bot, ChevronLeft, ChevronRight, MessageSquarePlus, Search } from "lucide-react";
+import { Bot, Calendar, ChevronLeft, ChevronRight, Layout, List, MessageCircle, MessageSquarePlus, Search, Timer } from "lucide-react";
 import AIFriend from "/assets/images/ai-friend.png";
 
 const AISidebar : React.FC = () => {
 
-    const { toggleSidebar, state } = useSidebar()
-    const isCollapsed = state === "collapsed"
+    const { toggleSidebar, state } = useSidebar();
+    const isCollapsed = state === "collapsed";
+
+    const features = [
+        { title: "Generate plans", icon: Calendar, url: "#" },
+        { title: "Learning Zone", icon: Bot, url: "#" },
+        { title: "Track My Day", icon: Timer, url: "#" },
+        { title: "Tell Me a Story", icon: MessageCircle, url: "#" },
+        { title: "View Tasks", icon: List, url: "#" },
+        { title: "Progress Tracker", icon: Layout, url: "#" },
+    ];
   
     return(
 
