@@ -5,6 +5,7 @@ import coinImage from "/assets/images/coins.png";
 import starsImage from "/assets/images/stars.png";
 import rankImage from "/assets/images/rank.png";
 import AIMessage from "/assets/images/message.png";
+import motivationImage from "/assets/images/motivation.png";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { toast } from "react-toastify";
@@ -35,6 +36,7 @@ const MyProfile : React.FC = () => {
     const [totalStars, setTotalStars] = useState<number>();
     const [dailyMessage, setDailyMessage] = useState<string> ('You are shining!');
     const [lastUnlocked, setLastUnlocked] = useState<{title: string, photo: string, description: string, unlockedAt: Date}> ();
+    const [noAchievements, setNoAchievements] = useState<boolean> (false);
     const [goals, setGoals] = useState<{completedGoals: number, totalGoals: number}>();
     const [tasks, setTasks] = useState<{completedTasks: number, totalTasks: number}>();
     const [isDialogOpen, setDialogOpen] = useState(false);
@@ -153,6 +155,9 @@ const MyProfile : React.FC = () => {
                 });
 
                 if (response){
+                    if (response.message === "No achievements"){
+                        setNoAchievements(true);
+                    }
                     setLastUnlocked(response.lastUnlockedAchievement);
                 }
             } catch (error) {
@@ -304,24 +309,34 @@ const MyProfile : React.FC = () => {
                         <div className="absolute inset-0 m-[8px] border-[1.5px] border-dashed border-[#2196F3] rounded-md pointer-events-none opacity-0 group-hover:opacity-100 animate-borderMovement"></div>
 
                         <h4 className="font-comic text-[16px] font-extrabold text-center">Achievements</h4>
-                        <img src={lastUnlocked?.photo || "https://via.placeholder.com/150"} alt="" className="w-12 center" />
-                        <p className="text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            {lastUnlocked?.title}
-                        </p>
-                        <p className="text-xs text-center">Unlocked on: {' '}
-                            {lastUnlocked?.unlockedAt 
-                                ? new Date(lastUnlocked.unlockedAt).toLocaleDateString(undefined, {
-                                    month: "short",
-                                    day: "numeric",
-                                    year: "numeric",
-                                }) 
-                                : "N/A"
-                            }
-                        </p>
-                        <p className="text-xs text-center">{lastUnlocked?.description}</p>
-                        <p className="text-center text-sm font-comic mb-3 font-extrabold">
-                            "Keep up the great work!"
-                        </p>
+                        {!noAchievements ? (
+                            <div className="flex flex-col justify-between">
+                                <img src={lastUnlocked?.photo || "https://via.placeholder.com/150"} alt="" className="w-12 center" />
+                                <p className="text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    {lastUnlocked?.title}
+                                </p>
+                                <p className="text-xs text-center">Unlocked on: {' '}
+                                    {lastUnlocked?.unlockedAt 
+                                        ? new Date(lastUnlocked.unlockedAt).toLocaleDateString(undefined, {
+                                            month: "short",
+                                            day: "numeric",
+                                            year: "numeric",
+                                        }) 
+                                        : "N/A"
+                                    }
+                                </p>
+                                <p className="text-xs text-center">{lastUnlocked?.description}</p>
+                                <p className="text-center text-sm font-comic mb-3 font-extrabold">
+                                    "Keep up the great work!"
+                                </p>
+                            </div>
+                        ): (
+                            <div className="flex flex-col items-center rounded-lg p-6 text-center">
+                                <h3 className="font-bold text-[#FF8A00] mb-2">No achievements yet!</h3>
+                                <p className="text-sm text-gray-700">Start completing tasks and challenges to collect your first star.<br></br><br></br>You can do it!</p>
+                                <img src={motivationImage} alt="Motivational Illustration" className="mt-4 w-20 h-20" />
+                            </div>
+                        )}
                     </div>
 
                     {/* Magic Garden */}
