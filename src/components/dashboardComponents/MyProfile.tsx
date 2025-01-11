@@ -291,14 +291,27 @@ const MyProfile : React.FC = () => {
                         {/* Card Content */}
                         <div className="relative w-full h-full bg-[#FDEBE3] rounded-md p-2">
                             <h4 className="font-comic text-[16px] font-extrabold text-center">Tasks & Goals</h4>
-                            <p className="text-xs text-left pt-10 font-bold">This month</p>
-                            <div>
-                                <ProgressBar completed={tasks?.completedTasks || 0} total={tasks?.totalTasks || 0} label="Tasks" />
-                                <ProgressBar completed={goals?.completedGoals || 0} total={goals?.totalGoals || 0} label="Goals" />
-                            </div>
-                            <p className="text-center text-sm font-comic mb-3 mt-14 font-extrabold">
-                                "Keep up the great work!"
-                            </p>
+                            {goals?.totalGoals && goals.totalGoals > 0 ? (
+                                <div>
+                                    <p className="text-xs text-left pt-10 font-bold">This month</p>
+                                    <div>
+                                        <ProgressBar completed={tasks?.completedTasks || 0} total={tasks?.totalTasks || 0} label="Tasks" />
+                                        <ProgressBar completed={goals?.completedGoals || 0} total={goals?.totalGoals || 0} label="Goals" />
+                                    </div>
+                                    <p className="text-center text-sm font-comic mb-3 mt-14 font-extrabold">
+                                        "Keep up the great work!"
+                                    </p>
+                                </div>
+                            ) :(
+                                <div className="flex flex-col items-center rounded-lg p-6 text-center">
+                                    <h3 className="font-bold text-[#3A8EBA] mb-2">No tasks or goals yet!</h3>
+                                    <p className="text-gray-700 text-sm">Ask your AI friend to assign exciting adventures and challenges. <br></br><br></br>Let’s get started!</p>
+                                    <button className="text-sm mt-4 bg-[#3A8EBA] text-white px-4 py-2 rounded-full hover:bg-[#347ea5]">
+                                        Get Tasks Now
+                                    </button>
+                                </div>
+
+                            )}
                         </div>
                     </div>
 
