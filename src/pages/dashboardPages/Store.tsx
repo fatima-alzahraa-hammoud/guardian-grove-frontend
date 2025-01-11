@@ -92,13 +92,13 @@ const Store: React.FC = () => {
     }
 
     return (
-        <div className="h-screen flex flex-col">
+        <div className="pt-28 min-h-screen flex justify-center">
             <ToastContainer className='text-xs'/>
-            <div className="max-w-5xl mx-auto flex-grow pt-20 font-poppins">
+            <div className="max-w-6xl w-full flex-grow font-poppins">
                 {/* Header */}
-                <div className="mb-10 mt-5 flex items-center justify-between">
+                <div className="mb-10 flex items-center justify-between">
                     <div className="text-left">
-                        <h2 className="text-3xl font-bold font-comic">Welcome to your Magic Store</h2>
+                        <h2 className="text-2xl font-bold font-comic">Welcome to your Magic Store</h2>
                         <p className="text-gray-600 mt-2 text-base">
                             Spend your hard-earned coins to customize your Magic Garden and unlock rewards!
                         </p>
