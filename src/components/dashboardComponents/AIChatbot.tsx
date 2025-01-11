@@ -78,6 +78,24 @@ const AIChatbot : React.FC  = () => {
         }
     };
 
+    const addNewTab = () => {
+        const newTabName = `Tab ${Object.keys(messages).length + 1}`;
+        setMessages((prevMessages) => ({
+          ...prevMessages,
+          [newTabName]: [{
+            id: Date.now().toString(),
+            content: `Welcome to ${newTabName}!`,
+            sender: 'ai',
+            timestamp: new Date()
+          }]
+        }));
+        setActiveTab(newTabName);
+    };
+    
+    const formatTimestamp = (date: Date) => {
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
     const handleVoiceMode = () => {
         // Handle the voice mode action here
         console.log("Voice mode activated");
@@ -107,13 +125,15 @@ const AIChatbot : React.FC  = () => {
                             </div>
 
                             <button
+                                onClick={addNewTab}
                                 className="ml-2 p-2 rounded-full hover:bg-gray-100"
                                 aria-label="Add new tab"
                             >
                                 <Plus className="h-4 w-4" />
                             </button>
                         </div>
-
+                        
+                        {/* Chatbot Container */}
                         <Card className="h-[calc(100vh-10rem)] bg-[#CDE7FE] border-none shadow-none w-full mt-4">
                         {Object.keys(messages).map((tab) => (
                             <TabsContent key={tab} value={tab} className="h-full m-0">
@@ -134,6 +154,7 @@ const AIChatbot : React.FC  = () => {
                                     <div className={`text-xs mt-1 ${
                                         message.sender === 'user' ? 'text-gray-300' : 'text-gray-500'
                                     }`}>
+                                        {formatTimestamp(message.timestamp)}
                                     </div>
                                     </div>
                                 </div>
