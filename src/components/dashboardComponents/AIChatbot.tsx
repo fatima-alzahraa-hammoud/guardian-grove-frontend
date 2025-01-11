@@ -156,30 +156,30 @@ const AIChatbot : React.FC  = () => {
                         <Card className="h-[calc(100vh-11rem)] bg-[#CDE7FE] border-none shadow-none w-full mt-4">
                         {Object.keys(messages).map((tab) => (
                             <TabsContent key={tab} value={tab} className="h-full m-0">
-                            <div className="h-full overflow-y-auto p-4 space-y-6">
-                                {messages[tab].map((message) => (
-                                <div
-                                    key={message.id}
-                                    className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                                >
+                                <div className="h-full overflow-y-auto p-4 space-y-6">
+                                    {messages[tab].map((message) => (
                                     <div
-                                    className={`max-w-[70%] rounded-2xl p-3 ${
-                                        message.sender === 'user'
-                                        ? 'bg-[#0D358C] text-white'
-                                        : 'bg-white text-black'
-                                    }`}
+                                        key={message.id}
+                                        className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                                     >
-                                    <div className="text-sm">{message.content}</div>
-                                    <div className={`text-xs mt-1 ${
-                                        message.sender === 'user' ? 'text-gray-300' : 'text-gray-500'
-                                    }`}>
-                                        {formatTimestamp(message.timestamp)}
+                                        <div
+                                        className={`max-w-[70%] rounded-2xl p-3 ${
+                                            message.sender === 'user'
+                                            ? 'bg-[#0D358C] text-white'
+                                            : 'bg-white text-black'
+                                        }`}
+                                        >
+                                        <div className="text-sm">{message.content}</div>
+                                        <div className={`text-xs mt-1 ${
+                                            message.sender === 'user' ? 'text-gray-300' : 'text-gray-500'
+                                        }`}>
+                                            {formatTimestamp(message.timestamp)}
+                                        </div>
+                                        </div>
                                     </div>
-                                    </div>
+                                    ))}
+                                    <div ref={messagesEndRef} />
                                 </div>
-                                ))}
-                                <div ref={messagesEndRef} />
-                            </div>
                             </TabsContent>
                         ))}
                         </Card>

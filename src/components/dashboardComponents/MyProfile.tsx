@@ -12,9 +12,11 @@ import "../../styles/card.css";
 import "../../styles/global.css";
 import DialogComponent from "../common/updateUserDialog";
 import { TUpdate } from "../../libs/types/updateTypes";
+import { useNavigate } from "react-router-dom";
 
 const MyProfile : React.FC = () => {
 
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const name = useSelector(selectName);
     const avatar = useSelector(selectAvatar);
@@ -340,7 +342,7 @@ const MyProfile : React.FC = () => {
             {/* Connect to AI */}
             <div className="mt-10">
                 <h3 className="font-comic font-extrabold mb-2">Need help or guidance today? I’m here for you!</h3>
-                <button className="p-2 mt-3 mb-10 bg-[#3A8EBA] rounded-full text-sm text-white">Talk to me, your AI friend</button>
+                <button onClick={() => navigate("/dashboard/AIFriend")} className="p-2 mt-3 mb-10 bg-[#3A8EBA] rounded-full text-sm text-white">Talk to me, your AI friend</button>
             </div>
             
         </div>
