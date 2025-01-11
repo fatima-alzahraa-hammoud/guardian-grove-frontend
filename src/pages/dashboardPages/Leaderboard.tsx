@@ -3,6 +3,7 @@ import { Button } from "../../components/ui/button";
 import { cn } from "../../lib/utils";
 import Task from "/assets/images/task.png";
 import Star from "/assets/images/stars.png";
+import ProgressBar from "../../components/common/ProgressBar";
 
 interface LeaderboardEntry {
     rank: number;
@@ -103,7 +104,7 @@ const Leaderboard: React.FC = () => {
                     {/* Right Side Progress */}
                     <div className="w-[350px] ml-[32px] font-poppins">
                         {/* Motivation section */}
-                        <div className="bg-[#E3F2FD] rounded-lg p-6 mb-6 flex flex-col justify-between items-center h-[220px]">
+                        <div className="bg-[#E3F2FD] rounded-lg p-6 mb-6 flex flex-col justify-between items-center h-[280px]">
                             <h3 className="text-xl font-bold mb-2 font-comic">Hooray!</h3>
                             <div className="mb-4 text-sm"><span className="font-bold font-poppins">Your Rank:</span> 8</div>
                             <p className="mb-2 text-sm">
@@ -112,6 +113,16 @@ const Leaderboard: React.FC = () => {
                             <p className="text-sm">
                                 You can do it—keep completing your tasks and reach the next level! 🌟
                             </p>
+                        </div>
+
+                        {/* Family Progress section*/}
+                        <div className="bg-[#E3F2FD] rounded-lg p-6 h-[280px] flex flex-col items-center">
+                            <h3 className="text-xl font-bold mb-4 font-comic">Your Family Progress</h3>
+                            <div className="space-y-2 w-[70%]">
+                                <ProgressBar label="Goals" completed={10} total={15}/>
+                                <ProgressBar label="Tasks" completed={53} total={60}/>
+                                <ProgressBar label="Achievements" completed={50} total={150}/>
+                            </div>
                         </div>
                     </div>
                 </div>
