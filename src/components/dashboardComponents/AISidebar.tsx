@@ -6,10 +6,14 @@ import AIFriend from "/assets/images/ai-friend.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
-const AISidebar : React.FC = () => {
+interface SidebarProps {
+  collapsed: boolean;
+}
+
+const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
 
     const { toggleSidebar, state } = useSidebar();
-    const isCollapsed = state === "collapsed";
+    collapsed = state === "collapsed";
 
     const [activeItem, setActiveItem] = useState<string | null>(null);
     const [activeChat, setActiveChat] = React.useState<string | null>(null);
@@ -46,7 +50,7 @@ const AISidebar : React.FC = () => {
             <SidebarHeader className="h-20 px-4 flex flex-col justify-center bg-[#B2D1F1] border-[#B2D1F1]">
                 <div className="flex items-center justify-between w-full">
                     <Button variant="ghost" size="icon" className="w-8 h-8" onClick={toggleSidebar}>
-                        {isCollapsed ? <ChevronRight className="w-6 h-6 text-sky-600" /> : <ChevronLeft className="w-5 h-5 text-sky-600" />}
+                        {collapsed ? <ChevronRight className="w-6 h-6 text-sky-600" /> : <ChevronLeft className="w-5 h-5 text-sky-600" />}
                     </Button>
                     <div className="flex items-center space-x-2">
                         <Button variant="ghost" size="icon" className="w-8 h-8 group-data-[collapsible=icon]:hidden">
