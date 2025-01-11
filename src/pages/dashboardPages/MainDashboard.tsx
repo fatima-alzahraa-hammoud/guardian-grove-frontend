@@ -15,7 +15,7 @@ const Main : React.FC = () => {
             case 'notes':
                 return <div className="pt-20">Notes Content</div>;
             case 'achievements':
-                return <Achievements />;
+                return <Achievements collapsed={collapsed}/>;
             default:
                 return <div>Select a section</div>;
         }

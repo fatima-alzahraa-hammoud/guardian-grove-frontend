@@ -22,8 +22,11 @@ interface Achievement {
     type: "personal" | "family";
 }
 
+interface AchievementsProps {
+  collapsed: boolean;
+}
 
-const Achievements : React.FC = () => {
+const Achievements : React.FC<AchievementsProps> = ({collapsed}) => {
 
     const [activeFilter, setActiveFilter] = useState<string>("My Achievements");
     const [achievements, setAchievements] = useState<Achievement[]>([]);
@@ -128,8 +131,8 @@ const Achievements : React.FC = () => {
     }, [sortOrder, sortBy, filteredAchievements]);
 
     return(
-        <div className="pt-20 h-screen flex flex-col">
-            <div className="max-w-5xl px-6 flex-grow font-poppins">
+        <div className={`pt-24 min-h-screen flex justify-center`}>
+            <div className={` w-full flex-grow font-poppins  ${collapsed ? "max-w-6xl" : "max-w-5xl"}`}>
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div className="text-left">
@@ -186,9 +189,12 @@ const Achievements : React.FC = () => {
                 </div>
 
                 {/* Item Cards Section */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-5">
-                    {filteredAchievements.length > 0 ? (
-                        filteredAchievements.map((achievement) => (
+                <div className="flex flex-col items-center justify-center">
+                    <div className={`w-full flex-grow font-poppins ${collapsed ? "max-w-6xl" : "max-w-5xl"}`}>
+                        {/* Content Section */}
+                        {filteredAchievements.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-10">
+                            {filteredAchievements.map((achievement) => (
                             <AchievementCard
                                 key={achievement._id}
                                 title={achievement.title}
@@ -200,10 +206,30 @@ const Achievements : React.FC = () => {
                                 isLocked={achievement.isLocked}
                                 unlockedAt={achievement.unlockedAt}
                             />
-                        ))
-                    ) : (
-                        <p className="text-center text-sm">No achievements found.</p>
-                    )}
+                            ))}
+                        </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center text-center min-h-[calc(100vh-200px)]">
+                                <h3 className="text-xl font-bold text-[#3A8EBA] mb-4">
+                                    No Achievements Yet!
+                                </h3>
+                                <p className="text-gray-600 text-base mb-6">
+                                    Start completing exciting tasks and challenges to unlock your first achievement. <br></br><br></br>You're capable of greatness!
+                                </p>
+                                <img
+                                    src="/assets/images/motivation.png"
+                                    alt="Motivational Illustration"
+                                    className="w-32 h-32 mb-6 mx-auto"
+                                />
+                                <Button
+                                    onClick={() => console.log("Request AI for tasks")}
+                                    className="bg-[#3A8EBA] text-white px-6 py-2 rounded-full hover:bg-[#347ea5] transition"
+                                >
+                                    Ask AI for Tasks
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
