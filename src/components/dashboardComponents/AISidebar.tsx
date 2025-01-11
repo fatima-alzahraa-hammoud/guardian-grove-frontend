@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail, useSidebar } from "../ui/sidebar";
 import { Button } from "../ui/button";
-import { Bot, Calendar, ChevronLeft, ChevronRight, History, Home, Layout, List, MessageCircle, MessageSquarePlus, MoreHorizontal, Search, Settings, Timer } from "lucide-react";
+import { Bot, Calendar, ChevronLeft, ChevronRight, History, Home, Layout, List, MessageCircle, MoreHorizontal, Search, Settings, Timer } from "lucide-react";
 import AIFriend from "/assets/images/ai-friend.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
