@@ -99,6 +99,21 @@ const Leaderboard: React.FC = () => {
                             </div>
                         ))}
                     </div>
+
+                    {/* Right Side Progress */}
+                    <div className="w-[350px] ml-[32px] font-poppins">
+                        {/* Motivation section */}
+                        <div className="bg-[#E3F2FD] rounded-lg p-6 mb-6 flex flex-col justify-between items-center h-[220px]">
+                            <h3 className="text-xl font-bold mb-2 font-comic">Hooray!</h3>
+                            <div className="mb-4 text-sm"><span className="font-bold font-poppins">Your Rank:</span> 8</div>
+                            <p className="mb-2 text-sm">
+                                You need just 5 more stars to reach Rank 7!
+                            </p>
+                            <p className="text-sm">
+                                You can do it—keep completing your tasks and reach the next level! 🌟
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
