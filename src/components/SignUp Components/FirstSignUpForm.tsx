@@ -62,7 +62,7 @@ const FirstSignUpForm : React.FC<FirstSignUpFormProps> = ({onNext}) => {
     }, [errors]);
 
     return(
-        <div ref={titleRef} className="w-full max-w-md space-y-5 -mt-24">
+        <div ref={titleRef} className="w-full max-w-md space-y-5">
             {/*title*/}
             <div className="form-element text-center flex-col space-y-4">
                 <h1 className="text-3xl font-bold text-center text-gray-800 font-comic">Create Account</h1>

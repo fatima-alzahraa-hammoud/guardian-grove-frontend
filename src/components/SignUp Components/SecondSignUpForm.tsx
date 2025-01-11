@@ -97,7 +97,7 @@ const SecondSignUpForm: React.FC<SecondSignUpFormProps> = ({onSubmit}) => {
     }, []);
 
     return (
-        <div ref={containerRef} className="w-full max-w-md space-y-6 -mt-20 font-poppins">
+        <div ref={containerRef} className="w-full max-w-md space-y-6 font-poppins">
             {/*title*/}
             <div className="form-element text-center flex-col space-y-4">
                 <h1 className="text-2xl font-bold text-center text-gray-800 font-comic">Welcome to Guardian Grove!</h1>
@@ -108,7 +108,7 @@ const SecondSignUpForm: React.FC<SecondSignUpFormProps> = ({onSubmit}) => {
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit, onError)} className="space-y-4">
-                    <div className="space-y-4 max-h-[350px] overflow-y-auto">
+                    <div className="space-y-4 max-h-[23rem] overflow-y-auto">
                         <FormField
                             control={form.control}
                             name="avatar"

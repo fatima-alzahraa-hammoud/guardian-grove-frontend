@@ -100,8 +100,8 @@ const Login : React.FC = () => {
             <div ref={logoRef} className="absolute top-4 left-4">
                 <img src={logo} alt="Guardian Grove Logo" width={100} height={100} />
             </div>
-            <div className="lg:w-1/2 flex-1 flex flex-col items-center justify-start p-8 lg:p-16 w-1/2">
-                <div ref={titleRef} className="w-full max-w-md space-y-4 mt-10">
+            <div className="lg:w-1/2 flex-1 flex flex-col items-center justify-center p-8 lg:p-16 w-1/2">
+                <div ref={titleRef} className="w-full max-w-md space-y-4">
                     {/*title*/}
                     <div className="form-element text-center flex-col space-y-4">
                         <h1 className="text-3xl font-bold text-center text-gray-800 font-comic">Sign in to Guardian Grove</h1>
