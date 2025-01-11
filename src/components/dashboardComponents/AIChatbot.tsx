@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import AIFriend from "/assets/images/ai-friend.png";
 import { Card } from "../ui/card";
-import { Mic, Paperclip, Send } from "lucide-react";
+import { Mic, Paperclip, Plus, Send } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 interface Message {
     id: string;
@@ -91,12 +92,59 @@ const AIChatbot : React.FC  = () => {
 
                 {/* Chatbot */}
                 <div className="flex flex-col w-full items-center relative">
+                   
+                    {/* Tabs */}
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-[98%] h-full flex flex-col">
+                        <div className="flex justify-between items-center pt-4">
+                            <div className="flex items-center w-[20%]">
+                                <TabsList className="flex-grow ">
+                                    {Object.keys(messages).map((tab) => (
+                                        <TabsTrigger key={tab} value={tab} className="flex-1">
+                                            {tab}
+                                        </TabsTrigger>
+                                    ))}
+                                </TabsList>
+                            </div>
 
-                    {/* Chatbot Container */}
-                    <Card className="h-[calc(100vh-10rem)] bg-[#CDE7FE] border-none shadow-none w-[98%] mt-10">
-                        <div className="h-full overflow-y-auto p-4 space-y-6"></div>
-                    </Card>
+                            <button
+                                className="ml-2 p-2 rounded-full hover:bg-gray-100"
+                                aria-label="Add new tab"
+                            >
+                                <Plus className="h-4 w-4" />
+                            </button>
+                        </div>
 
+                        <Card className="h-[calc(100vh-10rem)] bg-[#CDE7FE] border-none shadow-none w-full mt-4">
+                        {Object.keys(messages).map((tab) => (
+                            <TabsContent key={tab} value={tab} className="h-full m-0">
+                            <div className="h-full overflow-y-auto p-4 space-y-6">
+                                {messages[tab].map((message) => (
+                                <div
+                                    key={message.id}
+                                    className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                                >
+                                    <div
+                                    className={`max-w-[70%] rounded-2xl p-3 ${
+                                        message.sender === 'user'
+                                        ? 'bg-[#0D358C] text-white'
+                                        : 'bg-white text-black'
+                                    }`}
+                                    >
+                                    <div className="text-sm">{message.content}</div>
+                                    <div className={`text-xs mt-1 ${
+                                        message.sender === 'user' ? 'text-gray-300' : 'text-gray-500'
+                                    }`}>
+                                    </div>
+                                    </div>
+                                </div>
+                                ))}
+                                <div ref={messagesEndRef} />
+                            </div>
+                            </TabsContent>
+                        ))}
+                        </Card>
+                    </Tabs>
+                    
                     {/* Messaging container */}
                     <form onSubmit={handleSubmit} className="absolute bottom-0 w-full bg-[#0D358C] rounded-3xl z-10 p-3 text-white">
                         <div className="relative flex [&_textarea]:relative [&_textarea]:z-10 [&_textarea]:bg-transparent rounded-xl border-0">
