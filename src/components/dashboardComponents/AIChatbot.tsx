@@ -18,11 +18,39 @@ const AIChatbot : React.FC  = () => {
 
     const [input, setInput] = useState<string>("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-    const [messages, setMessages] = useState<Record<string, string[]>>({
-        "Tab 1": ["Hello! How can I help you today?", "I am your friendly assistant."],
-        "Tab 2": ["Welcome to the second tab.", "Let me know your thoughts!"],
-      }); 
-    const [activeTab, setActiveTab] = useState<string>("Tab 1"); // Active tab state
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [messages, setMessages] = useState<TabMessages>({
+        "Tab 1": [
+            {
+                id: "1",
+                content: "Hello! How can I help you today?",
+                sender: 'ai',
+                timestamp: new Date()
+            },
+            {
+                id: "2",
+                content: "I am your friendly assistant.",
+                sender: 'ai',
+                timestamp: new Date()
+            }
+        ],
+        "Tab 2": [
+            {
+                id: "3",
+                content: "Welcome to the second tab.",
+                sender: 'ai',
+                timestamp: new Date()
+            }
+        ]
+    });
+      
+    const [activeTab, setActiveTab] = useState<string>("Tab 1");
+    
+    // Auto-scroll to bottom when new messages arrive
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+     
 
     useEffect(() => {
         if (textareaRef.current) {
@@ -34,11 +62,18 @@ const AIChatbot : React.FC  = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (input.trim()) {
-          setMessages((prevMessages) => ({
-            ...prevMessages,
-            [activeTab]: [...(prevMessages[activeTab] || []), input.trim()],
-          }));
-          setInput("");
+            const newMessage: Message = {
+                id: Date.now().toString(),
+                content: input.trim(),
+                sender: 'user',
+                timestamp: new Date()
+            };
+    
+            setMessages((prevMessages) => ({
+                ...prevMessages,
+                [activeTab]: [...(prevMessages[activeTab] || []), newMessage]
+            }));
+            setInput("");
         }
     };
 
