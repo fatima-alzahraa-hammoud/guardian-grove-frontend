@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import AIFriend from "/assets/images/ai-friend.png";
 import { Card } from "../ui/card";
-import { Mic, Paperclip, Plus, Send } from "lucide-react";
+import { Mic, Paperclip, Plus, Send, Share } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 interface Message {
@@ -113,8 +113,8 @@ const AIChatbot : React.FC  = () => {
                    
                     {/* Tabs */}
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-[98%] h-full flex flex-col">
-                        <div className="flex justify-between items-center pt-4">
-                            <div className="flex items-center w-[20%]">
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center w-[30%] overflow-x-auto">
                                 <TabsList className="flex-grow ">
                                     {Object.keys(messages).map((tab) => (
                                         <TabsTrigger key={tab} value={tab} className="flex-1">
@@ -124,17 +124,26 @@ const AIChatbot : React.FC  = () => {
                                 </TabsList>
                             </div>
 
-                            <button
-                                onClick={addNewTab}
-                                className="ml-2 p-2 rounded-full hover:bg-gray-100"
-                                aria-label="Add new tab"
-                            >
-                                <Plus className="h-4 w-4" />
-                            </button>
+                            <div>
+                                <button
+                                    onClick={addNewTab}
+                                    className="ml-2 p-2 rounded-full hover:bg-gray-100"
+                                    aria-label="Add new tab"
+                                >
+                                    <Plus className="h-4 w-4" />
+                                </button>
+
+                                <button
+                                    className="ml-2 p-2 rounded-full hover:bg-gray-100"
+                                    aria-label="Share chat tab"
+                                >
+                                    <Share className="h-4 w-4" />
+                                </button>
+                            </div>
                         </div>
                         
                         {/* Chatbot Container */}
-                        <Card className="h-[calc(100vh-10rem)] bg-[#CDE7FE] border-none shadow-none w-full mt-4">
+                        <Card className="h-[calc(100vh-11rem)] bg-[#CDE7FE] border-none shadow-none w-full mt-4">
                         {Object.keys(messages).map((tab) => (
                             <TabsContent key={tab} value={tab} className="h-full m-0">
                             <div className="h-full overflow-y-auto p-4 space-y-6">
