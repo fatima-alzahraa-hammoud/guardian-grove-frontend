@@ -4,6 +4,7 @@ import { selectAvatar, selectBirthday, selectCoins, selectEmail, selectMmeberSin
 import coinImage from "/assets/images/coins.png";
 import starsImage from "/assets/images/stars.png";
 import rankImage from "/assets/images/rank.png";
+import AIMessage from "/assets/images/message.png";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { toast } from "react-toastify";
@@ -208,7 +209,10 @@ const MyProfile : React.FC = () => {
             {/* Daily message */}
 
             <div className="mt-5">
-                <h3 className="font-comic font-extrabold mb-2 text-base">Daily Message</h3>
+                <div className="flex gap-2">
+                    <h3 className="font-comic font-extrabold mb-2 text-base">Daily Message</h3>
+                    <img src={AIMessage} alt="AI message" className="w-6 h-6"/>
+                </div>
                 <div className="w-full max-h-16 text-[13px] font-poppins mt-3">
                     {dailyMessage}
                 </div>
