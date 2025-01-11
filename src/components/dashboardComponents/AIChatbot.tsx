@@ -3,11 +3,26 @@ import AIFriend from "/assets/images/ai-friend.png";
 import { Card } from "../ui/card";
 import { Mic, Paperclip, Send } from "lucide-react";
 
+interface Message {
+    id: string;
+    content: string;
+    sender: 'user' | 'ai';
+    timestamp: Date;
+}
+  
+interface TabMessages {
+    [key: string]: Message[];
+}
+
 const AIChatbot : React.FC  = () => {
 
     const [input, setInput] = useState<string>("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-    const [messages, setMessages] = useState<string[]>([]);
+    const [messages, setMessages] = useState<Record<string, string[]>>({
+        "Tab 1": ["Hello! How can I help you today?", "I am your friendly assistant."],
+        "Tab 2": ["Welcome to the second tab.", "Let me know your thoughts!"],
+      }); 
+    const [activeTab, setActiveTab] = useState<string>("Tab 1"); // Active tab state
 
     useEffect(() => {
         if (textareaRef.current) {
@@ -19,8 +34,11 @@ const AIChatbot : React.FC  = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (input.trim()) {
-            setMessages([...messages, input.trim()]);
-            setInput("");
+          setMessages((prevMessages) => ({
+            ...prevMessages,
+            [activeTab]: [...(prevMessages[activeTab] || []), input.trim()],
+          }));
+          setInput("");
         }
     };
 
