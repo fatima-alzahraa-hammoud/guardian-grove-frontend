@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import AIFriend from "/assets/images/ai-friend.png";
 import { Card } from "../ui/card";
-import { Paperclip, Send } from "lucide-react";
+import { Mic, Paperclip, Send } from "lucide-react";
 
 const AIChatbot : React.FC  = () => {
 
@@ -22,6 +22,11 @@ const AIChatbot : React.FC  = () => {
             setMessages([...messages, input.trim()]);
             setInput("");
         }
+    };
+
+    const handleVoiceMode = () => {
+        // Handle the voice mode action here
+        console.log("Voice mode activated");
     };
 
     return(
@@ -73,8 +78,12 @@ const AIChatbot : React.FC  = () => {
                                     className="inline-flex shrink-0 cursor-pointer select-none items-center justify-center gap-1.5 whitespace-nowrap text-nowrap border font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-offset-1 has-[:focus-visible]:ring-2 [&>svg]:pointer-events-none [&>svg]:size-5 [&_svg]:shrink-0 text-background border-white bg-white hover:border-[#eae9e9] focus:border-[#eae9e9] focus:bg-[#eae9e9] focus-visible:border-[#eae9e9] focus-visible:bg-[#eae9e9] px-3 text-sm rounded-full size-9 text-black hover:bg-[#eae9e9]"
                                     type="submit"
                                 >
+                                {input.trim() ? (
                                     <Send className="h-5 w-5 text-black" />
-                                    <span className="sr-only">Send Message</span>
+                                ) : (
+                                    <Mic className="h-5 w-5 text-black" onClick={handleVoiceMode} />
+                                )}
+                                <span className="sr-only">{input.trim() ? "Send Message" : "Voice Mode"}</span>
                                 </button>
                             </div>
                         </div>
