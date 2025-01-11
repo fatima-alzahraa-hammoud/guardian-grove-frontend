@@ -3,6 +3,7 @@ import AIFriend from "/assets/images/ai-friend.png";
 import { Card } from "../ui/card";
 import { Mic, Paperclip, Plus, Send, Share } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { toast, ToastContainer } from "react-toastify";
 
 interface Message {
     id: string;
@@ -79,15 +80,23 @@ const AIChatbot : React.FC  = () => {
     };
 
     const addNewTab = () => {
+        // Check if the number of tabs has reached the limit
+        if (Object.keys(messages).length >= 5) {
+            toast.error("You can only have up to 5 tabs.");
+            return;
+        }
+
         const newTabName = `Tab ${Object.keys(messages).length + 1}`;
         setMessages((prevMessages) => ({
-          ...prevMessages,
-          [newTabName]: [{
-            id: Date.now().toString(),
-            content: `Welcome to ${newTabName}!`,
-            sender: 'ai',
-            timestamp: new Date()
-          }]
+            ...prevMessages,
+            [newTabName]: [
+                {
+                    id: Date.now().toString(),
+                    content: `Welcome to ${newTabName}!`,
+                    sender: 'ai',
+                    timestamp: new Date(),
+                },
+            ],
         }));
         setActiveTab(newTabName);
     };
@@ -103,8 +112,9 @@ const AIChatbot : React.FC  = () => {
 
     return(
         <div className="max-w-5xl flex flex-col font-poppins">
+            <ToastContainer className="text-xs" />
             <div className="flex gap-3 w-full">
-                <div className="flex h-24 w-24 items-center justify-center rounded-full ">
+                <div className="flex h-24 w-24 items-center justify-center rounded-full ml-2">
                     <img src={AIFriend} alt="AI Avatar" className="h-22 w-22" />
                 </div>
 
@@ -114,10 +124,10 @@ const AIChatbot : React.FC  = () => {
                     {/* Tabs */}
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-[98%] h-full flex flex-col">
                         <div className="flex justify-between items-center">
-                            <div className="flex items-center w-[30%] overflow-x-auto">
-                                <TabsList className="flex-grow ">
+                            <div className="flex items-center overflow-x-auto">
+                                <TabsList className="flex flex-nowrap space-x-2 bg-[#CDE7FE]">
                                     {Object.keys(messages).map((tab) => (
-                                        <TabsTrigger key={tab} value={tab} className="flex-1">
+                                        <TabsTrigger key={tab} value={tab} className="shrink-0">
                                             {tab}
                                         </TabsTrigger>
                                     ))}
