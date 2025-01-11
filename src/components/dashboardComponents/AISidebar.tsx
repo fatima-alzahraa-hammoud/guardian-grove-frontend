@@ -44,8 +44,10 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
   
     return(
 
-        <Sidebar collapsible="icon" className="h-[calc(100vh-4rem)] transition-all duration-300 ease-in-out border-r bg-[#B2D1F1] flex flex-col justify-between fixed top-16 left-0">
-            
+        <Sidebar
+            collapsible="icon"
+            className={`h-[calc(100vh-4rem)] transition-all duration-300 ease-in-out border-r bg-[#B2D1F1] flex flex-col justify-between fixed top-16 left-0`}
+        >            
             {/* Sidebar header */}
             <SidebarHeader className="h-20 px-4 flex flex-col justify-center bg-[#B2D1F1] border-[#B2D1F1]">
                 <div className="flex items-center justify-between w-full">
@@ -71,7 +73,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
             </SidebarHeader>
 
             {/* Sidebar Content */}
-            <SidebarContent className="bg-[#B2D1F1] pt-3 pl-3">
+            <SidebarContent className={`bg-[#B2D1F1] pt-3 pl-3 ${collapsed ? "items-center pl-0" : ""}`}>
 
                 {/* features */}
                 <SidebarGroup>
@@ -186,7 +188,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                         Quick Tip
                     </Button>
                 </div>
-                <div className="flex items-center justify-around mt-4">
+                <div className="flex items-center justify-around mt-4 group-data-[collapsible=icon]:flex-col">
                     <Button variant="ghost" size="icon" className="w-8 h-8">
                         <Home className="w-4 h-4 text-[#0284c7]" />
                     </Button>
@@ -196,12 +198,13 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                             <line x1="12" x2="12" y1="16" y2="12"/>
                             <line x1="12" x2="12.01" y1="8" y2="8"/>
                         </svg>
-                        </Button>
+                    </Button>
                     <Button variant="ghost" size="icon" className="w-8 h-8">
                         <Settings className="w-4 h-4 text-[#0284c7]" />
                     </Button>
                 </div>
             </SidebarFooter>
+
             <SidebarRail />
         </Sidebar>
     );

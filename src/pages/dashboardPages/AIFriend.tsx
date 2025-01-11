@@ -12,8 +12,8 @@ const AIFriend : React.FC = () => {
             <SidebarProvider>
                 <AISidebar collapsed={collapsed} />
 
-                {/* Main Content Area */}
-                <div className={` pt-8 flex-grow max-w-[1200px] w-full mx-auto transition-all duration-300 text-left ${collapsed ? 'ml-20' : 'ml-64'}`}>
+                {/* AI Chatbot Area */}
+                <div className={` pt-28 flex-grow max-w-[1200px] w-full mx-auto transition-all duration-300 text-left ${collapsed ? 'ml-20' : 'ml-64'}`}>
                     <AIChatbot />
                 </div>
             </SidebarProvider>

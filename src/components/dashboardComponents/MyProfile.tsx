@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAvatar, selectBirthday, selectCoins, selectEmail, selectGender, selectMmeberSince, selectName, selectRank, selectRole, setEmail, setUser } from "../../redux/slices/userSlice";
+import { selectAvatar, selectBirthday, selectCoins, selectEmail, selectMmeberSince, selectName, selectRank, selectRole, setEmail, setUser } from "../../redux/slices/userSlice";
 import coinImage from "/assets/images/coins.png";
 import starsImage from "/assets/images/stars.png";
 import rankImage from "/assets/images/rank.png";
