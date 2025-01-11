@@ -1,33 +1,44 @@
 import React, { useState } from "react";
 import { Button } from "../../components/ui/button";
 import { cn } from "../../lib/utils";
+interface LeaderboardEntry {
+    rank: number;
+    familyName: string;
+    stars: number;
+    tasks: number;
+}
 
-const Leaderboard : React.FC = () => {
-
+const Leaderboard: React.FC = () => {
     const filters = ["Daily Stars", "Weekly Champions", "Monthly Achievers", "Yearly Legends"];
-    const [activeFilter, setActiveFilter] = useState<string>("My Achievements");
+    const [activeFilter, setActiveFilter] = useState<string>("Daily Stars");
 
-    return(
-        <div className=" h-screen flex flex-col">
-            <div className="max-w-5xl mx-auto flex-grow pt-20 font-poppins">
+    const leaderboardData: LeaderboardEntry[] = [
+        { rank: 1, familyName: "Family Name", stars: 200, tasks: 20 },
+        { rank: 2, familyName: "Family Name", stars: 190, tasks: 20 },
+        { rank: 3, familyName: "Family Name", stars: 190, tasks: 19 },
+        { rank: 4, familyName: "Family Name", stars: 190, tasks: 17 },
+        { rank: 5, familyName: "Family Name", stars: 170, tasks: 17 },
+        { rank: 6, familyName: "Family Name", stars: 160, tasks: 17 },
+        { rank: 6, familyName: "Family Name", stars: 160, tasks: 17 },
+    ];
+
+    return (
+        <div className="pt-28 min-h-screen flex justify-center">
+            <div className="max-w-6xl w-full flex-grow font-poppins">
                 {/* Header */}
-                <div className="mb-10 mt-5 flex items-center justify-between">
+                <div className="flex items-center justify-between">
                     <div className="text-left">
                         <h2 className="text-2xl font-bold font-comic">Family Leaderboard</h2>
                         <p className="text-gray-600 mt-2 text-base">
                             Shine together! See how your family ranks among others.
                         </p>
                     </div>
-
-                    <Button
-                        className="flex items-center bg-[#3A8EBA] px-3 py-2 rounded-full hover:bg-[#347ea5] transition"
-                    >
+                    <Button className="flex items-center bg-[#3A8EBA] px-3 py-2 rounded-full hover:bg-[#347ea5] transition">
                         <p className="text-sm font-semibold text-white">
-                            View Your Achievements 
+                            View Your Achievements
                         </p>
                     </Button>
                 </div>
-
 
                 {/* Filters Section */}
                 <div className="flex flex-wrap gap-3 mt-10">
@@ -46,7 +57,6 @@ const Leaderboard : React.FC = () => {
                     ))}
                 </div>
             </div>
-            
         </div>
     );
 };
