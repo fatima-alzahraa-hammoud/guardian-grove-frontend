@@ -54,9 +54,8 @@ const Leaderboard: React.FC = () => {
         const fetchLeaderboard = async () => {
             try {
                 const response = await requestApi({
-                    route: "/family/leaderboard",
+                    route: `/family/leaderboard?familyId=${familyId}`,
                     method: requestMethods.GET,
-                    body: familyId
                 })
                 if (response){
                     if(response.dailyTop10) setDailyRanks(response.dailyTop10);
@@ -70,6 +69,8 @@ const Leaderboard: React.FC = () => {
                         monthly: response.monthlyFamilyRank || null,
                         yearly: response.yearlyFamilyRank || null
                     });
+
+                    console.log(response.dailyFamilyRank)
                 }
                 else{
                     console.log("failed to fetch leaderboard");
@@ -78,25 +79,57 @@ const Leaderboard: React.FC = () => {
                 console.log("Something wrong happened", error);
             }
         };
-        fetchLeaderboard();
+        if (familyId)fetchLeaderboard();
     }, [familyId]);
 
     const getFilteredRanks = () => {
+        let rankings: LeaderboardEntry[] = [];
+        let currentFamilyRank: FamilyRank | null = null;
+
         switch (activeFilter) {
             case "Daily Stars":
-                return dailyRanks;
+                rankings = dailyRanks;
+                currentFamilyRank = familyRanks.daily;
+                break;
             case "Weekly Champions":
-                return weeklyRanks;
+                rankings = weeklyRanks;
+                currentFamilyRank = familyRanks.weekly;
+                break;
             case "Monthly Achievers":
-                return monthlyRanks;
+                rankings = monthlyRanks;
+                currentFamilyRank = familyRanks.monthly;
+                break;
             case "Yearly Legends":
-                return yearlyRanks;
+                rankings = yearlyRanks;
+                currentFamilyRank = familyRanks.yearly;
+                break;
             default:
-                return dailyRanks;
+                rankings = dailyRanks;
+                currentFamilyRank = familyRanks.daily;
         }
+
+        // Check if family is not in top 10 but has a rank
+        if (currentFamilyRank && !rankings.some(entry => entry.familyId === familyId)) {
+            // Add a separator if family rank is not immediately after top 10
+            if (currentFamilyRank.rank > rankings.length + 1) {
+                rankings.push({
+                    rank: -1, // Use -1 to indicate separator
+                    familyName: "...",
+                    stars: 0,
+                    tasks: 0,
+                    familyId: "separator",
+                    familyAvatar: ""
+                });
+            }
+            rankings.push(currentFamilyRank);
+        }
+
+        return rankings;
     };
 
     const leaderboardData = getFilteredRanks();
+    const currentFamilyRank = familyRanks[activeFilter.split(" ")[0].toLowerCase() as keyof typeof familyRanks];
+
 
     return (
         <div className="pt-28 min-h-screen flex justify-center">

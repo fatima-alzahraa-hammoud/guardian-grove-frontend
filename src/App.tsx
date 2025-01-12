@@ -39,7 +39,7 @@ function App() {
               const response = await requestApi({
                   route: "/users/user",
                   method: requestMethods.GET,
-                  body: userId,
+                  body:  { userId },
               });
 
               if (response){
