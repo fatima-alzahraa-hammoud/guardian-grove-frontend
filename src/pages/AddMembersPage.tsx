@@ -1,12 +1,13 @@
 import React from "react";
 import logo from '/assets/logo/GuardianGrove_logo_Text.png';
-import familyBonding from '/assets/images/family-bonding.png';
+import familyBondingImage from '/assets/images/family-bonding.png';
+import leafImage from '/assets/images/leaf.png';
 import { Button } from "../components/ui/button";
 import "../styles/addMember.css";
 
 const AddMembers :React.FC = () => {
     return(
-        <div className="h-screen bg-[#F5F1FA] flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        <div className="h-screen bg-[#F5F1FA] flex flex-col items-center justify-center relative overflow-hidden">
             {/* Logo */}
             <div className="absolute top-10 left-10">
                 <img
@@ -29,7 +30,7 @@ const AddMembers :React.FC = () => {
 
                     <div className="relative aspect-[16/9] rounded-xl overflow-hidden my-6">
                         <img
-                            src={familyBonding}
+                            src={familyBondingImage}
                             alt="Happy family illustration"
                             className="object-cover"
                         />
@@ -45,10 +46,17 @@ const AddMembers :React.FC = () => {
                         No
                     </Button>
                     <Button
-                        className="bg-[#3A8EBA] hover:bg-[#347ea5] rounded-full px-10 py-1"
+                        variant="secondary"
+                        className="bg-[#3A8EBA] hover:bg-[#347ea5] text-white rounded-full px-10 py-1"
                     >
                         Yes
                     </Button>
+                </div>
+
+                {/* Note section*/}
+                <div className="pt-4 flex gap-3 items-center justify-center">
+                    <p className="font-poppins text-sm">You can always add your children later from your profile settings.</p>
+                    <img src={leafImage} alt="" className="w-4 h-4"/>
                 </div>
             </div>
         </div>
