@@ -3,8 +3,8 @@ import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 
 const AddMembersForm : React.FC = () => {
 
-    const [value, setValue] = useState<string>("child");
-    
+    const [tab, setTab] = useState<string>("child");
+
     return(
         <div className="max-w-2xl w-full backdrop-blur-sm p-6 space-y-6 rounded-2xl">
             {/* Header */}
@@ -15,8 +15,8 @@ const AddMembersForm : React.FC = () => {
             <Tabs defaultValue="child" className="w-full">
                 <div className="flex justify-start items-center pl-20">
                     <TabsList className="flex flex-nowrap space-x-2 bg-[#CDE7FE]">
-                        <TabsTrigger value="child" className="shrink-0" onClick={() => setValue("child")}>Child</TabsTrigger>
-                        <TabsTrigger value="parent" className="shrink-0" onClick={() => setValue("parent")}>Parent</TabsTrigger>
+                        <TabsTrigger value="child" className="shrink-0" onClick={() => setTab("child")}>Child</TabsTrigger>
+                        <TabsTrigger value="parent" className="shrink-0" onClick={() => setTab("parent")}>Parent</TabsTrigger>
                     </TabsList>
                 </div>
             </Tabs>
