@@ -35,6 +35,18 @@ const Leaderboard: React.FC = () => {
     const [weeklyRanks, setWeeklyRanks] = useState<LeaderboardEntry[]>([]);
     const [monthlyRanks, setMonthlyRanks] = useState<LeaderboardEntry[]>([]);
     const [yearlyRanks, setYearlyRanks] = useState<LeaderboardEntry[]>([]);
+    const [familyRanks, setFamilyRanks] = useState<{
+        daily: FamilyRank | null;
+        weekly: FamilyRank | null;
+        monthly: FamilyRank | null;
+        yearly: FamilyRank | null;
+    }>({
+        daily: null,
+        weekly: null,
+        monthly: null,
+        yearly: null
+    });
+
 
     //change data depending on filter by default it is on daily
     //save and display family data
@@ -48,14 +60,17 @@ const Leaderboard: React.FC = () => {
                     body: familyId
                 })
                 if (response){
-                    if(response.dailyTop10)
-                        setDailyRanks(response.dailyTop10);
-                    if (response.weeklyTop10)
-                        setWeeklyRanks(response.weeklyTop10);
-                    if(response.monthlyTop10)
-                        setMonthlyRanks(response.monthlyTop10);
-                    if(response.yearlyTop10)
-                        setYearlyRanks(response.yearlyTop10);
+                    if(response.dailyTop10) setDailyRanks(response.dailyTop10);
+                    if (response.weeklyTop10) setWeeklyRanks(response.weeklyTop10);
+                    if(response.monthlyTop10) setMonthlyRanks(response.monthlyTop10);
+                    if(response.yearlyTop10) setYearlyRanks(response.yearlyTop10);
+
+                    setFamilyRanks({
+                        daily: response.dailyFamilyRank || null,
+                        weekly: response.weeklyFamilyRank || null,
+                        monthly: response.monthlyFamilyRank || null,
+                        yearly: response.yearlyFamilyRank || null
+                    });
                 }
                 else{
                     console.log("failed to fetch leaderboard");
