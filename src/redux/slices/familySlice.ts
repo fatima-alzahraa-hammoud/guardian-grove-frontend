@@ -9,3 +9,15 @@ interface FamilyState {
     tasks: number | 0;
     rank: number | 0;
 }
+
+
+const initialState: FamilyState = {
+    _id: null,
+    familyName: null,
+    email: null,
+    familyAvatar: null,
+    totalStars: 0,
+    tasks: 0,
+    rank: 0,
+    members: [],
+}
