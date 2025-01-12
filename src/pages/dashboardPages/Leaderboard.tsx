@@ -18,6 +18,15 @@ interface LeaderboardEntry {
     familyAvatar: string;
 }
 
+interface FamilyRank {
+    familyName: string;
+    familyAvatar: string;
+    stars: number;
+    tasks: number;
+    rank: number;
+    familyId: string;
+}
+
 const Leaderboard: React.FC = () => {
     const familyId = useSelector(selectFamilyId);
     const filters = ["Daily Stars", "Weekly Champions", "Monthly Achievers", "Yearly Legends"];
