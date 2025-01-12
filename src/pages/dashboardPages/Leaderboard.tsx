@@ -4,27 +4,76 @@ import { cn } from "../../lib/utils";
 import Task from "/assets/images/task.png";
 import Star from "/assets/images/stars.png";
 import ProgressBar from "../../components/common/ProgressBar";
+import { useSelector } from "react-redux";
+import { selectFamilyId } from "../../redux/slices/userSlice";
+import { requestApi } from "../../libs/requestApi";
+import { requestMethods } from "../../libs/enum/requestMethods";
 
 interface LeaderboardEntry {
     rank: number;
     familyName: string;
     stars: number;
     tasks: number;
+    familyId: string;
 }
 
 const Leaderboard: React.FC = () => {
+    const familyId = useSelector(selectFamilyId);
     const filters = ["Daily Stars", "Weekly Champions", "Monthly Achievers", "Yearly Legends"];
     const [activeFilter, setActiveFilter] = useState<string>("Daily Stars");
+    const [dailyRanks, setDailyRanks] = useState<LeaderboardEntry[]>([]);
+    const [weeklyRanks, setWeeklyRanks] = useState<LeaderboardEntry[]>([]);
+    const [monthlyRanks, setMonthlyRanks] = useState<LeaderboardEntry[]>([]);
+    const [yearlyRanks, setYearlyRanks] = useState<LeaderboardEntry[]>([]);
 
-    const leaderboardData: LeaderboardEntry[] = [
-        { rank: 1, familyName: "Family Name", stars: 200, tasks: 20 },
-        { rank: 2, familyName: "Family Name", stars: 190, tasks: 20 },
-        { rank: 3, familyName: "Family Name", stars: 190, tasks: 19 },
-        { rank: 4, familyName: "Family Name", stars: 190, tasks: 17 },
-        { rank: 5, familyName: "Family Name", stars: 170, tasks: 17 },
-        { rank: 6, familyName: "Family Name", stars: 160, tasks: 17 },
-        { rank: 6, familyName: "Family Name", stars: 160, tasks: 17 },
-    ];
+    //change data depending on filter by default it is on daily
+    //save and display family data
+
+    useEffect(() => {
+        const fetchLeaderboard = async () => {
+            try {
+                const response = await requestApi({
+                    route: "/family/leaderboard",
+                    method: requestMethods.GET,
+                    body: familyId
+                })
+                if (response){
+                    if(response.dailyTop10)
+                        setDailyRanks(response.dailyTop10);
+                    if (response.weeklyTop10)
+                        setWeeklyRanks(response.weeklyTop10);
+                    if(response.monthlyTop10)
+                        setMonthlyRanks(response.monthlyTop10);
+                    if(response.yearlyTop10)
+                        setYearlyRanks(response.yearlyTop10);
+                }
+                else{
+                    console.log("failed to fetch leaderboard");
+                }
+            } catch (error) {
+                console.log("Something wrong happened", error);
+            }
+        };
+        fetchLeaderboard();
+    }, [familyId]);
+
+    const getFilteredRanks = () => {
+        switch (activeFilter) {
+            case "Daily Stars":
+                return dailyRanks;
+            case "Weekly Champions":
+                return weeklyRanks;
+            case "Monthly Achievers":
+                return monthlyRanks;
+            case "Yearly Legends":
+                return yearlyRanks;
+            default:
+                return dailyRanks;
+        }
+    };
+
+    const leaderboardData = getFilteredRanks();
+
 
     return (
         <div className="pt-28 min-h-screen flex justify-center">
