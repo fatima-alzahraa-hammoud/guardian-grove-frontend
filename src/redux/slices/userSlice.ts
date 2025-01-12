@@ -4,6 +4,7 @@ interface UserState {
     _id: string | null;
     name: string | null;
     email: string | null;
+    familyId: string | null;
     birthday: Date;
     avatar: string | null;
     gender: string | null;
@@ -19,6 +20,7 @@ const initialState: UserState = {
     _id: null,
     name: null,
     email: null,
+    familyId: null,
     birthday: new Date('1940-01-01'),
     avatar: null,
     gender: null,
@@ -64,5 +66,6 @@ export const selectRank = (state: { user: UserState }) => state.user.rankInFamil
 export const selectPurchasedItems = (state: { user: UserState }) => state.user.purchasedItems;
 export const selectRole = (state: { user: UserState }) => state.user.role;
 export const selectGender = (state: { user: UserState }) => state.user.gender;
+export const selectFamilyId = (state: { user: UserState }) => state.user.familyId;
 
 export default userSlice.reducer;
