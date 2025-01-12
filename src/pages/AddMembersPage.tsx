@@ -1,8 +1,9 @@
 import React from "react";
 
 import logo from '/assets/logo/GuardianGrove_logo_Text.png';
+import familyBonding from '/assets/images/family-bonding.png';
 
-const AddMembersQuestion :React.FC = () => {
+const AddMembers :React.FC = () => {
     return(
         <div className="min-h-screen bg-[#F5F1FA] flex flex-col items-center justify-center p-4 relative overflow-hidden">
             {/* Logo */}
@@ -24,10 +25,18 @@ const AddMembersQuestion :React.FC = () => {
                     <p className="text-gray-600 font-poppins">
                         Adding your family will unlock tailored experiences and features just for them.
                     </p>
+
+                    <div className="relative aspect-[16/9] rounded-xl overflow-hidden my-6">
+                        <img
+                            src={familyBonding}
+                            alt="Happy family illustration"
+                            className="object-cover"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
     )
 };
 
-export default AddMembersQuestion;
+export default AddMembers;
