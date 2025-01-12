@@ -2,6 +2,7 @@ import React from "react";
 import logo from '/assets/logo/GuardianGrove_logo_Text.png';
 import familyBonding from '/assets/images/family-bonding.png';
 import { Button } from "../components/ui/button";
+import "../styles/addMember.css";
 
 const AddMembers :React.FC = () => {
     return(
