@@ -33,9 +33,9 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = ({
     >
         {/* Rank Section */}
         <div className="w-12 flex items-center justify-center">
-            {rank < 3 ? (
+            {rank <= 3 ? (
                 <span className="text-2xl">
-                    {rank === 0 ? "🥇" : rank === 1 ? "🥈" : "🥉"}
+                    {rank === 1 ? "🥇" : rank === 2 ? "🥈" : "🥉"}
                 </span>
             ) : (
                 <span className={rankStyle}>{rank}</span>

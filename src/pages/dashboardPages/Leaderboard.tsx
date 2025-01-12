@@ -28,6 +28,9 @@ interface FamilyRank {
 
 const Leaderboard: React.FC = () => {
     const familyId = useSelector(selectFamilyId);
+    const [rankingUpMessage, setRankingUpMessage] = useState<string>("");
+    const [motivationalMessage, setMotivationalMessage] = useState<string>("");
+
     const filters = ["Daily Stars", "Weekly Champions", "Monthly Achievers", "Yearly Legends"];
     const [activeFilter, setActiveFilter] = useState<string>("Daily Stars");
     const [dailyRanks, setDailyRanks] = useState<LeaderboardEntry[]>([]);
@@ -70,7 +73,6 @@ const Leaderboard: React.FC = () => {
                         yearly: response.yearlyFamilyRank || null
                     });
 
-                    console.log(response.dailyFamilyRank)
                 }
                 else{
                     console.log("failed to fetch leaderboard");
@@ -79,7 +81,7 @@ const Leaderboard: React.FC = () => {
                 console.log("Something wrong happened", error);
             }
         };
-        if (familyId)fetchLeaderboard();
+        if (familyId) fetchLeaderboard();
     }, [familyId]);
 
     const getFilteredRanks = () => {
@@ -110,26 +112,52 @@ const Leaderboard: React.FC = () => {
 
         // Check if family is not in top 10 but has a rank
         if (currentFamilyRank && !rankings.some(entry => entry.familyId === familyId)) {
-            // Add a separator if family rank is not immediately after top 10
-            if (currentFamilyRank.rank > rankings.length + 1) {
-                rankings.push({
-                    rank: -1, // Use -1 to indicate separator
-                    familyName: "...",
-                    stars: 0,
-                    tasks: 0,
-                    familyId: "separator",
-                    familyAvatar: ""
-                });
-            }
             rankings.push(currentFamilyRank);
         }
 
         return rankings;
     };
 
-    const leaderboardData = getFilteredRanks();
-    const currentFamilyRank = familyRanks[activeFilter.split(" ")[0].toLowerCase() as keyof typeof familyRanks];
+    useEffect(() => {
+        getMotivationalMessage();
+    }, [familyRanks, activeFilter]); 
 
+    const getMotivationalMessage = () => {
+        if (currentFamilyRank){
+            let comparisonFamilyRank: LeaderboardEntry | null = null;
+
+            if (currentFamilyRank.rank === 1){
+                setRankingUpMessage("You've reached Rank 1! ");
+                setMotivationalMessage("Keep it up and stay on top! You can do it—keep completing your tasks and stay there! 🌟");
+            }
+            else {
+                if (currentFamilyRank.rank >= 10){
+                    comparisonFamilyRank = leaderboardData.find(entry => entry.rank === 10) || null;
+                    setMotivationalMessage("You're doing great, but there’s always room to grow! Keep going! 🚀")
+                }
+                else{
+                    comparisonFamilyRank = leaderboardData.find(entry => entry.rank === currentFamilyRank.rank - 1) || null;
+                    setMotivationalMessage("You're so close to the top! Keep up the great work! 💪")
+                }
+
+                if (comparisonFamilyRank) {
+                    const starsNeeded = comparisonFamilyRank.stars - currentFamilyRank.stars;
+                    const tasksNeeded = comparisonFamilyRank.tasks - currentFamilyRank.tasks;
+        
+                    if (starsNeeded > 0 || tasksNeeded > 0) {
+                        setRankingUpMessage(`You need ${starsNeeded} more stars and ${tasksNeeded} more tasks to reach Rank ${currentFamilyRank.rank - 1}. Keep pushing!`);
+                    } else {
+                        setRankingUpMessage("You're so close to the top! Keep up the great work! 💪");
+                    }
+                }
+        
+            }
+        }
+    }
+
+    const leaderboardData = getFilteredRanks();
+    const period = activeFilter.split(" ")[0].toLowerCase();
+    const currentFamilyRank = familyRanks[period as keyof typeof familyRanks];
 
     return (
         <div className="pt-28 min-h-screen flex justify-center">
@@ -194,12 +222,12 @@ const Leaderboard: React.FC = () => {
                         {/* Motivation section */}
                         <div className="bg-[#E3F2FD] rounded-lg p-6 mb-6 flex flex-col justify-between items-center h-[280px]">
                             <h3 className="text-xl font-bold mb-2 font-comic">Hooray!</h3>
-                            <div className="mb-4 text-sm"><span className="font-bold font-poppins">Your Rank:</span> 8</div>
-                            <p className="mb-2 text-sm">
-                                You need just 5 more stars to reach Rank 7!
+                            <div className="mb-4 text-sm"><span className="font-bold font-poppins">Your {period} Rank:</span> {currentFamilyRank?.rank}</div>
+                            <p className="mb-4 text-sm">
+                                {rankingUpMessage}
                             </p>
-                            <p className="text-sm">
-                                You can do it—keep completing your tasks and reach the next level! 🌟
+                            <p className="mb-2 text-sm">
+                                {motivationalMessage}
                             </p>
                         </div>
 
