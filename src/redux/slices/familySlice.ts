@@ -33,3 +33,7 @@ const familySlice = createSlice({
         clearFamily: () => initialState,
     },
 });
+
+export const { setFamily, clearFamily} = familySlice.actions;
+
+export default familySlice.reducer;
