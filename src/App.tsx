@@ -11,6 +11,7 @@ import { setUser } from './redux/slices/userSlice';
 import ProtectedRoute from './components/ProtectedRoute';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
+import AddMembers from './pages/AddMembersPage';
 
 interface DecodedToken {
   userId: string;
@@ -61,6 +62,7 @@ function App() {
           <Route path='/signup' element={<Signup />}/>
           <Route path='/landingPage' element={<LandingPage />}/>
           <Route path='/dashboard/*' element={ <ProtectedRoute> <Dashboard /> </ProtectedRoute> } />
+          <Route path='/addMembers' element={ <ProtectedRoute> <AddMembers /> </ProtectedRoute> } />
         </Routes>
       </div>
     </>
