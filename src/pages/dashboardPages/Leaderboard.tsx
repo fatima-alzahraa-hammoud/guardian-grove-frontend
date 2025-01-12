@@ -74,7 +74,6 @@ const Leaderboard: React.FC = () => {
 
     const leaderboardData = getFilteredRanks();
 
-
     return (
         <div className="pt-28 min-h-screen flex justify-center">
             <div className="max-w-6xl w-full flex-grow font-poppins">
@@ -117,9 +116,9 @@ const Leaderboard: React.FC = () => {
                         {leaderboardData.map((entry, index) => (
                             <div
                                 key={index}
-                                className="flex items-center justify-around bg-[#301DAD21] rounded-lg mb-4 p-4"
+                                className="flex items-center justify-between bg-[#301DAD21] rounded-lg mb-4 p-4 h-20"
                             >
-                                <div className="w-8 h-8 flex items-center justify-center mr-10">
+                                <div className="w-8 h-8 flex items-center justify-center">
                                     {index < 3 ? (
                                         <span className="text-2xl">
                                         {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
@@ -129,9 +128,9 @@ const Leaderboard: React.FC = () => {
                                     )}
                                 </div>
                                 {/* Avatar and name */}
-                                <div className="flex items-center mr-14">
+                                <div className="flex items-center min-w-[200px]">
                                     <div className="w-10 h-10 bg-white rounded-full mr-4"></div>
-                                    <span className="text-lg flex-grow">{entry.familyName}</span>
+                                    <span className="truncate text-base font-medium max-w-[150px]">{entry.familyName}</span>
                                 </div>
                                 <div className="flex items-center gap-8">
                                     <div className="flex items-center gap-2">
