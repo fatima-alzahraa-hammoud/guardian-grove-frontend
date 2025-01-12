@@ -7,8 +7,12 @@ import branchImage1 from '/assets/images/branch1.png';
 import balloonImage from '/assets/images/balloon.png';
 import { Button } from "../components/ui/button";
 import "../styles/addMember.css";
+import { useNavigate } from "react-router-dom";
 
 const AddMembers :React.FC = () => {
+
+    const navigate = useNavigate();
+
     return(
         <div className="h-screen bg-[#F5F1FA] flex flex-col items-center justify-center relative overflow-hidden">
             {/* Logo */}
@@ -43,6 +47,7 @@ const AddMembers :React.FC = () => {
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-around items-center">
                     <Button 
+                        onClick={() => navigate("/dashboard/")}
                         variant="secondary"
                         className="bg-[#FF4A90] hover:bg-[#f14687] text-white rounded-full px-10 py-1"
                     >
@@ -66,11 +71,11 @@ const AddMembers :React.FC = () => {
             {/* Decorative Elements */}
             <div className="absolute left-48 top-[26%]">
                 <img
-                src={sunImage}
-                alt="Decorative element"
-                width={60}
-                height={60}
-                className="animate-float z-50"
+                    src={sunImage}
+                    alt="Decorative element"
+                    width={60}
+                    height={60}
+                    className="animate-float z-50"
                 />
             </div>
             <div className="absolute -left-0.5 bottom-1/4">
@@ -95,11 +100,11 @@ const AddMembers :React.FC = () => {
 
             <div className="absolute right-48 bottom-1/3">
                 <img
-                src={balloonImage}
-                alt="Decorative element"
-                width={60}
-                height={60}
-                className="animate-float"
+                    src={balloonImage}
+                    alt="Decorative element"
+                    width={60}
+                    height={60}
+                    className="animate-float"
                 />
             </div>
 
