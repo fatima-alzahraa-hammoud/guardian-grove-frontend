@@ -1,11 +1,11 @@
 import React from "react";
-
 import logo from '/assets/logo/GuardianGrove_logo_Text.png';
 import familyBonding from '/assets/images/family-bonding.png';
+import { Button } from "../components/ui/button";
 
 const AddMembers :React.FC = () => {
     return(
-        <div className="min-h-screen bg-[#F5F1FA] flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        <div className="h-screen bg-[#F5F1FA] flex flex-col items-center justify-center p-4 relative overflow-hidden">
             {/* Logo */}
             <div className="absolute top-10 left-10">
                 <img
@@ -33,6 +33,21 @@ const AddMembers :React.FC = () => {
                             className="object-cover"
                         />
                     </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-around items-center">
+                    <Button 
+                        variant="secondary"
+                        className="bg-[#FF4A90] hover:bg-[#f14687] text-white rounded-full px-10 py-1"
+                    >
+                        No
+                    </Button>
+                    <Button
+                        className="bg-[#3A8EBA] hover:bg-[#347ea5] rounded-full px-10 py-1"
+                    >
+                        Yes
+                    </Button>
                 </div>
             </div>
         </div>
