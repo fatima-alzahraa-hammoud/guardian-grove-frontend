@@ -48,11 +48,17 @@ const Leaderboard: React.FC = () => {
         monthly: null,
         yearly: null
     });
+    const [progressData, setProgressData] = useState<{
+        totalTasks: number;
+        completedTasks: number;
+        totalGoals: number;
+        completedGoals: number;
+        totalAchievements: number;
+        unlockedAchievements: number;
+    } | null>(null);
 
 
-    //change data depending on filter by default it is on daily
-    //save and display family data
-
+    // fetch leaderboard data
     useEffect(() => {
         const fetchLeaderboard = async () => {
             try {
@@ -84,6 +90,30 @@ const Leaderboard: React.FC = () => {
         if (familyId) fetchLeaderboard();
     }, [familyId]);
 
+    // Fetch progress stats
+    const fetchProgressStats = async () => {
+        try {
+            const timeFrame = activeFilter.split(" ")[0].toLowerCase();
+            const response = await requestApi({
+                route: "/family/familyProgressStats",
+                method: requestMethods.POST,
+                body: { familyId, timeFrame },
+            });
+            if (response) {
+                setProgressData(response);
+            } else {
+                console.error("Failed to fetch progress stats");
+            }
+        } catch (error) {
+            console.error("Error fetching progress stats:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchProgressStats();
+    }, [activeFilter, familyId]);
+
+    // get filtered ranks
     const getFilteredRanks = () => {
         let rankings: LeaderboardEntry[] = [];
         let currentFamilyRank: FamilyRank | null = null;
@@ -122,6 +152,7 @@ const Leaderboard: React.FC = () => {
         getMotivationalMessage();
     }, [familyRanks, activeFilter]); 
 
+    // put messages based on ranks
     const getMotivationalMessage = () => {
         if (currentFamilyRank){
             let comparisonFamilyRank: LeaderboardEntry | null = null;
@@ -235,9 +266,9 @@ const Leaderboard: React.FC = () => {
                         <div className="bg-[#E3F2FD] rounded-lg p-6 h-[280px] flex flex-col items-center">
                             <h3 className="text-xl font-bold mb-4 font-comic">Your Family Progress</h3>
                             <div className="space-y-2 w-[70%]">
-                                <ProgressBar label="Goals" completed={10} total={15}/>
-                                <ProgressBar label="Tasks" completed={53} total={60}/>
-                                <ProgressBar label="Achievements" completed={50} total={150}/>
+                                <ProgressBar label="Tasks" completed={progressData?.completedTasks || 0} total={progressData?.totalTasks || 0}/>
+                                <ProgressBar label="Goals" completed={progressData?.completedGoals || 0} total={progressData?.totalGoals || 0}/>
+                                <ProgressBar label="Achievements" completed={progressData?.unlockedAchievements || 0} total={progressData?.totalAchievements || 0}/>
                             </div>
                         </div>
                     </div>
