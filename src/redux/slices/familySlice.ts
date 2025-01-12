@@ -1,3 +1,4 @@
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface FamilyState {
     _id: string | null;
@@ -21,3 +22,14 @@ const initialState: FamilyState = {
     rank: 0,
     members: [],
 }
+
+const familySlice = createSlice({
+    name: 'family',
+    initialState,
+    reducers: {
+        setFamily: (state, action: PayloadAction<FamilyState>) => {
+            return {...state, ...action.payload}
+        },
+        clearFamily: () => initialState,
+    },
+});
