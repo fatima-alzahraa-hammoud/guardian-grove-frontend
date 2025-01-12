@@ -2,6 +2,9 @@ import React from "react";
 import logo from '/assets/logo/GuardianGrove_logo_Text.png';
 import familyBondingImage from '/assets/images/family-bonding.png';
 import leafImage from '/assets/images/leaf.png';
+import sunImage from '/assets/images/sun.png';
+import branchImage1 from '/assets/images/branch1.png';
+import balloonImage from '/assets/images/balloon.png';
 import { Button } from "../components/ui/button";
 import "../styles/addMember.css";
 
@@ -9,7 +12,7 @@ const AddMembers :React.FC = () => {
     return(
         <div className="h-screen bg-[#F5F1FA] flex flex-col items-center justify-center relative overflow-hidden">
             {/* Logo */}
-            <div className="absolute top-10 left-10">
+            <div className="absolute top-10 left-12">
                 <img
                     src={logo}
                     alt="Guardian Grove Logo"
@@ -58,6 +61,46 @@ const AddMembers :React.FC = () => {
                     <p className="font-poppins text-sm">You can always add your children later from your profile settings.</p>
                     <img src={leafImage} alt="" className="w-4 h-4"/>
                 </div>
+            </div>
+
+            {/* Decorative Elements */}
+            <div className="absolute left-48 top-[26%]">
+                <img
+                src={sunImage}
+                alt="Decorative element"
+                width={60}
+                height={60}
+                className="animate-float z-50"
+                />
+            </div>
+            <div className="absolute -left-0.5 bottom-1/4">
+                <img
+                    src={branchImage1}
+                    alt="Decorative element"
+                    width={80}
+                    height={80}
+                    className="animate-float-delayed z-50"
+                />
+            </div>
+
+            <div className="absolute -right-0.5 top-1/4">
+                <img
+                    src={branchImage1}
+                    alt="Decorative element"
+                    width={80}
+                    height={80}
+                    className="animate-float-delayed rotate-180"
+                />
+            </div>
+
+            <div className="absolute right-48 bottom-1/3">
+                <img
+                src={balloonImage}
+                alt="Decorative element"
+                width={60}
+                height={60}
+                className="animate-float"
+                />
             </div>
         </div>
     )
