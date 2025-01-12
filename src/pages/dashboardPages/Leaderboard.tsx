@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../../components/ui/button";
 import { cn } from "../../lib/utils";
-import Task from "/assets/images/task.png";
-import Star from "/assets/images/stars.png";
 import ProgressBar from "../../components/common/ProgressBar";
 import { useSelector } from "react-redux";
 import { selectFamilyId } from "../../redux/slices/userSlice";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
+import LeaderboardItem from "../../components/dashboardComponents/LeaderboardItem";
 
 interface LeaderboardEntry {
     rank: number;
@@ -138,55 +137,22 @@ const Leaderboard: React.FC = () => {
                 <div className="mt-8 flex gap-8">
                     {/* Leaderboard List */}
                     <div className="flex-grow">
-                    {leaderboardData.map((entry, index) => (
-                        <div
-                            key={index}
-                            className="flex items-center justify-between bg-[#301DAD21] rounded-lg mb-4 p-4 h-20"
-                        >
-                            {/* Rank Section */}
-                            <div className="w-12 flex items-center justify-center">
-                                {index < 3 ? (
-                                    <span className="text-2xl">
-                                        {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
-                                    </span>
-                                ) : (
-                                    <span className="font-bold text-lg">{entry.rank}</span>
-                                )}
-                            </div>
-
-                            {/* Avatar and Name Section */}
-                            <div className="flex items-center min-w-[200px]">
-                                <div className="w-10 h-10 rounded-full overflow-hidden mr-4">
-                                    <img
-                                        src={
-                                            entry.familyAvatar ||
-                                            "/assets/images/avatars/family/avatar1.png"
-                                        }
-                                        alt={`${entry.familyName} Avatar`}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                                <span className="truncate text-base font-medium max-w-[150px]">
-                                    {entry.familyName}
-                                </span>
-                            </div>
-
-                            {/* Stars, Tasks, and View Button */}
-                            <div className="flex items-center gap-16">
-                                <div className="flex items-center gap-3 w-[50px] justify-between">
-                                    <img src={Star} className="w-5 h-5" />
-                                    <span className="font-semibold text-center">{entry.stars}</span>
-                                </div>                                
-                                <div className="flex items-center gap-3 w-[50px] justify-between">
-                                    <img src={Task} className="w-5 h-5" />
-                                    <span className="font-semibold text-center">{entry.tasks}</span>
-                                </div>
-                                <Button className="bg-[#179447] hover:bg-[#158640] text-white px-6 rounded-2xl">
-                                    View
-                                </Button>
-                            </div>
-                        </div>
-                    ))}
+                        {leaderboardData.map((entry, index) => {
+                            const isFamily = entry.familyId === familyId;
+                            return (
+                                <LeaderboardItem
+                                    key={index}
+                                    rank={entry.rank}
+                                    familyName={entry.familyName}
+                                    stars={entry.stars}
+                                    tasks={entry.tasks}
+                                    familyId={entry.familyId}
+                                    familyAvatar={entry.familyAvatar}
+                                    isFamily={isFamily}
+                                    rankStyle={isFamily ? "font-bold text-lg text-[#3A8EBA]" : "font-semibold"}
+                                />
+                            );
+                        })}
 
                     </div>
 
