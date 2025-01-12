@@ -8,6 +8,7 @@ import balloonImage from '/assets/images/balloon.png';
 import { Button } from "../components/ui/button";
 import "../styles/addMember.css";
 import { useNavigate } from "react-router-dom";
+import AddMembersForm from "../components/dashboardComponents/AddMembersForm";
 
 const AddMembers :React.FC = () => {
 
@@ -27,9 +28,7 @@ const AddMembers :React.FC = () => {
             </div>
 
             {addMembers ? (
-                <div>
-                    
-                </div>
+                <AddMembersForm />
             ) : (
                 <div className="max-w-2xl w-full backdrop-blur-sm p-6 space-y-6 rounded-2xl">
                     {/* Question */}
