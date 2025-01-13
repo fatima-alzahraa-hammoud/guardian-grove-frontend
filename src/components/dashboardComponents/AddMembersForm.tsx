@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import AvatarSelector from "../AvatarSelector";
 import { useForm } from "react-hook-form";
@@ -18,6 +18,7 @@ import boyImage from "/assets/images/boy.png";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 const DropdownIndicator = (props: any) => {
     return (
@@ -44,6 +45,19 @@ const DropdownIndicator = (props: any) => {
 const AddMembersForm : React.FC = () => {
 
     const [tab, setTab] = useState<string>("Child");
+    const selectRef = useRef<any>(null);
+
+    const resetData = () => {
+        reset({
+            gender: "female", // Reset default values
+            role: "child",
+            name: "",
+            birthday: undefined,
+            interests: [],
+            avatar: "",
+        });
+        selectRef.current?.clearValue();
+    }
 
     const {
         register,
@@ -54,6 +68,10 @@ const AddMembersForm : React.FC = () => {
         reset
     } = useForm<TAddMember>({
         resolver: zodResolver(addMemberSchema),
+        defaultValues:{
+            gender: "female",
+            role: "child"
+        }
     });
 
     const selectedDate = watch("birthday");
@@ -65,28 +83,75 @@ const AddMembersForm : React.FC = () => {
     };
 
     const onSubmit = async (data: TAddMember) => {
+        console.log(data);
         try {
             const result = await requestApi({
                 route: "/users/",
                 method: requestMethods.POST,
                 body: JSON.stringify(data),
             });
-            if (result){
+            if (result) {
                 console.log(result.user);
+                // Success Toast
+                toast.success("Create your child successful, check your email.");
+                return true;
             }
         } catch (error) {
-            console.log("Something wrong happened", error)
+            console.log("Something wrong happened", error);
+            toast.error("There was an error creating the child. Please try again.");
+            return false; 
         }
-    }
+    };
+
+
+    const handleSaveAndAddAnother = handleSubmit(async (data) => {
+        const success = await onSubmit(data);
+        if (success) {
+            resetData();
+        }
+    });
+
+    const handleSaveAndContinue = handleSubmit(async (data) => {
+        const success = await onSubmit(data);
+        if (success) {
+            resetData();
+            navigate("/dashboard"); // Redirect to dashboard if successful
+        }
+    });
+
+    useEffect(() => {
+        resetData();
+    }, [tab, setValue]);
+
+    useEffect(() => {
+            if (errors.name) {
+                toast.error(errors.name.message);
+            }
+            if (errors.birthday) {
+                toast.error(errors.birthday.message);
+            }
+            if (errors.avatar) {
+                toast.error(errors.avatar.message);
+            }
+            if (errors.interests) {
+                toast.error(errors.interests.message);
+            }
+    }, [errors]);
     
     return(
         <div className="max-w-2xl w-full backdrop-blur-sm p-6 space-y-6 rounded-2xl">
+            <ToastContainer />
             {/* Header */}
             <h1 className="text-xl md:text-2xl font-bold font-comic">
                 Add Your Loved Ones to Begin the Adventure!
             </h1>
 
-            <Tabs defaultValue="Child" className="w-full" value={tab} onValueChange={(value) => setTab(value)}>
+            <Tabs defaultValue="Child" className="w-full" value={tab} 
+                onValueChange={(value) => {
+                    setTab(value);
+                    setValue("role", value.toLowerCase(), { shouldValidate: true });
+                }}
+            >
                 <div className="flex justify-start items-center pl-20">
                     <TabsList className="flex flex-nowrap space-x-2 bg-[#CDE7FE]">
                         <TabsTrigger value="Child" className="shrink-0">Child</TabsTrigger>
@@ -185,7 +250,7 @@ const AddMembersForm : React.FC = () => {
                             )}
                             onClick={() => setValue("gender", "female", { shouldValidate: true })} 
                         >
-                            <img src={girlImage} alt="girl" className="w-6 h-6"/>
+                            <img src={girlImage} alt="female" className="w-6 h-6"/>
                             <span>Female</span>
                         </Button>
                         <Button
@@ -206,6 +271,7 @@ const AddMembersForm : React.FC = () => {
                         <label className="block text-xs font-medium text-gray-700 text-left mb-2">{tab}'s Interests</label>
                         <div>
                             <Selects
+                                ref={selectRef}
                                 name="interests"
                                 isMulti
                                 options={interestOptions}
@@ -214,7 +280,7 @@ const AddMembersForm : React.FC = () => {
                                 classNamePrefix="react-select text-[20px]"
                                 onChange={(selectedOptions) => {
                                     const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
-                                    setValue("interests", selectedValues, { shouldValidate: true });
+                                    setValue("interests", selectedValues);
                                 }}
                                 styles={{
                                     ...customStyles,
@@ -236,10 +302,7 @@ const AddMembersForm : React.FC = () => {
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row justify-evenly pt-4">
                         <Button variant="outline" className="flex-1 rounded-full mr-20" 
-                            onClick={handleSubmit(async (data) => {
-                                await onSubmit(data);
-                                reset(); // Reset form for new entry
-                            })}>
+                            onClick={handleSaveAndAddAnother}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round-plus">
                                 <path d="M2 21a8 8 0 0 1 13.292-6"/><circle cx="10" cy="8" r="5"/>
                                 <path d="M19 16v6"/>
@@ -248,10 +311,7 @@ const AddMembersForm : React.FC = () => {
                             <span>Add Another {tab}</span>
                         </Button>
                         <Button className="flex-1 bg-[#3A8EBA] hover:bg-[#347ea5] rounded-full" 
-                                onClick={handleSubmit(async (data) => {
-                                await onSubmit(data);
-                                navigate("/dashboard"); // Redirect to dashboard
-                            })}
+                                onClick={handleSaveAndContinue}
                         >
                             Save and Continue
                         </Button>
