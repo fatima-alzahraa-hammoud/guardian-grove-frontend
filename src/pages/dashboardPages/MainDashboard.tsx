@@ -29,7 +29,7 @@ const Main : React.FC = () => {
             <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} collapsed={collapsed} setCollapsed={setCollapsed} />
 
             {/* Main Content Area */}
-            <div className={` pt-8 flex-grow max-w-[1200px] w-full mx-auto transition-all duration-300 text-left ${collapsed ? '' : 'ml-64'}`}>
+            <div className={` pt-8 flex-grow w-full mx-auto transition-all duration-300 text-left ${collapsed ? 'ml-[60px]' : 'ml-64'}`}>
                 {renderContent()}
             </div>
 
