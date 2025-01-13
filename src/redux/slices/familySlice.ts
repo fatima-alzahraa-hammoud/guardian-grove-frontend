@@ -30,14 +30,17 @@ const familySlice = createSlice({
         setFamily: (state, action: PayloadAction<FamilyState>) => {
             return {...state, ...action.payload}
         },
+        updateFamilyName: (state, action: PayloadAction<string>) => {
+            state.familyName = action.payload
+        },
         clearFamily: () => initialState,
     },
 });
 
-export const { setFamily, clearFamily} = familySlice.actions;
+export const { setFamily, clearFamily, updateFamilyName} = familySlice.actions;
 
-export const selectStars = (state: { family: FamilyState }) => state.family.totalStars;
-export const selectAvatar = (state: { family: FamilyState }) => state.family.familyAvatar;
+export const selectFamilyStars = (state: { family: FamilyState }) => state.family.totalStars;
+export const selectFamilyAvatar = (state: { family: FamilyState }) => state.family.familyAvatar;
 export const selectFamilyName = (state: { family: FamilyState }) => state.family.familyName;
 export const selectNbOfTasks = (state: { family: FamilyState }) => state.family.tasks;
 export const selectFamilyMembers = (state: { family: FamilyState }) => state.family.members;

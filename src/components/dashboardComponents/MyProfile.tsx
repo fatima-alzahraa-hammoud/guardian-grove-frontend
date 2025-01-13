@@ -15,6 +15,7 @@ import "../../styles/global.css";
 import DialogComponent from "../common/updateUserDialog";
 import { TUpdate } from "../../libs/types/updateTypes";
 import { useNavigate } from "react-router-dom";
+import { selectFamilyMembers, selectFamilyName, selectFamilyStars, updateFamilyName } from "../../redux/slices/familySlice";
 
 const MyProfile : React.FC = () => {
 
@@ -28,12 +29,13 @@ const MyProfile : React.FC = () => {
     const coins = useSelector(selectCoins);
     const rank = useSelector(selectRank);
     const role = useSelector(selectRole);
+    const familyName = useSelector(selectFamilyName);
+    const totalStars = useSelector(selectFamilyStars);
+    const nbOfMembers = useSelector(selectFamilyMembers).length;
+
     const [currentDate, setCurrentDate] = useState<string>("");
     const [age, setAge] = useState<number>();
     const [formattedMemberSince, setFormattedMemberSince] = useState<string>("");
-    const [familyName, setFamilyName] = useState<string>("");
-    const [nbOfMembers, setNumberOfMembers] = useState<number>();
-    const [totalStars, setTotalStars] = useState<number>();
     const [dailyMessage, setDailyMessage] = useState<string> ('You are shining!');
     const [lastUnlocked, setLastUnlocked] = useState<{title: string, photo: string, description: string, unlockedAt: Date}> ();
     const [noAchievements, setNoAchievements] = useState<boolean> (false);
@@ -67,6 +69,7 @@ const MyProfile : React.FC = () => {
                 console.log("something wents wrong in updaing user", error);
             }
 
+            //update family details
             if (data.email || data.familyAvatar || data.familyName){
                 try {
                     const response = await requestApi({
@@ -77,8 +80,7 @@ const MyProfile : React.FC = () => {
         
                     if (response){
                         dispatch(setEmail(response.family.email));
-                        // save family name in familySlice
-                        setFamilyName(response.family.familyName);
+                        dispatch(updateFamilyName(response.family.familyName));
                     }
                 } catch (error) {
                     console.log("something wents wrong in getting family details", error);
@@ -123,27 +125,6 @@ const MyProfile : React.FC = () => {
         }
 
     }, [birthday]);
-
-    useEffect(() => {
-        const fetchFamilyNameAndNbMembers = async () => {
-            try {
-                const response = await requestApi({
-                    route: "/family/someFamilydetails",
-                    method: requestMethods.GET
-                });
-
-                if (response){
-                    setFamilyName(response.familyName);
-                    setNumberOfMembers(response.numberOfMembers);
-                    setTotalStars(response.stars);
-                }
-            } catch (error) {
-                console.log(error);
-                toast.error("Error getting family name and number of members and stars")
-            }
-        }
-        fetchFamilyNameAndNbMembers();
-    }, []);
 
     useEffect(() => {
         const fetchLastUnlockedAchievement = async () => {

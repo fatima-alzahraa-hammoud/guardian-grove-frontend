@@ -75,7 +75,6 @@ function App() {
         if (result){
           if (result.family)
             dispatch(setFamily(result.family));
-          console.log(result.family);
         }
         else{
           console.log(result.message)
