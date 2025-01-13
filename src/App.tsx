@@ -11,7 +11,7 @@ import { setUser } from './redux/slices/userSlice';
 import ProtectedRoute from './components/ProtectedRoute';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
-import AddMembersQuestion from './pages/AddMembersQuestion';
+import AddMembersQuestion from './components/SignUp Components/AddMembersQuestion';
 import AddMembersForm from './components/dashboardComponents/AddMembersForm';
 import AddMembersBackground from './components/common/addMembersBackground';
 

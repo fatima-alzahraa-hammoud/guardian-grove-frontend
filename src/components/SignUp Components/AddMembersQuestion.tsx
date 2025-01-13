@@ -1,11 +1,7 @@
 import React from "react";
-import logo from '/assets/logo/GuardianGrove_logo_Text.png';
 import familyBondingImage from '/assets/images/family-bonding.png';
 import leafImage from '/assets/images/leaf.png';
-import sunImage from '/assets/images/sun.png';
-import branchImage1 from '/assets/images/branch1.png';
-import balloonImage from '/assets/images/balloon.png';
-import { Button } from "../components/ui/button";
+import { Button } from "../ui/button";
 import "../styles/addMember.css";
 import { useNavigate } from "react-router-dom";
 
