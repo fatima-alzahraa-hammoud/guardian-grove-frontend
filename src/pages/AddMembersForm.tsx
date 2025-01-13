@@ -120,7 +120,14 @@ const AddMembersForm : React.FC = () => {
     });
 
     useEffect(() => {
-        resetData();
+        reset({
+            gender: "female", // Reset default values
+            name: "",
+            birthday: undefined,
+            interests: [],
+            avatar: "",
+        });
+        selectRef.current?.clearValue();
     }, [tab, setValue]);
 
     useEffect(() => {
