@@ -13,6 +13,8 @@ import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
 import Selects, {components} from 'react-select';
 import { customStyles, interestOptions } from "../../libs/constants";
+import girlImage from "/assets/images/girl.png";
+import boyImage from "/assets/images/boy.png";
 
 const DropdownIndicator = (props: any) => {
     return (
@@ -159,23 +161,25 @@ const AddMembersForm : React.FC = () => {
                             type="button"
                             variant={gender === 'female' ? 'default' : 'outline'}
                             className={cn(
-                            "flex-1 rounded-none",
+                            "flex-1 rounded-none gap-6",
                             gender === 'female' ? "bg-[#FF4A90] hover:bg-[#f14687]" : ""
                             )}
                             onClick={() => setGender('female')}
                         >
-                            Female
+                            <img src={girlImage} alt="girl" className="w-6 h-6"/>
+                            <span>Female</span>
                         </Button>
                         <Button
                             type="button"
                             variant={gender === 'male' ? 'default' : 'outline'}
                             className={cn(
-                            "flex-1 rounded-none",
+                            "flex-1 rounded-none gap-6",
                             gender === 'male' ? "bg-[#3A8EBA] hover:bg-[#347ea5]" : ""
                             )}
                             onClick={() => setGender('male')}
                         >
-                            Male
+                            <img src={boyImage} alt="boy" className="w-6 h-6"/>
+                            <span>Male</span>
                         </Button>
                     </div>
 
@@ -213,7 +217,12 @@ const AddMembersForm : React.FC = () => {
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row justify-evenly pt-4">
                         <Button variant="outline" className="flex-1 rounded-full mr-20">
-                            Add Another Child
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round-plus">
+                                <path d="M2 21a8 8 0 0 1 13.292-6"/><circle cx="10" cy="8" r="5"/>
+                                <path d="M19 16v6"/>
+                                <path d="M22 19h-6"/>
+                            </svg>
+                            <span>Add Another Child</span>
                         </Button>
                         <Button className="flex-1 bg-[#3A8EBA] hover:bg-[#347ea5] rounded-full">
                             Save and Continue
