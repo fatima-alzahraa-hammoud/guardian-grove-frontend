@@ -2,7 +2,7 @@ import React from "react";
 import familyBondingImage from '/assets/images/family-bonding.png';
 import leafImage from '/assets/images/leaf.png';
 import { Button } from "../ui/button";
-import "../styles/addMember.css";
+import "../../styles/addMember.css";
 import { useNavigate } from "react-router-dom";
 
 const AddMembersQuestion :React.FC = () => {
