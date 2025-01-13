@@ -209,6 +209,16 @@ const AddMembersForm : React.FC = () => {
                             />
                         </div>
                     </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:flex-row justify-evenly pt-4">
+                        <Button variant="outline" className="flex-1 rounded-full mr-20">
+                            Add Another Child
+                        </Button>
+                        <Button className="flex-1 bg-[#3A8EBA] hover:bg-[#347ea5] rounded-full">
+                            Save and Continue
+                        </Button>
+                    </div>
                 </TabsContent>
             </Tabs>
         </div>
