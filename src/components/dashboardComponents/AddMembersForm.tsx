@@ -11,6 +11,30 @@ import { cn } from "../../lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
+import Selects, {components} from 'react-select';
+import { customStyles, interestOptions } from "../../libs/constants";
+
+const DropdownIndicator = (props: any) => {
+    return (
+        <components.DropdownIndicator {...props}>
+            <svg
+                width="15"
+                height="15"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+            <path
+                d="M5 7L10 12L15 7"
+                stroke="#6b7280"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            </svg>
+        </components.DropdownIndicator>
+    );
+};  
 
 const AddMembersForm : React.FC = () => {
 
@@ -153,6 +177,37 @@ const AddMembersForm : React.FC = () => {
                         >
                             Male
                         </Button>
+                    </div>
+
+                    <div className="w-full max-w-md">
+                        <label className="block text-xs font-medium text-gray-700 text-left mb-2">{tab}'s Interests</label>
+                        <div>
+                            <Selects
+                                name="interests"
+                                isMulti
+                                options={interestOptions}
+                                placeholder="Select interests..."
+                                className="custom-select text-[20px]"
+                                classNamePrefix="react-select text-[20px]"
+                                onChange={(selectedOptions) => {
+                                    const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
+                                    setValue("interests", selectedValues, { shouldValidate: true });
+                                }}
+                                styles={{
+                                    ...customStyles,
+                                    option: (provided: any, state: any) => ({
+                                        ...provided,
+                                        fontSize: '12px',
+                                        backgroundColor: state.isFocused ? '#3A8EBA' : provided.backgroundColor,
+                                        color: state.isFocused ? 'white' : provided.color,
+                                    }),
+                                }}
+                                components={{ DropdownIndicator }}
+                                menuPortalTarget={document.body}
+                                menuPosition="fixed"
+                                menuShouldScrollIntoView={false}
+                            />
+                        </div>
                     </div>
                 </TabsContent>
             </Tabs>
