@@ -18,6 +18,7 @@ import { useDispatch } from "react-redux";
 import "../styles/global.css";
 import { setToken } from "../redux/slices/authSlice";
 import { setUser } from "../redux/slices/userSlice";
+import { setFamily } from "../redux/slices/familySlice";
 
 const Login : React.FC = () => {
     const dispatch = useDispatch();
@@ -43,7 +44,8 @@ const Login : React.FC = () => {
                 toast.success('Login successful!');
                 dispatch(setToken(response.token));
                 dispatch(setUser(response.user));
-
+                if (response.user.familyId)
+                    fetchFamilyDetails(response.user.familyId);
                 navigate("/dashboard");
             } else {
                 toast.error(response.message || 'Login failed!');
@@ -55,6 +57,27 @@ const Login : React.FC = () => {
             toast.error('An error occurred during login.');
         }
     }
+
+    const fetchFamilyDetails = async (familyId: string) => {
+            try {
+            const result = await requestApi({
+                route: "/family/getFamily",
+                method: requestMethods.POST,
+                body: {familyId}
+            });
+
+            if (result){
+                if (result.family)
+                dispatch(setFamily(result.family));
+            }
+            else{
+                console.log(result.message)
+            }
+        } catch (error) {
+            console.log("Something went wrong", error);
+        }
+    };
+    
 
     const navigate = useNavigate();
 

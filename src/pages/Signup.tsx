@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setToken } from "../redux/slices/authSlice";
 import { setUser } from "../redux/slices/userSlice";
+import { setFamily } from "../redux/slices/familySlice";
 
 const Signup : React.FC = () => {
 
@@ -42,7 +43,7 @@ const Signup : React.FC = () => {
                 toast.success('SignUp successful!');
                 dispatch(setToken(response.token));
                 dispatch(setUser(response.user));
-
+                dispatch(setFamily(response.family));
                 navigate("/dashboard");
             } else {
                 toast.error(response.error || 'SignUp failed!');
