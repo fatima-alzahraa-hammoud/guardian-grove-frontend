@@ -15,6 +15,9 @@ import Selects, {components} from 'react-select';
 import { customStyles, interestOptions } from "../../libs/constants";
 import girlImage from "/assets/images/girl.png";
 import boyImage from "/assets/images/boy.png";
+import { requestApi } from "../../libs/requestApi";
+import { requestMethods } from "../../libs/enum/requestMethods";
+import { useNavigate } from "react-router-dom";
 
 const DropdownIndicator = (props: any) => {
     return (
@@ -55,10 +58,26 @@ const AddMembersForm : React.FC = () => {
 
     const selectedDate = watch("birthday");
     const gender = watch("gender"); 
+    const navigate = useNavigate();
 
     const onDateSelect = (date: Date | undefined) => {
         setValue("birthday", date || new Date("1900-01-01"), { shouldValidate: true });
     };
+
+    const onSubmit = async (data: TAddMember) => {
+        try {
+            const result = await requestApi({
+                route: "/users/",
+                method: requestMethods.POST,
+                body: JSON.stringify(data),
+            });
+            if (result){
+                console.log(result.user);
+            }
+        } catch (error) {
+            console.log("Something wrong happened", error)
+        }
+    }
     
     return(
         <div className="max-w-2xl w-full backdrop-blur-sm p-6 space-y-6 rounded-2xl">
@@ -216,7 +235,11 @@ const AddMembersForm : React.FC = () => {
 
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row justify-evenly pt-4">
-                        <Button variant="outline" className="flex-1 rounded-full mr-20">
+                        <Button variant="outline" className="flex-1 rounded-full mr-20" 
+                            onClick={handleSubmit(async (data) => {
+                                await onSubmit(data);
+                                reset(); // Reset form for new entry
+                            })}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round-plus">
                                 <path d="M2 21a8 8 0 0 1 13.292-6"/><circle cx="10" cy="8" r="5"/>
                                 <path d="M19 16v6"/>
@@ -224,7 +247,12 @@ const AddMembersForm : React.FC = () => {
                             </svg>
                             <span>Add Another {tab}</span>
                         </Button>
-                        <Button className="flex-1 bg-[#3A8EBA] hover:bg-[#347ea5] rounded-full">
+                        <Button className="flex-1 bg-[#3A8EBA] hover:bg-[#347ea5] rounded-full" 
+                                onClick={handleSubmit(async (data) => {
+                                await onSubmit(data);
+                                navigate("/dashboard"); // Redirect to dashboard
+                            })}
+                        >
                             Save and Continue
                         </Button>
                     </div>
