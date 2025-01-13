@@ -44,7 +44,7 @@ const Signup : React.FC = () => {
                 dispatch(setToken(response.token));
                 dispatch(setUser(response.user));
                 dispatch(setFamily(response.family));
-                navigate("/dashboard");
+                navigate("/addMembersQuestion");
             } else {
                 toast.error(response.error || 'SignUp failed!');
             }
