@@ -41,7 +41,6 @@ const DropdownIndicator = (props: any) => {
 const AddMembersForm : React.FC = () => {
 
     const [tab, setTab] = useState<string>("Child");
-    const [gender, setGender] = useState<'female' | 'male'>('female')
 
     const {
         register,
@@ -55,6 +54,7 @@ const AddMembersForm : React.FC = () => {
     });
 
     const selectedDate = watch("birthday");
+    const gender = watch("gender"); 
 
     const onDateSelect = (date: Date | undefined) => {
         setValue("birthday", date || new Date("1900-01-01"), { shouldValidate: true });
@@ -164,7 +164,7 @@ const AddMembersForm : React.FC = () => {
                             "flex-1 rounded-none gap-6",
                             gender === 'female' ? "bg-[#FF4A90] hover:bg-[#f14687]" : ""
                             )}
-                            onClick={() => setGender('female')}
+                            onClick={() => setValue("gender", "female", { shouldValidate: true })} 
                         >
                             <img src={girlImage} alt="girl" className="w-6 h-6"/>
                             <span>Female</span>
@@ -176,7 +176,7 @@ const AddMembersForm : React.FC = () => {
                             "flex-1 rounded-none gap-6",
                             gender === 'male' ? "bg-[#3A8EBA] hover:bg-[#347ea5]" : ""
                             )}
-                            onClick={() => setGender('male')}
+                            onClick={() => setValue("gender", "male", { shouldValidate: true })} 
                         >
                             <img src={boyImage} alt="boy" className="w-6 h-6"/>
                             <span>Male</span>
@@ -222,7 +222,7 @@ const AddMembersForm : React.FC = () => {
                                 <path d="M19 16v6"/>
                                 <path d="M22 19h-6"/>
                             </svg>
-                            <span>Add Another Child</span>
+                            <span>Add Another {tab}</span>
                         </Button>
                         <Button className="flex-1 bg-[#3A8EBA] hover:bg-[#347ea5] rounded-full">
                             Save and Continue
