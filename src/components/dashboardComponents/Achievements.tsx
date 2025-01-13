@@ -132,7 +132,7 @@ const Achievements : React.FC<AchievementsProps> = ({collapsed}) => {
 
     return(
         <div className={`pt-24 min-h-screen flex justify-center`}>
-            <div className={` w-full flex-grow font-poppins  ${collapsed ? "max-w-6xl" : "max-w-5xl"}`}>
+            <div className={`w-full flex-grow font-poppins ${ collapsed ? "mx-auto max-w-5xl" : "max-w-5xl" }`} >
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div className="text-left">
