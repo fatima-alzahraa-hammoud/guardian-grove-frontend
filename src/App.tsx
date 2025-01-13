@@ -3,17 +3,18 @@ import Login from './pages/Login';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Signup from './pages/Signup';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 import { requestApi } from './libs/requestApi';
 import { requestMethods } from './libs/enum/requestMethods';
-import { setUser } from './redux/slices/userSlice';
+import { selectFamilyId, setUser } from './redux/slices/userSlice';
 import ProtectedRoute from './components/ProtectedRoute';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import AddMembersQuestion from './components/SignUp Components/AddMembersQuestion';
 import AddMembersForm from './pages/AddMembersForm';
 import AddMembersBackground from './components/common/addMembersBackground';
+import { setFamily } from './redux/slices/familySlice';
 
 interface DecodedToken {
   userId: string;
@@ -23,6 +24,7 @@ interface DecodedToken {
 function App() {
 
   const dispatch = useDispatch();
+  const familyId = useSelector(selectFamilyId);
   const location = useLocation();
 
   const [userId, setUserId] = useState<string | null>(null);
@@ -55,6 +57,36 @@ function App() {
           fetchUsers();
       }
   }, []);
+
+  useEffect(() => {
+    if (location.pathname === '/' || location.pathname === 'signup'){
+      return;
+    }
+    if (!familyId) return;
+    
+    const fetchFamilyDetails = async () => {
+      try {
+        const result = await requestApi({
+          route: "/family/getFamily",
+          method: requestMethods.POST,
+          body: {familyId}
+        });
+
+        if (result){
+          if (result.family)
+            dispatch(setFamily(result.family));
+          console.log(result.family);
+        }
+        else{
+          console.log(result.message)
+        }
+      } catch (error) {
+        console.log("Something went wrong", error);
+      }
+    };
+
+    fetchFamilyDetails();
+  }, [userId,familyId])
 
   return (
     <>

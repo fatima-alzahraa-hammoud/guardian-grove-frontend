@@ -12,7 +12,7 @@ interface AddMembersQuestionProps {
 const AddMembersBackground: React.FC<AddMembersQuestionProps> = ({ ChildComponent }) => {
 
     return(
-        <div className="h-screen bg-[#F5F1FA] flex flex-col items-center justify-center relative overflow-hidden">
+        <div className="addMembers h-screen bg-[#F5F1FA] flex flex-col items-center justify-center relative overflow-hidden">
             {/* Logo */}
             <div className="absolute top-10 left-12">
                 <img
