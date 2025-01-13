@@ -1,10 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+interface FamilyMember {
+    name: string;
+    role: string;
+    avatar: string;
+    gender: string;
+}
+
 interface FamilyState {
     _id: string | null;
     familyName: string | null;
     email: string | null;
-    members: string[]; //contains id role name
+    members: FamilyMember[];
     familyAvatar: string | null;
     totalStars: number | 0;
     tasks: number | 0;
