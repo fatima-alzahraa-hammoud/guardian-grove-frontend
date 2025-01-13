@@ -13,6 +13,7 @@ import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import AddMembersQuestion from './pages/AddMembersQuestion';
 import AddMembersForm from './components/dashboardComponents/AddMembersForm';
+import AddMembersBackground from './components/common/addMembersBackground';
 
 interface DecodedToken {
   userId: string;
@@ -63,8 +64,8 @@ function App() {
           <Route path='/signup' element={<Signup />}/>
           <Route path='/landingPage' element={<LandingPage />}/>
           <Route path='/dashboard/*' element={ <ProtectedRoute> <Dashboard /> </ProtectedRoute> } />
-          <Route path='/addMembersQuestion' element={ <ProtectedRoute> <AddMembersQuestion /> </ProtectedRoute> } />
-          <Route path='/addMembers' element={ <ProtectedRoute> <AddMembersForm /> </ProtectedRoute> } />
+          <Route path='/addMembersQuestion' element={ <ProtectedRoute> <AddMembersBackground ChildComponent={AddMembersQuestion} /> </ProtectedRoute> } />
+          <Route path='/addMembers' element={ <ProtectedRoute> <AddMembersBackground ChildComponent={AddMembersForm} /> </ProtectedRoute> } />
         </Routes>
       </div>
     </>

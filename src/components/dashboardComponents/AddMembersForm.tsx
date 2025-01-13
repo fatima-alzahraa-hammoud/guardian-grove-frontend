@@ -139,7 +139,7 @@ const AddMembersForm : React.FC = () => {
     }, [errors]);
     
     return(
-        <div className="max-w-2xl w-full backdrop-blur-sm p-6 space-y-6 rounded-2xl">
+        <>
             <ToastContainer />
             {/* Header */}
             <h1 className="text-xl md:text-2xl font-bold font-comic">
@@ -318,7 +318,7 @@ const AddMembersForm : React.FC = () => {
                     </div>
                 </TabsContent>
             </Tabs>
-        </div>
+        </>
     );
 };
 

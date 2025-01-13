@@ -3,9 +3,13 @@ import logo from '/assets/logo/GuardianGrove_logo_Text.png';
 import sunImage from '/assets/images/sun.png';
 import branchImage1 from '/assets/images/branch1.png';
 import balloonImage from '/assets/images/balloon.png';
-import "../styles/addMember.css";
+import "../../styles/addMember.css";
 
-const AddMembersQuestion :React.FC = () => {
+interface AddMembersQuestionProps {
+    ChildComponent: React.ComponentType; 
+}
+
+const AddMembersBackground: React.FC<AddMembersQuestionProps> = ({ ChildComponent }) => {
 
     return(
         <div className="h-screen bg-[#F5F1FA] flex flex-col items-center justify-center relative overflow-hidden">
@@ -20,7 +24,7 @@ const AddMembersQuestion :React.FC = () => {
             </div>
 
             <div className="max-w-2xl w-full backdrop-blur-sm p-6 space-y-6 rounded-2xl">
-                
+                <ChildComponent />
             </div>
 
             {/* Decorative Elements */}
@@ -132,4 +136,4 @@ const AddMembersQuestion :React.FC = () => {
     )
 };
 
-export default AddMembersQuestion;
+export default AddMembersBackground;
