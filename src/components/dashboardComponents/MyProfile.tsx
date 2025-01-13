@@ -64,7 +64,7 @@ const MyProfile : React.FC = () => {
                     dispatch(setUser(response.user));
                 }
             } catch (error) {
-                console.log(error);
+                console.log("something wents wrong in updaing user", error);
             }
 
             if (data.email || data.familyAvatar || data.familyName){
@@ -81,7 +81,7 @@ const MyProfile : React.FC = () => {
                         setFamilyName(response.family.familyName);
                     }
                 } catch (error) {
-                    console.log(error);
+                    console.log("something wents wrong in getting family details", error);
                 }
             }
         }
@@ -113,7 +113,6 @@ const MyProfile : React.FC = () => {
 
         // Format memberSince date correctly
         if (memberSince) {
-            console.log(memberSince)
             const memberDate = new Date(memberSince);
             if (memberDate instanceof Date && !isNaN(memberDate.getTime())) {
                 const formattedDate = `${memberDate.getDate()}, ${memberDate.getMonth() + 1}, ${memberDate.getFullYear()}`;
@@ -161,7 +160,7 @@ const MyProfile : React.FC = () => {
                     setLastUnlocked(response.lastUnlockedAchievement);
                 }
             } catch (error) {
-                console.log(error);
+                console.log("something wents wrong in getting achievements", error);
             }
         }
         fetchLastUnlockedAchievement();

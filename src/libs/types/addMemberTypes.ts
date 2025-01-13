@@ -8,6 +8,7 @@ export const addMemberSchema = z.object({
     }),
     gender: z.string().nonempty({ message: "Gender is required." }),
     interests: z.array(z.string()).min(1, { message: "At least one interest is required." }),
+    role: z.string().nonempty({ message: "Family member type is required." }),
 });
 
 
