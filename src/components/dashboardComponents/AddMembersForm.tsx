@@ -15,6 +15,7 @@ import { format } from "date-fns";
 const AddMembersForm : React.FC = () => {
 
     const [tab, setTab] = useState<string>("Child");
+    const [gender, setGender] = useState<'female' | 'male'>('female')
 
     const {
         register,
@@ -85,7 +86,7 @@ const AddMembersForm : React.FC = () => {
                     {/* Birthday Picker */}
                     <div className="w-full max-w-md">
                         <div className="block text-xs font-medium text-gray-700 text-left mb-1">
-                            Date of Birth
+                            {tab}'s Birthday
                         </div>
                         <Popover>
                             <PopoverTrigger asChild>
@@ -126,6 +127,32 @@ const AddMembersForm : React.FC = () => {
                                 />
                             </PopoverContent>
                         </Popover>
+                    </div>
+
+                    {/* Select gender */}
+                    <div className="flex rounded-full overflow-hidden w-full max-w-md">
+                        <Button
+                            type="button"
+                            variant={gender === 'female' ? 'default' : 'outline'}
+                            className={cn(
+                            "flex-1 rounded-none",
+                            gender === 'female' ? "bg-[#FF4A90] hover:bg-[#f14687]" : ""
+                            )}
+                            onClick={() => setGender('female')}
+                        >
+                            Female
+                        </Button>
+                        <Button
+                            type="button"
+                            variant={gender === 'male' ? 'default' : 'outline'}
+                            className={cn(
+                            "flex-1 rounded-none",
+                            gender === 'male' ? "bg-[#3A8EBA] hover:bg-[#347ea5]" : ""
+                            )}
+                            onClick={() => setGender('male')}
+                        >
+                            Male
+                        </Button>
                     </div>
                 </TabsContent>
             </Tabs>
