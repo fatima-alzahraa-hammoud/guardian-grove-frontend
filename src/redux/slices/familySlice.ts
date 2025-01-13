@@ -36,4 +36,10 @@ const familySlice = createSlice({
 
 export const { setFamily, clearFamily} = familySlice.actions;
 
+export const selectStars = (state: { family: FamilyState }) => state.family.totalStars;
+export const selectAvatar = (state: { family: FamilyState }) => state.family.familyAvatar;
+export const selectFamilyName = (state: { family: FamilyState }) => state.family.familyName;
+export const selectNbOfTasks = (state: { family: FamilyState }) => state.family.tasks;
+export const selectFamilyMembers = (state: { family: FamilyState }) => state.family.members;
+
 export default familySlice.reducer;
