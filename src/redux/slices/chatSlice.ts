@@ -27,6 +27,9 @@ const chatSlice = createSlice({
             const chat = state.chats.find(chat => chat.id === action.payload.id);
             if (chat) chat.title = action.payload.title;
         },
+        deleteChat: (state, action: PayloadAction<string>) => {
+            state.chats = state.chats.filter(chat => chat.id !== action.payload);
+        },
     },
 });
   
