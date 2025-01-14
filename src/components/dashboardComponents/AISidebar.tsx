@@ -28,6 +28,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
 
     const [activeItem, setActiveItem] = useState<string | null>(null);
     const [hoveredChat, setHoveredChat] = React.useState<string | null>(null);
+    const [editingChatId, setEditingChatId] = useState<string | null>(null);
 
     const handleClickChat = (chatId: string) => {
         dispatch(setActiveChat(chatId));
@@ -67,7 +68,17 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
         } catch (error) {
             console.log("Something wrong happened", error);
         }
-    };  
+    };
+    
+    const handleEditStart = (chatId: string) => {
+        setEditingChatId(chatId);
+    };
+    
+    const handleEditEnd = (chatId: string, newTitle: string) => {
+        if (newTitle.trim() === "") return;
+        handleRenameChat(chatId, newTitle);
+        setEditingChatId(null);
+    };    
 
     const features = [
         { title: "Generate plans", icon: Calendar, url: "#" },
