@@ -14,11 +14,11 @@ const chatSlice = createSlice({
             state.chats.push(action.payload);
         },
         renameChat: (state, action: PayloadAction<{ id: string; title: string }>) => {
-            const chat = state.chats.find(chat => chat.id === action.payload.id);
+            const chat = state.chats.find(chat => chat._id === action.payload.id);
             if (chat) chat.title = action.payload.title;
         },
         deleteChat: (state, action: PayloadAction<string>) => {
-            state.chats = state.chats.filter(chat => chat.id !== action.payload);
+            state.chats = state.chats.filter(chat => chat._id !== action.payload);
         },
         setActiveChat: (state, action: PayloadAction<string>) => {
             state.activeChatId = action.payload;
@@ -28,7 +28,7 @@ const chatSlice = createSlice({
             action: PayloadAction<{ chatId: string; sender: "user" | "ai"; message: string }>
         ) => {
             const { chatId, sender, message } = action.payload;
-            const chat = state.chats.find(chat => chat.id === chatId);
+            const chat = state.chats.find(chat => chat._id === chatId);
             if (chat) {
                 chat.messages.push({ 
                     sender, 
