@@ -3,6 +3,8 @@ import AIFriend from "/assets/images/ai-friend.png";
 import { Card } from "../ui/card";
 import { Mic, Paperclip, Send, Share } from "lucide-react";
 import {toast, ToastContainer } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { addMessageToChat, selectActiveChatId, selectChats } from "../../redux/slices/chatSlice";
 
 interface Message {
     id: string;
@@ -15,26 +17,22 @@ const AIChatbot : React.FC  = () => {
 
     const [input, setInput] = useState<string>("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const chats = useSelector(selectChats);
+    const activeChatId = useSelector(selectActiveChatId);
+    const dispatch = useDispatch();
+
+    const activeChat = chats.find((chat) => chat._id === activeChatId) || null;
+    const messages = activeChat ? activeChat.messages : [];
+
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: "1",
-            content: "Hello! How can I help you today?",
-            sender: 'ai',
-            timestamp: new Date()
-        },
-        {
-            id: "2",
-            content: "I am your friendly assistant.",
-            sender: 'ai',
-            timestamp: new Date()
-        }
-    ]);
 
           
     // Auto-scroll to bottom when new messages arrive
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        // Ensure scroll is always at the bottom after messages change
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
     }, [messages]);
      
 
@@ -46,36 +44,40 @@ const AIChatbot : React.FC  = () => {
     }, [input]);
 
      // Handle message submission
-    const handleSubmit = (e: React.FormEvent) => {
+     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (input.trim()) {
-            const newMessage: Message = {
-                id: Date.now().toString(),
-                content: input.trim(),
-                sender: "user",
-                timestamp: new Date(),
-            };
+            const newMessage = { sender: "user", message: input.trim(), timestamp: new Date() };
 
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
+            // Dispatch action to add the message to the active chat
+            if (activeChatId) {
+                dispatch(addMessageToChat({ chatId: activeChatId, sender: "user", message: input.trim() }));
+            }
 
-            // add an AI response
+            // Add an AI response after a short delay
             setTimeout(() => {
-                const aiResponse: Message = {
-                id: Date.now().toString(),
-                content: "Thanks for your message! I'll get back to you soon.",
-                sender: "ai",
-                timestamp: new Date(),
+                const aiResponse = {
+                    sender: "ai",
+                    message: "Thanks for your message! I'll get back to you soon.",
+                    timestamp: new Date(),
                 };
-                setMessages((prevMessages) => [...prevMessages, aiResponse]);
+
+                if (activeChatId) {
+                    dispatch(addMessageToChat({ chatId: activeChatId, sender: "ai", message: aiResponse.message }));
+                }
             }, 1000);
 
-                setInput("");
+            setInput(""); // Clear input field
         } else {
             toast.warn("Message cannot be empty!", { position: "top-center" });
         }
     };
     
     const formatTimestamp = (date: Date) => {
+        // Check if the date is valid
+        if (!(date instanceof Date) || isNaN(date.getTime())) {
+            return ""; // Return an empty string if the date is invalid
+        }
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
@@ -104,28 +106,26 @@ const AIChatbot : React.FC  = () => {
                         
                     {/* Chatbot Container */}
                     <Card className="h-[calc(100vh-9rem)] bg-[#CDE7FE] border-none shadow-none w-full mt-4">
-                            <div className="h-full overflow-y-auto p-4 space-y-6">
-                                {messages.map((message) => (
-                                <div
-                                    key={message.id}
-                                    className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                                >
-                                    <div
-                                        className={`max-w-[70%] rounded-2xl p-3 ${
-                                            message.sender === 'user'
-                                                ? 'bg-[#0D358C] text-white'
-                                                : 'bg-white text-black'
-                                        }`}
-                                    >
-                                        <div className="text-sm">{message.content}</div>
-                                        <div className={`text-xs mt-1 ${
-                                            message.sender === 'user' ? 'text-gray-300' : 'text-gray-500'
-                                        }`}>
-                                            {formatTimestamp(message.timestamp)}
+                            <div className="max-h-[500px]  overflow-y-auto p-4 space-y-6">
+                            {messages.length > 0 ? (
+                                messages.map((message, index) => (
+                                    <div key={index} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
+                                        <div
+                                            className={`max-w-[70%] rounded-2xl p-3 ${message.sender === "user" ? "bg-[#0D358C] text-white" : "bg-white text-black"}`}
+                                        >
+                                            <div className="text-sm">{message.message}</div>
+                                            <div className={`text-xs mt-1 ${message.sender === "user" ? "text-gray-300" : "text-gray-500"}`}>
+                                                {formatTimestamp(message.timestamp)}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            ) : (
+                                <p className="text-center text-gray-500 italic font-semibold font-comic text-lg">
+                                    🗨️ Hey there! Start the conversation, and I’ll be happy to chat with you! 😊
+                                </p>
+                            )}
+                            {/* Scroll target at the bottom */}
                             <div ref={messagesEndRef} />
                         </div>
                     </Card>
