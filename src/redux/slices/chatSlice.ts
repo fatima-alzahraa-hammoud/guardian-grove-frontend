@@ -33,6 +33,10 @@ const chatSlice = createSlice({
         setActiveChat: (state, action: PayloadAction<string | null>) => {
             state.activeChatId = action.payload;
         },
+        addMessageToChat: (state, action: PayloadAction<{ chatId: string; message: string }>) => {
+            const chat = state.chats.find(chat => chat.id === action.payload.chatId);
+            if (chat) chat.messages.push(action.payload.message);
+        },
     },
 });
   
