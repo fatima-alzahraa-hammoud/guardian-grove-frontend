@@ -5,6 +5,7 @@ import { Bot, Calendar, ChevronLeft, ChevronRight, History, Home, Layout, List, 
 import AIFriend from "/assets/images/ai-friend.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { useDispatch } from "react-redux";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -15,6 +16,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
     const { toggleSidebar, state } = useSidebar();
     collapsed = state === "collapsed";
 
+    const dispatch = useDispatch();
     const [activeItem, setActiveItem] = useState<string | null>(null);
     const [activeChat, setActiveChat] = React.useState<string | null>(null);
     const [hoveredChat, setHoveredChat] = React.useState<string | null>(null);
