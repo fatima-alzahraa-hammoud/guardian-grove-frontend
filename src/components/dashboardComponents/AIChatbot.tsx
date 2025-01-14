@@ -71,9 +71,9 @@ const AIChatbot : React.FC  = () => {
         }
     };
     
-    const formatTimestamp = (date: Date) => {
-        // Check if the date is valid
-        if (!(date instanceof Date) || isNaN(date.getTime())) {
+    const formatTimestamp = (timestamp: Date | string): string => {
+        const date = new Date(timestamp);  // Convert to Date object
+        if (isNaN(date.getTime())) {
             return ""; // Return an empty string if the date is invalid
         }
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });

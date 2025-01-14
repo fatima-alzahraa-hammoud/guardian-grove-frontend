@@ -1,7 +1,7 @@
 export interface Message {
     sender: "user" | "bot";
     message: string; 
-    timestamp: Date;
+    timestamp: string;
 }
 
 export interface Chat {
@@ -9,7 +9,7 @@ export interface Chat {
     title: string;
     messages: Message[];
     createdAt: Date;
-    updatedAt: Date;
+    updatedAt: string;
 }
 
 export interface ChatState {

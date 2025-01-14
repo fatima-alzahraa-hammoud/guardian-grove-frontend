@@ -33,9 +33,9 @@ const chatSlice = createSlice({
                 chat.messages.push({ 
                     sender, 
                     message, 
-                    timestamp: new Date() 
+                    timestamp: new Date().toISOString(),
                 });
-                chat.updatedAt = new Date();
+                chat.updatedAt = new Date().toISOString();
             }
         },
     },
