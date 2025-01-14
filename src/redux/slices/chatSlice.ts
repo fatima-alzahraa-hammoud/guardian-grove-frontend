@@ -30,6 +30,9 @@ const chatSlice = createSlice({
         deleteChat: (state, action: PayloadAction<string>) => {
             state.chats = state.chats.filter(chat => chat.id !== action.payload);
         },
+        setActiveChat: (state, action: PayloadAction<string | null>) => {
+            state.activeChatId = action.payload;
+        },
     },
 });
   
