@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import AIFriend from "/assets/images/ai-friend.png";
 import { Card } from "../ui/card";
-import { Mic, Paperclip, Send, Share } from "lucide-react";
+import { Mic, Paperclip, Send } from "lucide-react";
 import {toast, ToastContainer } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { addMessageToChat, selectActiveChatId, selectChats } from "../../redux/slices/chatSlice";
@@ -89,13 +89,6 @@ const AIChatbot : React.FC  = () => {
 
                 {/* Chatbot */}
                 <div className="flex flex-col w-full items-center relative">
-                    <button
-                        className="absolute right-3 -top-6 p-2 rounded-full hover:bg-gray-100"
-                        aria-label="Share chat tab"
-                    >
-                        <Share className="h-4 w-4" />
-                    </button>
-
                         
                     {/* Chatbot Container */}
                     <Card className="h-[calc(100vh-9rem)] bg-[#CDE7FE] border-none shadow-none w-full mt-4">
