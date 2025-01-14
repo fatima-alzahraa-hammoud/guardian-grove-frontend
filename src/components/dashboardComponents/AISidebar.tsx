@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail, useSidebar } from "../ui/sidebar";
 import { Button } from "../ui/button";
 import { Bot, Calendar, ChevronLeft, ChevronRight, History, Home, Layout, List, MessageCircle, MoreHorizontal, Search, Settings, Timer } from "lucide-react";
 import AIFriend from "/assets/images/ai-friend.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { selectActiveChatId, selectChats, setActiveChat } from "../../redux/slices/chatSlice";
+import { organizeChatsByPeriod } from "../../libs/categorizeChatsHelper";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -17,9 +19,16 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
     collapsed = state === "collapsed";
 
     const dispatch = useDispatch();
+    const chats = useSelector(selectChats);
+    const activeChatId = useSelector(selectActiveChatId);
+    const chatHistory = useMemo(() => organizeChatsByPeriod(chats), [chats]);
+
     const [activeItem, setActiveItem] = useState<string | null>(null);
-    const [activeChat, setActiveChat] = React.useState<string | null>(null);
     const [hoveredChat, setHoveredChat] = React.useState<string | null>(null);
+
+    const handleChatClick = (chatId: string) => {
+        dispatch(setActiveChat(chatId));
+    };
 
     const features = [
         { title: "Generate plans", icon: Calendar, url: "#" },
@@ -28,21 +37,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
         { title: "Tell Me a Story", icon: MessageCircle, url: "#" },
         { title: "View Tasks", icon: List, url: "#" },
         { title: "Progress Tracker", icon: Layout, url: "#" },
-    ];
-
-    const chatHistory = {
-        today: [
-          { id: "chat1", title: "Second chat", url: "#" },
-          { id: "chat2", title: "First chat", url: "#" },
-        ],
-        previous7days: [
-          { id: "chat3", title: "Second chat", url: "#" },
-          { id: "chat4", title: "First chat", url: "#" },
-        ],
-        previous30days: [
-          { id: "chat5", title: "First chat", url: "#" },
-        ],
-    };    
+    ];  
   
     return(
 
@@ -114,68 +109,71 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {Object.entries(chatHistory).map(([period, chats]) => (
-                                <Collapsible key={period} className="group/collapsible">
-                                    <SidebarMenuItem>
-                                        <CollapsibleTrigger asChild>
-                                            <SidebarMenuButton className="text-sky-800 hover:bg-[#3A8EBA] hover:text-white transition-colors duration-200">
-                                                <History className="w-4 h-4" />
-                                                <span className="group-data-[collapsible=icon]:hidden font-poppins text-xs">
-                                                    {period === 'today'
-                                                        ? 'Today'
-                                                        : period === 'previous7days'
-                                                        ? 'Previous 7 days'
-                                                        : 'Previous 30 days'}
-                                                </span>
-                                                <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden" />
-                                            </SidebarMenuButton>
-                                        </CollapsibleTrigger>
-                                        <CollapsibleContent>
-                                            <SidebarMenuSub>
-                                                {chats.map((chat) => (
-                                                    <SidebarMenuSubItem key={chat.id}>
-                                                        <SidebarMenuSubButton
-                                                            asChild
-                                                            className={`group ${activeChat === chat.id ? "bg-white text-sky-800 hover:text-sky-800" : "text-sky-800 hover:bg-[#3A8EBA] hover:text-white"} transition-colors duration-200 font-poppins text-xs`}
-                                                        >
-                                                        <a
-                                                            href={chat.url}
-                                                            className={`text-sky-800 font-poppins text-xs ${activeChat === chat.id ? 'bg-white text-[#3A8EBA] hover:text-[#3A8EBA]' : ''}`}
-                                                            onClick={(e) => {
-                                                            e.preventDefault();
-                                                            setActiveChat(chat.id);
-                                                            }}
-                                                            onMouseEnter={() => setHoveredChat(chat.id)}
-                                                            onMouseLeave={() => setHoveredChat(null)} 
-                                                        >
-                                                            <span className="group-data-[collapsible=icon]:hidden">{chat.title}</span>
-                                                            <DropdownMenu>
-                                                                <DropdownMenuTrigger asChild>
-                                                                    <Button
-                                                                        variant="ghost"
-                                                                        size="icon"
-                                                                        className={`h-6 w-6 ml-auto ${hoveredChat === chat.id ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}
-                                                                        onClick={(e) => e.stopPropagation()}
-                                                                    >
-                                                                        <MoreHorizontal className="h-4 w-4" />
-                                                                    </Button>
-                                                                </DropdownMenuTrigger>
-                                                                <DropdownMenuContent align="end" className="w-40">
-                                                                    <DropdownMenuItem>Rename</DropdownMenuItem>
-                                                                    <DropdownMenuItem>Share</DropdownMenuItem>
-                                                                    <DropdownMenuSeparator />
-                                                                    <DropdownMenuItem className="text-red-600">
-                                                                        Delete
-                                                                    </DropdownMenuItem>
-                                                                </DropdownMenuContent>
-                                                            </DropdownMenu>
-                                                        </a>
-                                                        </SidebarMenuSubButton>
-                                                    </SidebarMenuSubItem>
-                                                ))}
-                                            </SidebarMenuSub>
-                                        </CollapsibleContent>
-                                    </SidebarMenuItem>
-                                </Collapsible>
+                                chats.length > 0 && (
+                                    <Collapsible key={period} className="group/collapsible">
+                                        <SidebarMenuItem>
+                                            <CollapsibleTrigger asChild>
+                                                <SidebarMenuButton className="text-sky-800 hover:bg-[#3A8EBA] hover:text-white transition-colors duration-200">
+                                                    <History className="w-4 h-4" />
+                                                    <span className="group-data-[collapsible=icon]:hidden font-poppins text-xs">
+                                                        {period === 'today'
+                                                            ? 'Today'
+                                                            : period === 'previous7days'
+                                                            ? 'Previous 7 days'
+                                                            : period === 'previous30days'
+                                                            ? 'Previous 30 days'
+                                                            : period}
+                                                    </span>
+                                                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden" />
+                                                </SidebarMenuButton>
+                                            </CollapsibleTrigger>
+                                            <CollapsibleContent>
+                                                <SidebarMenuSub>
+                                                    {chats.map((chat) => (
+                                                        <SidebarMenuSubItem key={chat._id}>
+                                                            <SidebarMenuSubButton
+                                                                asChild
+                                                                className={`group ${chat._id === activeChatId  ? "bg-white text-sky-800 hover:text-sky-800" : "text-sky-800 hover:bg-[#3A8EBA] hover:text-white"} transition-colors duration-200 font-poppins text-xs`}
+                                                            >
+                                                            <a
+                                                                className={`text-sky-800 font-poppins text-xs ${activeChatId === chat._id ? 'bg-white text-[#3A8EBA] hover:text-[#3A8EBA]' : ''}`}
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    handleChatClick(chat._id);
+                                                                }}
+                                                                onMouseEnter={() => setHoveredChat(chat._id)}
+                                                                onMouseLeave={() => setHoveredChat(null)} 
+                                                            >
+                                                                <span className="group-data-[collapsible=icon]:hidden text-left">{chat.title}</span>
+                                                                <DropdownMenu>
+                                                                    <DropdownMenuTrigger asChild>
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="icon"
+                                                                            className={`h-6 w-6 ml-auto ${hoveredChat === chat._id ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}
+                                                                            onClick={(e) => e.stopPropagation()}
+                                                                        >
+                                                                            <MoreHorizontal className="h-4 w-4" />
+                                                                        </Button>
+                                                                    </DropdownMenuTrigger>
+                                                                    <DropdownMenuContent align="end" className="w-40">
+                                                                        <DropdownMenuItem>Rename</DropdownMenuItem>
+                                                                        <DropdownMenuItem>Share</DropdownMenuItem>
+                                                                        <DropdownMenuSeparator />
+                                                                        <DropdownMenuItem className="text-red-600">
+                                                                            Delete
+                                                                        </DropdownMenuItem>
+                                                                    </DropdownMenuContent>
+                                                                </DropdownMenu>
+                                                            </a>
+                                                            </SidebarMenuSubButton>
+                                                        </SidebarMenuSubItem>
+                                                    ))}
+                                                </SidebarMenuSub>
+                                            </CollapsibleContent>
+                                        </SidebarMenuItem>
+                                    </Collapsible>
+                                )
                             ))}
                         </SidebarMenu>
                     </SidebarGroupContent>
