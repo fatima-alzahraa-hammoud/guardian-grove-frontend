@@ -6,8 +6,11 @@ import AIFriend from "/assets/images/ai-friend.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { useDispatch, useSelector } from "react-redux";
-import { selectActiveChatId, selectChats, setActiveChat } from "../../redux/slices/chatSlice";
+import { deleteChat, selectActiveChatId, selectChats, setActiveChat } from "../../redux/slices/chatSlice";
 import { organizeChatsByPeriod } from "../../libs/categorizeChatsHelper";
+import { requestApi } from "../../libs/requestApi";
+import { requestMethods } from "../../libs/enum/requestMethods";
+import { toast, ToastContainer } from "react-toastify";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -26,8 +29,26 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
     const [activeItem, setActiveItem] = useState<string | null>(null);
     const [hoveredChat, setHoveredChat] = React.useState<string | null>(null);
 
-    const handleChatClick = (chatId: string) => {
+    const handleClickChat = (chatId: string) => {
         dispatch(setActiveChat(chatId));
+    };
+
+    const handleDeleteChat = async (chatId: string) => {
+        try {
+            const response = await requestApi({
+                route: "/chats/",
+                method: requestMethods.DELETE,
+                body: {chatId}
+            });
+            if (response){
+                dispatch(deleteChat(chatId));
+            }
+            else{
+                toast.error("Failed to delete chat");
+            }
+        } catch (error) {
+            console.log("Something wrong happened", error);
+        }
     };
 
     const features = [
@@ -44,7 +65,8 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
         <Sidebar
             collapsible="icon"
             className={`h-[calc(100vh-4rem)] transition-all duration-300 ease-in-out border-r bg-[#B2D1F1] flex flex-col justify-between fixed top-16 left-0`}
-        >            
+        >        
+        <ToastContainer/>    
             {/* Sidebar header */}
             <SidebarHeader className="h-20 px-4 flex flex-col justify-center bg-[#B2D1F1] border-[#B2D1F1]">
                 <div className="flex items-center justify-between w-full">
@@ -139,7 +161,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                                                                 className={`text-sky-800 font-poppins text-xs ${activeChatId === chat._id ? 'bg-white text-[#3A8EBA] hover:text-[#3A8EBA]' : ''}`}
                                                                 onClick={(e) => {
                                                                     e.preventDefault();
-                                                                    handleChatClick(chat._id);
+                                                                    handleClickChat(chat._id);
                                                                 }}
                                                                 onMouseEnter={() => setHoveredChat(chat._id)}
                                                                 onMouseLeave={() => setHoveredChat(null)} 
@@ -160,7 +182,10 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                                                                         <DropdownMenuItem>Rename</DropdownMenuItem>
                                                                         <DropdownMenuItem>Share</DropdownMenuItem>
                                                                         <DropdownMenuSeparator />
-                                                                        <DropdownMenuItem className="text-red-600">
+                                                                        <DropdownMenuItem 
+                                                                            className="text-red-600"
+                                                                            onClick={() => handleDeleteChat(chat._id)}
+                                                                        >
                                                                             Delete
                                                                         </DropdownMenuItem>
                                                                     </DropdownMenuContent>
