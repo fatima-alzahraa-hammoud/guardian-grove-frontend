@@ -9,3 +9,8 @@ interface ChatState {
     chats: Chat[];
     activeChatId: string | null;
 }
+
+const initialState: ChatState = {
+    chats: [],
+    activeChatId: null,
+};
