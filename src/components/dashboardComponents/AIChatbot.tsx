@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import AIFriend from "/assets/images/ai-friend.png";
 import { Card } from "../ui/card";
-import { Mic, Paperclip, Plus, Send, Share } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { toast, ToastContainer } from "react-toastify";
+import { Mic, Paperclip, Send, Share } from "lucide-react";
+import {toast, ToastContainer } from "react-toastify";
 
 interface Message {
     id: string;
@@ -11,43 +10,28 @@ interface Message {
     sender: 'user' | 'ai';
     timestamp: Date;
 }
-  
-interface TabMessages {
-    [key: string]: Message[];
-}
 
 const AIChatbot : React.FC  = () => {
 
     const [input, setInput] = useState<string>("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const [messages, setMessages] = useState<TabMessages>({
-        "Tab 1": [
-            {
-                id: "1",
-                content: "Hello! How can I help you today?",
-                sender: 'ai',
-                timestamp: new Date()
-            },
-            {
-                id: "2",
-                content: "I am your friendly assistant.",
-                sender: 'ai',
-                timestamp: new Date()
-            }
-        ],
-        "Tab 2": [
-            {
-                id: "3",
-                content: "Welcome to the second tab.",
-                sender: 'ai',
-                timestamp: new Date()
-            }
-        ]
-    });
-      
-    const [activeTab, setActiveTab] = useState<string>("Tab 1");
-    
+    const [messages, setMessages] = useState<Message[]>([
+        {
+            id: "1",
+            content: "Hello! How can I help you today?",
+            sender: 'ai',
+            timestamp: new Date()
+        },
+        {
+            id: "2",
+            content: "I am your friendly assistant.",
+            sender: 'ai',
+            timestamp: new Date()
+        }
+    ]);
+
+          
     // Auto-scroll to bottom when new messages arrive
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -61,54 +45,44 @@ const AIChatbot : React.FC  = () => {
         }
     }, [input]);
 
+     // Handle message submission
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (input.trim()) {
             const newMessage: Message = {
                 id: Date.now().toString(),
                 content: input.trim(),
-                sender: 'user',
-                timestamp: new Date()
+                sender: "user",
+                timestamp: new Date(),
             };
-    
-            setMessages((prevMessages) => ({
-                ...prevMessages,
-                [activeTab]: [...(prevMessages[activeTab] || []), newMessage]
-            }));
-            setInput("");
-        }
-    };
 
-    const addNewTab = () => {
-        // Check if the number of tabs has reached the limit
-        if (Object.keys(messages).length >= 5) {
-            toast.error("You can only have up to 5 tabs.");
-            return;
-        }
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
 
-        const newTabName = `Tab ${Object.keys(messages).length + 1}`;
-        setMessages((prevMessages) => ({
-            ...prevMessages,
-            [newTabName]: [
-                {
-                    id: Date.now().toString(),
-                    content: `Welcome to ${newTabName}!`,
-                    sender: 'ai',
-                    timestamp: new Date(),
-                },
-            ],
-        }));
-        setActiveTab(newTabName);
+            // add an AI response
+            setTimeout(() => {
+                const aiResponse: Message = {
+                id: Date.now().toString(),
+                content: "Thanks for your message! I'll get back to you soon.",
+                sender: "ai",
+                timestamp: new Date(),
+                };
+                setMessages((prevMessages) => [...prevMessages, aiResponse]);
+            }, 1000);
+
+                setInput("");
+        } else {
+            toast.warn("Message cannot be empty!", { position: "top-center" });
+        }
     };
     
     const formatTimestamp = (date: Date) => {
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
+    // Handle voice mode action
     const handleVoiceMode = () => {
-        // Handle the voice mode action here
         console.log("Voice mode activated");
-    };
+  };
 
     return(
         <div className="max-w-5xl flex flex-col font-poppins">
@@ -120,85 +94,56 @@ const AIChatbot : React.FC  = () => {
 
                 {/* Chatbot */}
                 <div className="flex flex-col w-full items-center relative">
-                   
-                    {/* Tabs */}
-                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-[98%] h-full flex flex-col">
-                        <div className="flex justify-between items-center">
-                            <div className="flex items-center overflow-x-auto">
-                                <TabsList className="flex flex-nowrap space-x-2 bg-[#CDE7FE]">
-                                    {Object.keys(messages).map((tab) => (
-                                        <TabsTrigger key={tab} value={tab} className="shrink-0">
-                                            {tab}
-                                        </TabsTrigger>
-                                    ))}
-                                </TabsList>
-                            </div>
+                    <button
+                        className="absolute right-3 -top-6 p-2 rounded-full hover:bg-gray-100"
+                        aria-label="Share chat tab"
+                    >
+                        <Share className="h-4 w-4" />
+                    </button>
 
-                            <div>
-                                <button
-                                    onClick={addNewTab}
-                                    className="ml-2 p-2 rounded-full hover:bg-gray-100"
-                                    aria-label="Add new tab"
-                                >
-                                    <Plus className="h-4 w-4" />
-                                </button>
-
-                                <button
-                                    className="ml-2 p-2 rounded-full hover:bg-gray-100"
-                                    aria-label="Share chat tab"
-                                >
-                                    <Share className="h-4 w-4" />
-                                </button>
-                            </div>
-                        </div>
                         
-                        {/* Chatbot Container */}
-                        <Card className="h-[calc(100vh-11rem)] bg-[#CDE7FE] border-none shadow-none w-full mt-4">
-                        {Object.keys(messages).map((tab) => (
-                            <TabsContent key={tab} value={tab} className="h-full m-0">
-                                <div className="h-full overflow-y-auto p-4 space-y-6">
-                                    {messages[tab].map((message) => (
+                    {/* Chatbot Container */}
+                    <Card className="h-[calc(100vh-9rem)] bg-[#CDE7FE] border-none shadow-none w-full mt-4">
+                            <div className="h-full overflow-y-auto p-4 space-y-6">
+                                {messages.map((message) => (
+                                <div
+                                    key={message.id}
+                                    className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                                >
                                     <div
-                                        key={message.id}
-                                        className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                                    >
-                                        <div
                                         className={`max-w-[70%] rounded-2xl p-3 ${
                                             message.sender === 'user'
-                                            ? 'bg-[#0D358C] text-white'
-                                            : 'bg-white text-black'
+                                                ? 'bg-[#0D358C] text-white'
+                                                : 'bg-white text-black'
                                         }`}
-                                        >
+                                    >
                                         <div className="text-sm">{message.content}</div>
                                         <div className={`text-xs mt-1 ${
                                             message.sender === 'user' ? 'text-gray-300' : 'text-gray-500'
                                         }`}>
                                             {formatTimestamp(message.timestamp)}
                                         </div>
-                                        </div>
                                     </div>
-                                    ))}
-                                    <div ref={messagesEndRef} />
                                 </div>
-                            </TabsContent>
-                        ))}
-                        </Card>
-                    </Tabs>
+                            ))}
+                            <div ref={messagesEndRef} />
+                        </div>
+                    </Card>
                     
                     {/* Messaging container */}
-                    <form onSubmit={handleSubmit} className="absolute bottom-0 w-full bg-[#0D358C] rounded-3xl z-10 p-3 text-white">
-                        <div className="relative flex [&_textarea]:relative [&_textarea]:z-10 [&_textarea]:bg-transparent rounded-xl border-0">
+                    <form onSubmit={handleSubmit} className="absolute -bottom-2 w-full bg-[#0D358C] rounded-3xl z-10 p-3 text-white">
+                        <div className="relative flex rounded-xl border-0">                            
                             <textarea
                                 ref={textareaRef}
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
-                                placeholder="Ask a follow up…"
+                                placeholder="Ask a follow-up…"
                                 spellCheck="false"
                                 className="resize-none overflow-auto w-full flex-1 bg-transparent p-3 pb-0 text-sm outline-none ring-0 placeholder:text-[#ffffff76]"
                                 style={{
-                                    height: '58px',
-                                    minHeight: '42px',
-                                    maxHeight: '384px'
+                                    height: "58px",
+                                    minHeight: "42px",
+                                    maxHeight: "384px",
                                 }}
                             />
                             <div className="absolute inset-0 inline overflow-auto whitespace-pre-wrap break-words border border-transparent text-sm pointer-events-none -translate-x-px -translate-y-px p-3 pb-1.5" aria-hidden="true">
@@ -236,3 +181,74 @@ const AIChatbot : React.FC  = () => {
 };
 
 export default AIChatbot;
+
+
+{/*
+/ Chatbot 
+<div className="flex flex-col w-full items-center relative">
+                   
+/* Tabs *
+<Tabs value={activeTab} onValueChange={setActiveTab} className="w-[98%] h-full flex flex-col">
+    <div className="flex justify-between items-center">
+        <div className="flex items-center overflow-x-auto">
+            <TabsList className="flex flex-nowrap space-x-2 bg-[#CDE7FE]">
+                {Object.keys(messages).map((tab) => (
+                    <TabsTrigger key={tab} value={tab} className="shrink-0">
+                        {tab}
+                    </TabsTrigger>
+                ))}
+            </TabsList>
+        </div>
+
+        <div>
+            <button
+                onClick={addNewTab}
+                className="ml-2 p-2 rounded-full hover:bg-gray-100"
+                aria-label="Add new tab"
+            >
+                <Plus className="h-4 w-4" />
+            </button>
+
+            <button
+                className="ml-2 p-2 rounded-full hover:bg-gray-100"
+                aria-label="Share chat tab"
+            >
+                <Share className="h-4 w-4" />
+            </button>
+        </div>
+    </div>
+    
+    {/* Chatbot Container 
+    <Card className="h-[calc(100vh-11rem)] bg-[#CDE7FE] border-none shadow-none w-full mt-4">
+    {Object.keys(messages).map((tab) => (
+        <TabsContent key={tab} value={tab} className="h-full m-0">
+            <div className="h-full overflow-y-auto p-4 space-y-6">
+                {messages[tab].map((message) => (
+                <div
+                    key={message.id}
+                    className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                    <div
+                    className={`max-w-[70%] rounded-2xl p-3 ${
+                        message.sender === 'user'
+                        /? 'bg-[#0D358C] text-white'
+                        : 'bg-white text-black'
+                    }`}
+                    >
+                    <div className="text-sm">{message.content}</div>
+                    <div className={`text-xs mt-1 ${
+                        message.sender === 'user' ? 'text-gray-300' : 'text-gray-500'
+                    }`}>
+                        {formatTimestamp(message.timestamp)}
+                    </div>
+                    </div>
+                </div>
+                ))}
+                <div ref={messagesEndRef} />
+            </div>
+        </TabsContent>
+    ))}
+    </Card>
+</Tabs>
+
+*/}
