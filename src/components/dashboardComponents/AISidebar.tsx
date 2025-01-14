@@ -75,9 +75,15 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
     };
     
     const handleEditEnd = (chatId: string, newTitle: string) => {
-        if (newTitle.trim() === "") return;
+        if (newTitle.trim() === "") {
+            // Keep the last title by setting editingChatId to null without updating
+            setEditingChatId(null);
+            return;
+        }
+    
+        // Update with the new title if it's not empty
         handleRenameChat(chatId, newTitle);
-        setEditingChatId(null);
+        setEditingChatId(null);    
     };    
 
     const features = [
@@ -195,7 +201,31 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                                                                 onMouseEnter={() => setHoveredChat(chat._id)}
                                                                 onMouseLeave={() => setHoveredChat(null)} 
                                                             >
-                                                                <span className="group-data-[collapsible=icon]:hidden text-left">{chat.title}</span>
+                                                                {editingChatId === chat._id ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        className="border border-sky-800 rounded-md p-1 w-full text-left"
+                                                                        defaultValue={chat.title}
+                                                                        onBlur={(e) =>
+                                                                            handleEditEnd(chat._id, e.target.value)
+                                                                        }
+                                                                        onKeyDown={(e) => {
+                                                                            if (e.key === "Enter") {
+                                                                                handleEditEnd(chat._id, e.currentTarget.value);
+                                                                            }
+                                                                        }}                                            
+                                                                        autoFocus
+                                                                    />
+                                                                ) : (
+                                                                    <span
+                                                                        className="flex-1 cursor-pointer text-left"
+                                                                        onDoubleClick={() =>
+                                                                            handleEditStart(chat._id)
+                                                                        }
+                                                                    >
+                                                                        {chat.title}
+                                                                    </span>
+                                                                )}
                                                                 <DropdownMenu>
                                                                     <DropdownMenuTrigger asChild>
                                                                         <Button
@@ -208,7 +238,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                                                                         </Button>
                                                                     </DropdownMenuTrigger>
                                                                     <DropdownMenuContent align="end" className="w-40">
-                                                                        <DropdownMenuItem>Rename</DropdownMenuItem>
+                                                                        <DropdownMenuItem onClick={() => handleEditStart(chat._id)}>Rename</DropdownMenuItem>
                                                                         <DropdownMenuItem>Share</DropdownMenuItem>
                                                                         <DropdownMenuSeparator />
                                                                         <DropdownMenuItem 
