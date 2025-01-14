@@ -38,10 +38,16 @@ const chatSlice = createSlice({
                 chat.updatedAt = new Date().toISOString();
             }
         },
+        updateChatTitle(state, action: PayloadAction<{ chatId: string; title: string }>) {
+            const chat = state.chats.find((chat) => chat._id === action.payload.chatId);
+            if (chat) {
+              chat.title = action.payload.title;
+            }
+        },
     },
 });
   
-export const { addChat, renameChat, deleteChat, setActiveChat, addMessageToChat } = chatSlice.actions;
+export const { addChat, renameChat, deleteChat, setActiveChat, addMessageToChat, updateChatTitle } = chatSlice.actions;
 
 export const selectChats = (state: { chat: ChatState }) => state.chat.chats;
 export const selectActiveChatId = (state: { chat: ChatState }) => state.chat.activeChatId;
