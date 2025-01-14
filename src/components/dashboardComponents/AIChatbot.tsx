@@ -4,7 +4,7 @@ import { Card } from "../ui/card";
 import { Mic, Paperclip, Send } from "lucide-react";
 import {toast, ToastContainer } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { addChat, addMessageToChat, selectActiveChatId, selectChats, setActiveChat } from "../../redux/slices/chatSlice";
+import { addChat, addMessageToChat, selectActiveChatId, selectActiveChatTitle, selectChats, setActiveChat, updateChatTitle } from "../../redux/slices/chatSlice";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 
@@ -14,6 +14,8 @@ const AIChatbot : React.FC  = () => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const chats = useSelector(selectChats);
     const activeChatId = useSelector(selectActiveChatId);
+    const activeChatTitle = useSelector(selectActiveChatTitle);
+
     const dispatch = useDispatch();
 
     const activeChat = chats.find((chat) => chat._id === activeChatId) || null;
@@ -55,6 +57,9 @@ const AIChatbot : React.FC  = () => {
                         console.log(response.sendedMessage.message);
                         dispatch(addMessageToChat({ chatId: activeChatId, sender: "user", message: response.sendedMessage.message }));
                         dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: response.aiResponse.content }));
+                        if (activeChatTitle !== response.chat.title){
+                            dispatch(updateChatTitle({chatId: activeChatId, title: response.chat.title}))
+                        }
                     }
                     else{
                         dispatch(addChat(response.chat))
