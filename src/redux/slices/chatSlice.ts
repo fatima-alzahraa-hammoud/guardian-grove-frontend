@@ -51,5 +51,9 @@ export const { addChat, renameChat, deleteChat, setActiveChat, addMessageToChat,
 
 export const selectChats = (state: { chat: ChatState }) => state.chat.chats;
 export const selectActiveChatId = (state: { chat: ChatState }) => state.chat.activeChatId;
+export const selectActiveChatTitle = (state: { chat: ChatState }) => {
+    const activeChat = state.chat.chats.find((chat) => chat._id === state.chat.activeChatId);
+    return activeChat ? activeChat.title : "No active chat";
+};
 
 export default chatSlice.reducer;
