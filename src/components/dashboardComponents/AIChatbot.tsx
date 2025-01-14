@@ -4,7 +4,9 @@ import { Card } from "../ui/card";
 import { Mic, Paperclip, Send } from "lucide-react";
 import {toast, ToastContainer } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { addMessageToChat, selectActiveChatId, selectChats } from "../../redux/slices/chatSlice";
+import { addChat, addMessageToChat, selectActiveChatId, selectChats, setActiveChat } from "../../redux/slices/chatSlice";
+import { requestApi } from "../../libs/requestApi";
+import { requestMethods } from "../../libs/enum/requestMethods";
 
 const AIChatbot : React.FC  = () => {
 
@@ -37,32 +39,35 @@ const AIChatbot : React.FC  = () => {
     }, [input]);
 
      // Handle message submission
-     const handleSubmit = (e: React.FormEvent) => {
+     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (input.trim()) {
-            const newMessage = { sender: "user", message: input.trim(), timestamp: new Date() };
-
-            // Dispatch action to add the message to the active chat
-            if (activeChatId) {
-                dispatch(addMessageToChat({ chatId: activeChatId, sender: "user", message: input.trim() }));
-            }
-
-            // Add an AI response after a short delay
-            setTimeout(() => {
-                const aiResponse = {
-                    sender: "ai",
-                    message: "Thanks for your message! I'll get back to you soon.",
-                    timestamp: new Date(),
-                };
-
-                if (activeChatId) {
-                    dispatch(addMessageToChat({ chatId: activeChatId, sender: "ai", message: aiResponse.message }));
+        try {
+            const data = {sender:"user", message: input.trim(), chatId: activeChatId};
+            if (input.trim()) {
+                const response = await requestApi({
+                    route: "/chats/handle",
+                    method: requestMethods.POST,
+                    body: data
+                });
+                if (response){
+                    if (activeChatId !== null){
+                        console.log(response.sendedMessage.sender);
+                        console.log(response.sendedMessage.message);
+                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "user", message: response.sendedMessage.message }));
+                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: response.aiResponse.content }));
+                    }
+                    else{
+                        dispatch(addChat(response.chat))
+                        dispatch(setActiveChat(response.chat._id));
+                    }
                 }
-            }, 1000);
-
-            setInput(""); // Clear input field
-        } else {
-            toast.warn("Message cannot be empty!", { position: "top-center" });
+                setInput("");
+            }
+            else{
+                toast.warn("Message cannot be empty!", { position: "top-center" });
+            }
+        } catch (error) {
+            toast.error("Something went wrong!", { position: "top-center" });
         }
     };
     

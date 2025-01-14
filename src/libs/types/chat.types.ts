@@ -1,5 +1,5 @@
 export interface Message {
-    sender: "user" | "ai";
+    sender: "user" | "bot";
     message: string; 
     timestamp: Date;
 }

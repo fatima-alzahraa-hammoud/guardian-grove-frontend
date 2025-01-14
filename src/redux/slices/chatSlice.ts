@@ -25,7 +25,7 @@ const chatSlice = createSlice({
         },
         addMessageToChat: (
             state, 
-            action: PayloadAction<{ chatId: string; sender: "user" | "ai"; message: string }>
+            action: PayloadAction<{ chatId: string; sender: "user" | "bot"; message: string }>
         ) => {
             const { chatId, sender, message } = action.payload;
             const chat = state.chats.find(chat => chat._id === chatId);
