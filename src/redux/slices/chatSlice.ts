@@ -1,3 +1,4 @@
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface Chat {
     id: string;
@@ -14,3 +15,12 @@ const initialState: ChatState = {
     chats: [],
     activeChatId: null,
 };
+
+const chatSlice = createSlice({
+    name: 'chat',
+    initialState,
+    reducers: {
+        
+    },
+});
+  
