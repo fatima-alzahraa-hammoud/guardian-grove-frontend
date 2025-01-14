@@ -23,6 +23,10 @@ const chatSlice = createSlice({
         addChat: (state, action: PayloadAction<Chat>) => {
             state.chats.push(action.payload);
         },
+        renameChat: (state, action: PayloadAction<{ id: string; title: string }>) => {
+            const chat = state.chats.find(chat => chat.id === action.payload.id);
+            if (chat) chat.title = action.payload.title;
+        },
     },
 });
   
