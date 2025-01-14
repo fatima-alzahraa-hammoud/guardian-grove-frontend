@@ -6,13 +6,6 @@ import {toast, ToastContainer } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { addMessageToChat, selectActiveChatId, selectChats } from "../../redux/slices/chatSlice";
 
-interface Message {
-    id: string;
-    content: string;
-    sender: 'user' | 'ai';
-    timestamp: Date;
-}
-
 const AIChatbot : React.FC  = () => {
 
     const [input, setInput] = useState<string>("");

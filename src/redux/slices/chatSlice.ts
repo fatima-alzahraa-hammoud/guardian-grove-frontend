@@ -20,7 +20,7 @@ const chatSlice = createSlice({
         deleteChat: (state, action: PayloadAction<string>) => {
             state.chats = state.chats.filter(chat => chat._id !== action.payload);
         },
-        setActiveChat: (state, action: PayloadAction<string>) => {
+        setActiveChat: (state, action: PayloadAction<string | null>) => {
             state.activeChatId = action.payload;
         },
         addMessageToChat: (
