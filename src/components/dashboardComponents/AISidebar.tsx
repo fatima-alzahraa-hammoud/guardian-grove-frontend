@@ -6,7 +6,7 @@ import AIFriend from "/assets/images/ai-friend.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteChat, selectActiveChatId, selectChats, setActiveChat } from "../../redux/slices/chatSlice";
+import { deleteChat, renameChat, selectActiveChatId, selectChats, setActiveChat } from "../../redux/slices/chatSlice";
 import { organizeChatsByPeriod } from "../../libs/categorizeChatsHelper";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
@@ -50,6 +50,24 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
             console.log("Something wrong happened", error);
         }
     };
+
+    const handleRenameChat = async (chatId: string, title: string) => {
+        try {
+            const response = await requestApi({
+                route: "/chats/rename",
+                method: requestMethods.PUT,
+                body: {chatId, title}
+            });
+            if (response){
+                dispatch(renameChat({id: chatId, title: title}));
+            }
+            else{
+                toast.error("Failed to rename chat");
+            }
+        } catch (error) {
+            console.log("Something wrong happened", error);
+        }
+    };  
 
     const features = [
         { title: "Generate plans", icon: Calendar, url: "#" },
