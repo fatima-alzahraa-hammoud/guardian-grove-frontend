@@ -39,9 +39,16 @@ const chatSlice = createSlice({
         setActiveChat: (state, action: PayloadAction<string | null>) => {
             state.activeChatId = action.payload;
         },
-        addMessageToChat: (state, action: PayloadAction<{ chatId: string; message: string }>) => {
-            const chat = state.chats.find(chat => chat.id === action.payload.chatId);
-            if (chat) chat.messages.push(action.payload.message);
+        addMessageToChat: (
+            state, 
+            action: PayloadAction<{ chatId: string; sender: "user" | "ai"; message: string }>
+        ) => {
+            const { chatId, sender, message } = action.payload;
+            const chat = state.chats.find(chat => chat.id === chatId);
+            if (chat) {
+                const timestamp = new Date().toLocaleTimeString();
+                chat.messages.push({ sender, message, timestamp });
+            }
         },
     },
 });
