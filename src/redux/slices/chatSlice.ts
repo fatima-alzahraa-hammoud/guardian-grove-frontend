@@ -1,9 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+interface Message {
+    sender: "user" | "ai";
+    message: string; 
+    timestamp: string;
+}
+
 interface Chat {
     id: string;
     title: string;
-    messages: string[];
+    messages: Message[];
 }
 
 interface ChatState {
