@@ -55,4 +55,6 @@ const chatSlice = createSlice({
   
 export const { addChat, renameChat, deleteChat, setActiveChat, addMessageToChat } = chatSlice.actions;
 
+export const selectChats = (state: { chat: ChatState }) => state.chat.chats;
+
 export default chatSlice.reducer;
