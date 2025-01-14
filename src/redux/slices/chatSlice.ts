@@ -1,21 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-interface Message {
-    sender: "user" | "ai";
-    message: string; 
-    timestamp: string;
-}
-
-interface Chat {
-    id: string;
-    title: string;
-    messages: Message[];
-}
-
-interface ChatState {
-    chats: Chat[];
-    activeChatId: string | null;
-}
+import { Chat, ChatState } from "../../libs/types/chat.types";
 
 const initialState: ChatState = {
     chats: [],
@@ -46,8 +30,12 @@ const chatSlice = createSlice({
             const { chatId, sender, message } = action.payload;
             const chat = state.chats.find(chat => chat.id === chatId);
             if (chat) {
-                const timestamp = new Date().toLocaleTimeString();
-                chat.messages.push({ sender, message, timestamp });
+                chat.messages.push({ 
+                    sender, 
+                    message, 
+                    timestamp: new Date() 
+                });
+                chat.updatedAt = new Date();
             }
         },
     },

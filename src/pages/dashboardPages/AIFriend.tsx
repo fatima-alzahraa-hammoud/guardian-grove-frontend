@@ -6,18 +6,7 @@ import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { useDispatch } from "react-redux";
 import { addChat } from "../../redux/slices/chatSlice";
-
-interface Message {
-    sender: "user" | "ai";
-    message: string;
-    timestamp: string;
-}
-
-interface Chat {
-    id: string;
-    title: string;
-    messages: Message[];
-}
+import { Chat } from "../../libs/types/chat.types";
 
 const AIFriend : React.FC = () => {
 
