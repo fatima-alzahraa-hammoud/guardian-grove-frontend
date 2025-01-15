@@ -8,17 +8,18 @@ interface GoalCardProps {
     title: string;
     type: string;
     description: string;
-    criteria: string;
     progress: number;
     total: number;
     completionDate: Date;
-    starRewards: number;
-    coinRewards: number;
+    rewards: {
+        stars: number;
+        coins: number;
+    };
     badge: string;
     onViewTasks: () => void;
 }
 
-const GoalCard : React.FC<GoalCardProps> = ({title, type, description, progress, total, completionDate, starRewards, coinRewards, badge,onViewTasks }) => {
+const GoalCard : React.FC<GoalCardProps> = ({title, type, description, progress, total, completionDate, rewards, badge,onViewTasks }) => {
     return (
         <Card className="bg-pink-50">
             <CardContent className="p-6">
@@ -36,8 +37,8 @@ const GoalCard : React.FC<GoalCardProps> = ({title, type, description, progress,
                     <div className="text-sm">
                         Rewards: 
                     <span className="ml-1">
-                        <Stars className="inline w-4 h-4 text-yellow-500" /> {starRewards}
-                        <CircleDollarSign className="inline w-4 h-4 text-yellow-500 ml-2" /> {coinRewards}
+                        <Stars className="inline w-4 h-4 text-yellow-500" /> {rewards.stars}
+                        <CircleDollarSign className="inline w-4 h-4 text-yellow-500 ml-2" /> {rewards.coins}
                     </span>
                     </div>
                     <div className="text-sm">

@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { cn } from "../../lib/utils";
 import sortImage from "/assets/images/sort.png";
 import magicImage from "/assets/images/magic-wand.png";
+import { requestApi } from "../../libs/requestApi";
+import { requestMethods } from "../../libs/enum/requestMethods";
+import { useSelector } from "react-redux";
+import { selectUserId } from "../../redux/slices/userSlice";
+import { toast } from "react-toastify";
 
 interface FamilyTreeProps {
     collapsed: boolean;
@@ -13,7 +18,34 @@ const Goals : React.FC<FamilyTreeProps> = ({collapsed}) => {
     const filters = ["Goals", "Adventures"];
     const [activeFilter, setActiveFilter] = useState<string>("Goals");
 
+    const userId = useSelector(selectUserId);
+
     const [status, setStatus] = useState<'In Progress | Completed'>();
+
+    const [goals, setGoals] = useState<[]>([]);
+
+    useEffect(() => {
+        fetchgoals();
+    }, [])
+
+    const fetchgoals = async () => {
+        try {
+            const response = await requestApi({
+                route: "/userGoals/goals",
+                method: requestMethods.POST,
+                body: {userId}
+            });
+
+            if (response && response.goals){
+                setGoals(response.goals);
+                console.log(response.goals);
+            }else{
+                toast.error("Failed to get goals", response.message)
+            }
+        } catch (error) {
+            console.log("Something wents wrong", error);
+        }
+    };
 
     return(
         <div className={`pt-24 min-h-screen flex flex-col items-center`}>
