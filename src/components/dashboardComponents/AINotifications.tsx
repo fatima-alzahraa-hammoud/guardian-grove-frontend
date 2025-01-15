@@ -49,6 +49,45 @@ const AINotifications : React.FC <AINotificationsProps> = ({collapsed}) => {
         }
     };
 
+    // Group notifications by time range
+    const today = new Date();
+    const oneDayAgo = new Date(today);
+    oneDayAgo.setDate(today.getDate() - 1);
+
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 7);
+
+    const groupedNotifications = {
+        today: notifications.filter((n) => new Date(n.timestamp) >= oneDayAgo),
+        last7Days: notifications.filter(
+            (n) =>
+                new Date(n.timestamp) < oneDayAgo &&
+                new Date(n.timestamp) >= sevenDaysAgo
+        ),
+        old: notifications.filter((n) => new Date(n.timestamp) < sevenDaysAgo),
+    };
+
+    // Filter notifications based on active filter
+    const filteredNotifications = (category: "today" | "last7Days" | "old") => {
+        const filtered = groupedNotifications[category].filter((notification) => {
+            if (activeFilter === "Tips & Suggestions") {
+                return (
+                    notification.category === "tip" ||
+                    notification.category === "suggestion"
+                );
+            }
+            if (activeFilter === "Alerts & Notifications") {
+                return (
+                    notification.category === "alert" ||
+                    notification.category === "notification"
+                );
+            }
+            return true;
+        });
+
+        return filtered;
+    };
+
     return(
         <div className={`pt-24 min-h-screen flex flex-col items-center`}>
             <div className={`w-full flex-grow font-poppins ${ collapsed ? "mx-auto max-w-6xl" : "max-w-5xl" }`} >
@@ -77,6 +116,10 @@ const AINotifications : React.FC <AINotificationsProps> = ({collapsed}) => {
                             {filter}
                         </Button>
                     ))}
+                </div>
+
+                <div>
+
                 </div>
             </div>
         </div>
