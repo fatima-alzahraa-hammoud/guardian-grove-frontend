@@ -37,8 +37,6 @@ const Goals : React.FC<FamilyTreeProps> = ({collapsed}) => {
 
     const userId = useSelector(selectUserId);
 
-    const [status, setStatus] = useState<'In Progress | Completed'>();
-
     const [goals, setGoals] = useState<Goal[]>([]);
 
     useEffect(() => {

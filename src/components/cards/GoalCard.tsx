@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
-import { CircleDollarSign, Stars } from "lucide-react";
+import { CircleDollarSign, Star, Stars } from "lucide-react";
 import ProgressBar from "../common/ProgressBar";
 
 interface Goal {
@@ -26,37 +26,39 @@ interface GoalCardProps {
 
 const GoalCard : React.FC<GoalCardProps> = ({goal, onViewTasks }) => {
     return (
-        <Card className="bg-[#FDE3EC] border-none shadow-none w-[250px]">
-            <CardContent className="p-6">
-                <h3 className="text-lg font-semibold mb-2">{goal.title}</h3>
-                <p className="text-sm text-gray-600 mb-1">{goal.type}</p>
-                <p className="text-sm mb-4">{goal.description}</p>
+        <Card className="bg-[#FDE3EC] border-none shadow-none w-[250px] font-poppins">
+            <CardContent className="p-6 flex flex-col justify-between h-full">
+                <h3 className="text-lg font-semibold mb-2 font-comic">{goal.title}</h3>
+                <p className="text-xs text-gray-600 mb-1">{goal.type} Goals</p>
+                <p className="text-sm mt-3">{goal.description}</p>
                 
                 <div className="mb-4">
                     <ProgressBar label="Tasks" completed={goal.nbOfTasksCompleted} total={goal.tasks.length} />
                 </div>
         
-                <p className="text-sm mb-4">Complete by: {goal.dueDate?.toLocaleDateString()}</p>
+                <p className="text-xs mb-4">Complete by: {goal.dueDate?.toLocaleDateString()}</p>
                 
                 <div className="flex flex-col mb-4">
-                    <div className="text-sm">
-                        Rewards: 
+                    <div className="text-xs">
+                        <span className="font-semibold">Rewards: </span>
                         <span className="ml-1">
-                            <Stars className="inline w-4 h-4 text-yellow-500" /> {goal.rewards.stars}
-                            <CircleDollarSign className="inline w-4 h-4 text-yellow-500 ml-2" /> {goal.rewards.coins}
+                            <Star className="inline w-4 h-4 text-yellow-500 mr-1" /> {goal.rewards.stars}
+                            <CircleDollarSign className="inline w-4 h-4 text-yellow-500 ml-2 mr-1" /> {goal.rewards.coins}
                         </span>
                     </div>
-                    <div className="text-sm pt-2">
-                        Badge: {goal.rewards.achievementName}
+                    <div className="text-xs pt-2">
+                        <span className="font-semibold mr-2">Badge: </span> {goal.rewards.achievementName}
                     </div>
                 </div>
         
-                <Button
-                    className="w-full bg-blue-500 text-white hover:bg-blue-600"
-                    onClick={onViewTasks}
-                >
-                    View Tasks
-                </Button>
+                <div className="flex justify-center">
+                    <Button
+                        className="w-1/2 rounded-full bg-[#3A8EBA] text-white hover:bg-[#326E9F] shadow-none"
+                        onClick={onViewTasks}
+                    >
+                        View Tasks
+                    </Button>
+                </div>
             </CardContent>
         </Card>  
     );
