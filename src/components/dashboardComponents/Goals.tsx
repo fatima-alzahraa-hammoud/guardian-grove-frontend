@@ -13,6 +13,8 @@ const Goals : React.FC<FamilyTreeProps> = ({collapsed}) => {
     const filters = ["Goals", "Adventures"];
     const [activeFilter, setActiveFilter] = useState<string>("Goals");
 
+    const [status, setStatus] = useState<'In Progress | Completed'>();
+
     return(
         <div className={`pt-24 min-h-screen flex flex-col items-center`}>
             <div className={`w-full flex-grow font-poppins ${ collapsed ? "mx-auto max-w-6xl" : "max-w-5xl" }`} >
