@@ -17,6 +17,7 @@ interface Goal {
       coins: number;
       achievementName?: string;
     };
+    isCompleted: boolean;
 }
 
 interface GoalCardProps {
@@ -51,14 +52,16 @@ const GoalCard : React.FC<GoalCardProps> = ({goal, onViewTasks }) => {
                     </div>
                 </div>
         
-                <div className="flex justify-center">
-                    <Button
-                        className="w-1/2 rounded-full bg-[#3A8EBA] text-white hover:bg-[#326E9F] shadow-none"
-                        onClick={onViewTasks}
-                    >
-                        View Tasks
-                    </Button>
-                </div>
+                {!goal.isCompleted &&
+                    <div className="flex justify-center">
+                        <Button
+                            className="w-1/2 rounded-full bg-[#3A8EBA] text-white hover:bg-[#326E9F] shadow-none"
+                            onClick={onViewTasks}
+                        >
+                            View Tasks
+                        </Button>
+                    </div>
+                }
             </CardContent>
         </Card>  
     );
