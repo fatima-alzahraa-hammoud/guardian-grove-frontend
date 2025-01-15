@@ -93,7 +93,7 @@ const Goals : React.FC<FamilyTreeProps> = ({collapsed}) => {
                                 onClick={() => setActiveFilter(filter)}
                                 variant="secondary"
                                 className={cn(
-                                    "bg-[#E3F2FD] hover:bg-[#d7edfd] w-44 text-black",
+                                    "bg-[#E3F2FD] hover:bg-[#d7edfd] w-36 text-black",
                                     activeFilter === filter && "bg-[#3A8EBA] text-white hover:bg-[#347ea5]"
                                 )}
                             >

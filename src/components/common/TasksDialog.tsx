@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Coins, Star } from "lucide-react";
@@ -28,6 +28,22 @@ interface TasksDialogProps {
 
 const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) => {
     if (!goal) return null;
+
+    const [showAiPopup, setShowAiPopup] = useState(false);
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
+    const handleDoItClick = (task: Task) => {
+        setSelectedTask(task);
+        setShowAiPopup(true); // Show the AI pop-up when the "Do it" button is clicked
+    };
+
+    const handleAiClose = (confirmed: boolean) => {
+        if (confirmed && selectedTask) {
+            // Mark the task as completed
+            selectedTask.completed = true;
+        }
+        setShowAiPopup(false); // Close the AI popup
+    };
 
     return(
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -94,6 +110,7 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
                                         variant="outline"
                                         className="text-xs"
                                         disabled={task.completed}
+                                        onClick={() => handleDoItClick(task)}
                                     >
                                         {task.completed ? "Done!" : "Do it"}
                                     </Button>
