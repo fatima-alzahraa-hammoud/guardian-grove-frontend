@@ -5,6 +5,7 @@ import MyProfile from "../../components/dashboardComponents/MyProfile";
 import FamilyTree from "../../components/dashboardComponents/FamilyTree";
 import { useDispatch } from "react-redux";
 import { resetChats } from "../../redux/slices/chatSlice";
+import Goals from "../../components/dashboardComponents/Goals";
 
 const Main : React.FC = () => {
 
@@ -22,6 +23,8 @@ const Main : React.FC = () => {
                 return <Achievements collapsed={collapsed}/>;
             case 'familyTree':
                 return <FamilyTree collapsed = {collapsed}/>
+            case 'goals&adventures':
+                return <Goals collapsed={collapsed}/>
             default:
                 return <div>Select a section</div>;
         }
