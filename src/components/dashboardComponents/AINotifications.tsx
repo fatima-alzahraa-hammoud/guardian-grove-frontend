@@ -6,6 +6,7 @@ import { cn } from "../../lib/utils";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { toast } from "react-toastify";
+import NotificationCard from "../cards/NotificationCard";
 
 interface AINotificationsProps {
     collapsed: boolean;
@@ -13,16 +14,15 @@ interface AINotificationsProps {
 
 interface Notification {
     title: string;
-    type: 'personal' | 'family';
-    category: 'tip' | 'alert' | 'suggestion' | 'notification';
+    type: "personal" | "family";
+    category: "tip" | "alert" | "suggestion" | "notification";
     message: string;
     timestamp: Date;
 }
 
-const AINotifications : React.FC <AINotificationsProps> = ({collapsed}) => {
-
+const AINotifications: React.FC<AINotificationsProps> = ({ collapsed }) => {
     const role = useSelector(selectRole);
-    const filters = role === "parent" ?  ['Tips & Suggestions', 'Alerts & Notifications', 'Children’s Notify & Tips'] : ['Tips & Suggestions', 'Alerts & Notifications'];
+    const filters = role === "parent" ? ["Tips & Suggestions", "Alerts & Notifications", "Children’s Notify & Tips"] : ["Tips & Suggestions", "Alerts & Notifications"];
     const [activeFilter, setActiveFilter] = useState<string>("Tips & Suggestions");
     const [notifications, setNotifications] = useState<Notification[]>([]);
 
@@ -30,22 +30,21 @@ const AINotifications : React.FC <AINotificationsProps> = ({collapsed}) => {
         fetchNotifications();
     }, []);
 
-    const fetchNotifications = async() => {
+    const fetchNotifications = async () => {
         try {
             const response = await requestApi({
                 route: "/userNotifications/",
-                method: requestMethods.GET
+                method: requestMethods.GET,
             });
 
-            if (response && response.notifications){
+            if (response && response.notifications) {
                 setNotifications(response.notifications);
                 console.log(response.notifications);
-            }
-            else{
+            } else {
                 toast.error("Failed to retrieve notifications", response.message);
             }
         } catch (error) {
-            console.log("Something wents wrong", error);
+            console.log("Something went wrong", error);
         }
     };
 
@@ -88,16 +87,21 @@ const AINotifications : React.FC <AINotificationsProps> = ({collapsed}) => {
         return filtered;
     };
 
-    return(
+    return (
         <div className={`pt-24 min-h-screen flex flex-col items-center`}>
-            <div className={`w-full flex-grow font-poppins ${ collapsed ? "mx-auto max-w-6xl" : "max-w-5xl" }`} >
+            <div
+                className={`w-full flex-grow font-poppins ${
+                    collapsed ? "mx-auto max-w-6xl" : "max-w-5xl"
+                }`}
+            >
                 {/* Header */}
                 <div className="text-left">
                     <h2 className="text-xl font-bold font-comic">
                         Stay Informed with Smart AI Insights
                     </h2>
                     <p className="text-gray-600 mt-2 text-base w-[75%]">
-                        Your AI companion provides personalized tips and timely alerts to help you and your family stay safe, motivated, and connected.
+                        Your AI companion provides personalized tips and timely alerts to
+                        help you and your family stay safe, motivated, and connected.
                     </p>
                 </div>
 
@@ -110,7 +114,8 @@ const AINotifications : React.FC <AINotificationsProps> = ({collapsed}) => {
                             variant="secondary"
                             className={cn(
                                 "bg-[#E3F2FD] hover:bg-[#d7edfd] w-52 text-black",
-                                activeFilter === filter && "bg-[#3A8EBA] text-white hover:bg-[#347ea5]"
+                                activeFilter === filter &&
+                                    "bg-[#3A8EBA] text-white hover:bg-[#347ea5]"
                             )}
                         >
                             {filter}
@@ -118,9 +123,30 @@ const AINotifications : React.FC <AINotificationsProps> = ({collapsed}) => {
                     ))}
                 </div>
 
-                <div>
+                {/* Notifications Sections */}
+                {(["today", "last7Days", "old"] as const).map((category) => {
+                    const notificationsList = filteredNotifications(category);
+                    if (notificationsList.length === 0) {
+                        return null; // Skip if no notifications in this category
+                    }
 
-                </div>
+                    return (
+                        <div key={category} className="mt-10">
+                            <h3 className="text-lg font-bold capitalize">
+                                {category === "today"
+                                    ? "Today"
+                                    : category === "last7Days"
+                                    ? "Previous 7 Days"
+                                    : "Old"}
+                            </h3>
+                            <div className="flex flex-wrap gap-5 mt-5">
+                                {notificationsList.map((notification, idx) => (
+                                    <NotificationCard key={idx} notification={notification}/>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

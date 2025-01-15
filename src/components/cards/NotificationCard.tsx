@@ -24,7 +24,7 @@ const NotificationCard : React.FC<NotificationProp> = ({notification}) => {
 
     return(
         <div
-            className={`p-4 rounded-lg shadow-md ${categoryColors[notification.category]} w-48 max-w-sm`}
+            className={`p-4 rounded-lg shadow-md ${categoryColors[notification.category]} w-full max-w-sm`}
         >
             <h3 className="font-bold text-lg">{notification.title}</h3>
             <p className="text-sm mt-2">{notification.message}</p>
