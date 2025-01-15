@@ -91,7 +91,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
         if (data.name !== name) formData.name = data.name;
         if (data.email !== email && role === "parent") formData.email = data.email;
         if (data.avatar !== avatar) formData.avatar = data.avatar;
-        if (data.birthday !== birthday) formData.birthday = data.birthday;
+        if (data.birthday !== new Date(birthday)) formData.birthday = data.birthday;
         if (data.gender !== gender) formData.gender = data.gender;
         if (data.familyName !== familyName  && role === "parent") formData.familyName = data.familyName;
         if (data.familyAvatar !== familyAvatar  && role === "parent") formData.familyAvatar = data.familyAvatar;

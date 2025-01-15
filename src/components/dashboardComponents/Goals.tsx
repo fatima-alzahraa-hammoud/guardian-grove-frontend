@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { selectUserId } from "../../redux/slices/userSlice";
 import { toast } from "react-toastify";
 import GoalCard from "../cards/GoalCard";
+import TasksDialog from "../common/TasksDialog";
 
 interface FamilyTreeProps {
     collapsed: boolean;
@@ -38,6 +39,14 @@ const Goals : React.FC<FamilyTreeProps> = ({collapsed}) => {
     const userId = useSelector(selectUserId);
 
     const [goals, setGoals] = useState<Goal[]>([]);
+
+    const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null); // For storing the selected goal
+    const [dialogOpen, setDialogOpen] = useState(false); // To manage the dialog state
+
+    const handleViewTasks = (goal: Goal) => {
+        setSelectedGoal(goal); // Set the selected goal
+        setDialogOpen(true); // Open the dialog
+    };
 
     useEffect(() => {
         fetchgoals();
@@ -119,7 +128,7 @@ const Goals : React.FC<FamilyTreeProps> = ({collapsed}) => {
                             <h2 className="text-lg font-semibold mb-4">In Progress</h2>
                             <div className="flex overflow-x-auto gap-6 scroll-smooth hide-scrollbar relative px-12">
                                 {goals.filter(goal => !goal.isCompleted).map((goal) => (
-                                    <GoalCard key={goal._id} goal={goal} onViewTasks={() => { }} />
+                                    <GoalCard key={goal._id} goal={goal} onViewTasks={() => {handleViewTasks(goal)}} />
                                 ))}
                             </div>
                         </div>
@@ -131,7 +140,7 @@ const Goals : React.FC<FamilyTreeProps> = ({collapsed}) => {
                             <h2 className="text-lg font-semibold mb-4">Completed</h2>
                             <div className="flex overflow-x-auto gap-6 scroll-smooth hide-scrollbar relative px-12">
                                 {goals.filter(goal => goal.isCompleted).map((goal) => (
-                                    <GoalCard key={goal._id} goal={goal} onViewTasks={() => { }} />
+                                    <GoalCard key={goal._id} goal={goal} onViewTasks={() => {handleViewTasks(goal)}} />
                                 ))}
                             </div>
                         </div>
@@ -142,6 +151,13 @@ const Goals : React.FC<FamilyTreeProps> = ({collapsed}) => {
                         <div className="text-center text-gray-600 mt-8">No goals available</div>
                     )}
                 </div>
+
+                {/* Dialog for Viewing Tasks */}
+                <TasksDialog
+                    goal={selectedGoal}
+                    open={dialogOpen}
+                    onOpenChange={setDialogOpen}
+                />
             </div>
         </div>
     );

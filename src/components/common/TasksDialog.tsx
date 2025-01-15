@@ -1,4 +1,7 @@
 import React from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Button } from "../ui/button";
+import { Coins, Star, X } from "lucide-react";
 
 interface Task {
     _id: string;
@@ -23,9 +26,13 @@ interface TasksDialogProps {
     onOpenChange: (open: boolean) => void;
 }
 
-const TasksDialog : React.FC<TasksDialogProps> = () => {
+const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) => {
+    if (!goal) return null;
+
     return(
-        <div></div>
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            
+        </Dialog>
     );
 }
 
