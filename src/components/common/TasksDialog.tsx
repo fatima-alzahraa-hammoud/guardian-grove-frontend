@@ -124,6 +124,40 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
                     </div>
                 </div>
             </DialogContent>
+            {/* AI Popup for Task Completion */}
+            {showAiPopup && selectedTask && (
+                <Dialog open={showAiPopup} onOpenChange={(open) => setShowAiPopup(open)}>
+                    <DialogContent className="max-w-xs p-6 text-center">
+                        <DialogHeader className="text-center">
+                            <DialogTitle className="text-center">
+                                <h2 className="font-comic text-xl mb-4">AI Assistant</h2>
+                            </DialogTitle>
+                        </DialogHeader>
+
+                        <p className="font-poppins mb-4">{aiQuestion}</p>
+
+                        {/* Input for the user's answer */}
+                        <input
+                            type="text"
+                            value={userAnswer}
+                            onChange={(e) => setUserAnswer(e.target.value)}
+                            className="border p-2 w-full rounded-lg mb-4"
+                            placeholder="Your answer..."
+                        />
+
+                        <Button
+                            variant="outline"
+                            className="w-full mb-4"
+                            onClick={handleAiSubmit}
+                        >
+                            Submit Answer
+                        </Button>
+
+                        {/* AI response */}
+                        {aiResponse && <p className="font-poppins text-sm">{aiResponse}</p>}
+                    </DialogContent>
+                </Dialog>
+            )}
         </Dialog>
     );
 }
