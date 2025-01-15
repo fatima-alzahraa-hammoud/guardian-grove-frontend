@@ -6,6 +6,7 @@ import FamilyTree from "../../components/dashboardComponents/FamilyTree";
 import { useDispatch } from "react-redux";
 import { resetChats } from "../../redux/slices/chatSlice";
 import GoalsAndAdventures from "../../components/dashboardComponents/GoalsAndAdventures";
+import FamilyJournal from "../../components/dashboardComponents/FamilyJournal";
 
 const Main : React.FC = () => {
 
@@ -23,6 +24,8 @@ const Main : React.FC = () => {
                 return <Achievements collapsed={collapsed}/>;
             case 'familyTree':
                 return <FamilyTree collapsed = {collapsed}/>
+            case 'familyJournal':
+                return <FamilyJournal collapsed = {collapsed}/>
             case 'goals&adventures':
                 return <GoalsAndAdventures collapsed={collapsed}/>
             default:

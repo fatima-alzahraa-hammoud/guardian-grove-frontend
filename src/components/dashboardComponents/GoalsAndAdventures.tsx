@@ -16,7 +16,7 @@ import "react-calendar/dist/Calendar.css";
 import "../../styles/calendar.css";
 import { Value } from "react-calendar/dist/esm/shared/types.js";
 
-interface FamilyTreeProps {
+interface GoalsAndAdventuresProps {
     collapsed: boolean;
 }
 
@@ -52,7 +52,7 @@ interface Adventure {
     coinsReward: number;
 }
 
-const GoalsAndAdventures : React.FC<FamilyTreeProps> = ({collapsed}) => {
+const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => {
 
     const filters = ["Goals", "Adventures"];
     const [activeFilter, setActiveFilter] = useState<string>("Goals");
