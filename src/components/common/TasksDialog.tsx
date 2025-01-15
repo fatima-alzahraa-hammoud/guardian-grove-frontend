@@ -33,9 +33,9 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-2xl p-10">
                 <DialogHeader>
-                    <DialogTitle className="flex items-center justify-between font-comic">
+                    <DialogTitle className="flex items-center justify-between font-comic text-lg">
                         <div>
-                            <span className="text-xl font-bold">Goal: </span>
+                            <span className=" font-bold">Goal: </span>
                             <span className="font-semibold">{goal.title}</span>
                         </div>
 
@@ -46,7 +46,29 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
                     </DialogTitle>
                 </DialogHeader>
 
-                
+                <div className="mt-2">
+                    {/* Rewards section */}
+                    <div className="mb-6 font-comic">
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <span className="font-semibold">Total Stars:</span>
+                                    <span>{goal.rewards.stars}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="font-semibold">Total Coins:</span>
+                                    <span>{goal.rewards.coins}</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold">Badge Reward:</span>
+                                <span>Bookworm</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                </div>
             </DialogContent>
         </Dialog>
     );
