@@ -32,6 +32,13 @@ interface Goal {
     isCompleted: boolean;
 }
 
+interface Adventure {
+    date: string;
+    title: string;
+    description: string;
+    challenges: string[];
+}
+
 const GoalsAndAdventures : React.FC<FamilyTreeProps> = ({collapsed}) => {
 
     const filters = ["Goals", "Adventures"];
@@ -40,9 +47,11 @@ const GoalsAndAdventures : React.FC<FamilyTreeProps> = ({collapsed}) => {
     const userId = useSelector(selectUserId);
 
     const [goals, setGoals] = useState<Goal[]>([]);
+    const [adventures, setAdventures] = useState<Adventure[]>([]);
+    const [selectedAdventures, setSelectedAdventures] = useState<Adventure | null>(null);
 
-    const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null); // For storing the selected goal
-    const [dialogOpen, setDialogOpen] = useState(false); // To manage the dialog state
+    const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
 
     const handleViewTasks = (goal: Goal) => {
         setSelectedGoal(goal); // Set the selected goal
@@ -51,7 +60,11 @@ const GoalsAndAdventures : React.FC<FamilyTreeProps> = ({collapsed}) => {
 
     useEffect(() => {
         fetchgoals();
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        fetchAdventures();
+    }, []);
 
     const fetchgoals = async () => {
         try {
@@ -66,6 +79,25 @@ const GoalsAndAdventures : React.FC<FamilyTreeProps> = ({collapsed}) => {
                 console.log(response.goals);
             }else{
                 toast.error("Failed to get goals", response.message)
+            }
+        } catch (error) {
+            console.log("Something wents wrong", error);
+        }
+    };
+
+    const fetchAdventures = async() => {
+        try {
+            const response = await requestApi({
+                route: "/adventures/",
+                method: requestMethods.GET
+            });
+
+            if (response && response.adventures){
+                setAdventures(response.adventures);
+                console.log(response.adventures);
+            }
+            else{
+                toast.error("Failed to retrieve adventures", response.message);
             }
         } catch (error) {
             console.log("Something wents wrong", error);
