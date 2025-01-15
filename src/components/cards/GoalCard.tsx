@@ -26,7 +26,7 @@ interface GoalCardProps {
 
 const GoalCard : React.FC<GoalCardProps> = ({goal, onViewTasks }) => {
     return (
-        <Card className="bg-pink-50">
+        <Card className="bg-[#FDE3EC] border-none shadow-none w-[250px]">
             <CardContent className="p-6">
                 <h3 className="text-lg font-semibold mb-2">{goal.title}</h3>
                 <p className="text-sm text-gray-600 mb-1">{goal.type}</p>
@@ -36,17 +36,17 @@ const GoalCard : React.FC<GoalCardProps> = ({goal, onViewTasks }) => {
                     <ProgressBar label="Tasks" completed={goal.nbOfTasksCompleted} total={goal.tasks.length} />
                 </div>
         
-                <p className="text-sm mb-4">Complete by: {goal.dueDate.toLocaleDateString()}</p>
+                <p className="text-sm mb-4">Complete by: {goal.dueDate?.toLocaleDateString()}</p>
                 
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex flex-col mb-4">
                     <div className="text-sm">
                         Rewards: 
-                    <span className="ml-1">
-                        <Stars className="inline w-4 h-4 text-yellow-500" /> {goal.rewards.stars}
-                        <CircleDollarSign className="inline w-4 h-4 text-yellow-500 ml-2" /> {goal.rewards.coins}
-                    </span>
+                        <span className="ml-1">
+                            <Stars className="inline w-4 h-4 text-yellow-500" /> {goal.rewards.stars}
+                            <CircleDollarSign className="inline w-4 h-4 text-yellow-500 ml-2" /> {goal.rewards.coins}
+                        </span>
                     </div>
-                    <div className="text-sm">
+                    <div className="text-sm pt-2">
                         Badge: {goal.rewards.achievementName}
                     </div>
                 </div>

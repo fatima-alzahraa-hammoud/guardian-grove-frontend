@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { cn } from "../../lib/utils";
 import sortImage from "/assets/images/sort.png";
@@ -8,9 +8,26 @@ import { requestMethods } from "../../libs/enum/requestMethods";
 import { useSelector } from "react-redux";
 import { selectUserId } from "../../redux/slices/userSlice";
 import { toast } from "react-toastify";
+import GoalCard from "../cards/GoalCard";
 
 interface FamilyTreeProps {
     collapsed: boolean;
+}
+
+interface Goal {
+    _id: string;
+    title: string;
+    type: string;
+    description: string;
+    nbOfTasksCompleted: number;
+    tasks: { _id: string; title: string; completed: boolean }[];
+    dueDate: Date;
+    rewards: {
+      stars: number;
+      coins: number;
+      achievementName?: string;
+    };
+    isCompleted: boolean;
 }
 
 const Goals : React.FC<FamilyTreeProps> = ({collapsed}) => {
@@ -22,7 +39,7 @@ const Goals : React.FC<FamilyTreeProps> = ({collapsed}) => {
 
     const [status, setStatus] = useState<'In Progress | Completed'>();
 
-    const [goals, setGoals] = useState<[]>([]);
+    const [goals, setGoals] = useState<Goal[]>([]);
 
     useEffect(() => {
         fetchgoals();
@@ -95,6 +112,37 @@ const Goals : React.FC<FamilyTreeProps> = ({collapsed}) => {
                             <span className="text-sm font-semibold text-white">Generate Goal</span>
                         </Button>
                     </div>
+                </div>
+
+                <div className="mt-8">
+                    {/* In Progress Goals */}
+                    {goals.some(goal => !goal.isCompleted) && (
+                        <div className="mt-10">
+                            <h2 className="text-lg font-semibold mb-4">In Progress</h2>
+                            <div className="flex overflow-x-auto gap-6 scroll-smooth hide-scrollbar relative px-12">
+                                {goals.filter(goal => !goal.isCompleted).map((goal) => (
+                                    <GoalCard key={goal._id} goal={goal} onViewTasks={() => { }} />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Completed Goals */}
+                    {goals.some(goal => goal.isCompleted) && (
+                        <div className="mt-10">
+                            <h2 className="text-lg font-semibold mb-4">Completed</h2>
+                            <div className="flex overflow-x-auto gap-6 scroll-smooth hide-scrollbar relative px-12">
+                                {goals.filter(goal => goal.isCompleted).map((goal) => (
+                                    <GoalCard key={goal._id} goal={goal} onViewTasks={() => { }} />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* If no goals */}
+                    {goals.length === 0 && (
+                        <div className="text-center text-gray-600 mt-8">No goals available</div>
+                    )}
                 </div>
             </div>
         </div>
