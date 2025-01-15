@@ -37,7 +37,7 @@ interface Goal {
 }
 
 interface Adventure {
-    date: string;
+    startDate: string;
     title: string;
     description: string;
     challenges: string[];
@@ -52,7 +52,7 @@ const GoalsAndAdventures : React.FC<FamilyTreeProps> = ({collapsed}) => {
 
     const [goals, setGoals] = useState<Goal[]>([]);
     const [adventures, setAdventures] = useState<Adventure[]>([]);
-    const [selectedAdventures, setSelectedAdventures] = useState<Adventure | null>(null);
+    const [selectedAdventure, setSelectedAdventure] = useState<Adventure | null>(null);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date()); // Default to today's date
 
     const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
@@ -111,8 +111,20 @@ const GoalsAndAdventures : React.FC<FamilyTreeProps> = ({collapsed}) => {
 
     const handleDateChange = (date: Value) => {
         if (date instanceof Date) {
-            console.log("Selected Date:", date);
             setSelectedDate(date); 
+
+            // Filter adventures based on the selected date
+            const filteredAdventures = adventures.filter((adventure) => {
+                const adventureDate = new Date(adventure.startDate);
+                return adventureDate.toDateString() === date.toDateString(); // Match by date
+            });
+
+            // Set the first adventure if there's a match, otherwise null
+            if (filteredAdventures.length > 0) {
+                setSelectedAdventure(filteredAdventures[0]);
+            } else {
+                setSelectedAdventure(null);
+            }
         } else {
             console.error("Invalid date selected:", date)
         }
@@ -176,11 +188,11 @@ const GoalsAndAdventures : React.FC<FamilyTreeProps> = ({collapsed}) => {
                         </div>
                     </div>
                     {activeFilter === "Adventures" && (
-                        <div className="flex justify-center mb-6">
+                        <div className="flex justify-center mb-6 border-[1px] border-[#3A8EBA]">
                         <Calendar
                             onChange={(date) => handleDateChange(date)}
                             value={selectedDate}
-                            className=" shadow-lg rounded-lg bg-white p-4 border border-gray-200 custom-calendar"
+                            className="rounded-lg bg-white p-4  border-gray-200 custom-calendar border-[2px]"
                         />
                         </div>
                     )}
