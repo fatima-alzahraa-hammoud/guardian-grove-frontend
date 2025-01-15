@@ -31,18 +31,22 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
 
     const [showAiPopup, setShowAiPopup] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+    const [aiQuestion, setAiQuestion] = useState<string>("What did you learn from completing this task?");
+    const [userAnswer, setUserAnswer] = useState<string>("");
+    const [aiResponse, setAiResponse] = useState<string>("");
 
     const handleDoItClick = (task: Task) => {
         setSelectedTask(task);
         setShowAiPopup(true); // Show the AI pop-up when the "Do it" button is clicked
     };
 
-    const handleAiClose = (confirmed: boolean) => {
-        if (confirmed && selectedTask) {
-            // Mark the task as completed
-            selectedTask.completed = true;
+    const handleAiSubmit = () => {
+        if (userAnswer.trim() !== "") {
+            setAiResponse(`Great job! You said: "${userAnswer}". Now, you've completed the task!`);
+            selectedTask && (selectedTask.completed = true);
+        } else {
+            setAiResponse("Please provide a response before submitting.");
         }
-        setShowAiPopup(false); // Close the AI popup
     };
 
     return(
