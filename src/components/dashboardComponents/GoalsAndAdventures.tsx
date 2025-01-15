@@ -10,6 +10,7 @@ import { selectUserId } from "../../redux/slices/userSlice";
 import { toast } from "react-toastify";
 import GoalCard from "../cards/GoalCard";
 import TasksDialog from "../common/TasksDialog";
+import Adventures from "./Adventures";
 
 interface FamilyTreeProps {
     collapsed: boolean;
@@ -166,7 +167,7 @@ const GoalsAndAdventures : React.FC<FamilyTreeProps> = ({collapsed}) => {
                         />
                     </div>
                 ) : (
-                    <div></div>
+                    <Adventures />
                 )}
             </div>
         </div>
