@@ -132,7 +132,7 @@ const AINotifications: React.FC<AINotificationsProps> = ({ collapsed }) => {
 
                     return (
                         <div key={category} className="mt-10">
-                            <h3 className="text-lg font-bold capitalize">
+                            <h3 className="text-lg font-bold font-comic capitalize">
                                 {category === "today"
                                     ? "Today"
                                     : category === "last7Days"
