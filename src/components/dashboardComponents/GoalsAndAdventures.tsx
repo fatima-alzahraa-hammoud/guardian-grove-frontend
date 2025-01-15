@@ -13,6 +13,7 @@ import TasksDialog from "../common/TasksDialog";
 import Adventures from "./Adventures";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import "../../styles/calendar.css";
 import { Value } from "react-calendar/dist/esm/shared/types.js";
 
 interface FamilyTreeProps {
@@ -179,7 +180,7 @@ const GoalsAndAdventures : React.FC<FamilyTreeProps> = ({collapsed}) => {
                         <Calendar
                             onChange={(date) => handleDateChange(date)}
                             value={selectedDate}
-                            className=" shadow-lg rounded-lg bg-white p-4 border border-gray-200"
+                            className=" shadow-lg rounded-lg bg-white p-4 border border-gray-200 custom-calendar"
                         />
                         </div>
                     )}
