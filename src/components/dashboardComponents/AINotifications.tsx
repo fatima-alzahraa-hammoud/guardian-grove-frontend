@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectRole } from "../../redux/slices/userSlice";
 import { Button } from "../ui/button";
 import { cn } from "../../lib/utils";
+import { requestApi } from "../../libs/requestApi";
+import { requestMethods } from "../../libs/enum/requestMethods";
+import { toast } from "react-toastify";
 
 interface AINotificationsProps {
     collapsed: boolean;
@@ -13,6 +16,30 @@ const AINotifications : React.FC <AINotificationsProps> = ({collapsed}) => {
     const role = useSelector(selectRole);
     const filters = role === "parent" ?  ['Tips & Suggestions', 'Alerts & Notifications', 'Children’s Notify & Tips'] : ['Tips & Suggestions', 'Alerts & Notifications'];
     const [activeFilter, setActiveFilter] = useState<string>("Tips & Suggestions");
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+
+    useEffect(() => {
+        fetchNotifications();
+    }, []);
+
+    const fetchNotifications = async() => {
+        try {
+            const response = await requestApi({
+                route: "/userNotifications/",
+                method: requestMethods.GET
+            });
+
+            if (response && response.notifications){
+                setNotifications(response.notifications);
+                console.log(response.notifications);
+            }
+            else{
+                toast.error("Failed to retrieve notifications", response.message);
+            }
+        } catch (error) {
+            console.log("Something wents wrong", error);
+        }
+    };
 
     return(
         <div className={`pt-24 min-h-screen flex flex-col items-center`}>
