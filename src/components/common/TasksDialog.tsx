@@ -31,7 +31,23 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
 
     return(
         <Dialog open={open} onOpenChange={onOpenChange}>
-            
+            <DialogContent className="max-w-2xl p-10">
+                <DialogHeader>
+                    <DialogTitle className="flex items-center justify-between font-comic">
+                        <div>
+                            <span className="text-xl font-bold">Goal: </span>
+                            <span className="font-semibold">{goal.title}</span>
+                        </div>
+
+                        <div>
+                            <span className="font-semibold">Total Tasks: </span>
+                            <span className="font-medium">{goal.tasks.length}</span>
+                        </div>
+                    </DialogTitle>
+                </DialogHeader>
+
+                
+            </DialogContent>
         </Dialog>
     );
 }
