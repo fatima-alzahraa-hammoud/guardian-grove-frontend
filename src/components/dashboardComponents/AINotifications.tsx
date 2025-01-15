@@ -11,6 +11,14 @@ interface AINotificationsProps {
     collapsed: boolean;
 }
 
+interface Notification {
+    title: string;
+    type: 'personal' | 'family';
+    category: 'tip' | 'alert' | 'suggestion' | 'notification';
+    message: string;
+    timestamp: Date;
+}
+
 const AINotifications : React.FC <AINotificationsProps> = ({collapsed}) => {
 
     const role = useSelector(selectRole);
