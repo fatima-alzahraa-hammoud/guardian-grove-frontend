@@ -13,7 +13,7 @@ const FamilyJournal : React.FC <FamilyJournalProps> = ({collapsed}) => {
                     <h2 className="text-xl font-bold font-comic">
                         Family Journal
                     </h2>
-                    <p className="text-gray-600 mt-2 text-base">
+                    <p className="text-gray-600 mt-2 text-base w-[75%]">
                         A place to capture your family’s special moments, stories, and memories. Keep them close, cherish them forever.
                     </p>
                 </div>

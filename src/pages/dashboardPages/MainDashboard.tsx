@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { resetChats } from "../../redux/slices/chatSlice";
 import GoalsAndAdventures from "../../components/dashboardComponents/GoalsAndAdventures";
 import FamilyJournal from "../../components/dashboardComponents/FamilyJournal";
+import AINotifications from "../../components/dashboardComponents/AINotifications";
 
 const Main : React.FC = () => {
 
@@ -28,6 +29,8 @@ const Main : React.FC = () => {
                 return <FamilyJournal collapsed = {collapsed}/>
             case 'goals&adventures':
                 return <GoalsAndAdventures collapsed={collapsed}/>
+            case 'notifications':
+                return <AINotifications collapsed={collapsed}/>
             default:
                 return <div>Select a section</div>;
         }
