@@ -7,6 +7,7 @@ import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { toast } from "react-toastify";
 import NotificationCard from "../cards/NotificationCard";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 
 interface AINotificationsProps {
     collapsed: boolean;
@@ -124,6 +125,7 @@ const AINotifications: React.FC<AINotificationsProps> = ({ collapsed }) => {
                 </div>
 
                 {/* Notifications Sections */}
+                {/* Notifications Sections */}
                 {(["today", "last7Days", "old"] as const).map((category) => {
                     const notificationsList = filteredNotifications(category);
                     if (notificationsList.length === 0) {
@@ -134,16 +136,24 @@ const AINotifications: React.FC<AINotificationsProps> = ({ collapsed }) => {
                         <div key={category} className="mt-10">
                             <h3 className="text-lg font-bold font-comic capitalize">
                                 {category === "today"
-                                    ? "Today"
-                                    : category === "last7Days"
-                                    ? "Previous 7 Days"
-                                    : "Old"}
+                                ? "Today"
+                                : category === "last7Days"
+                                ? "Previous 7 Days"
+                                : "Old"}
                             </h3>
-                            <div className="flex flex-wrap gap-5 mt-5">
-                                {notificationsList.map((notification, idx) => (
-                                    <NotificationCard key={idx} notification={notification}/>
-                                ))}
-                            </div>
+
+                            {/* Horizontal Scrollable Carousel */}
+                            <Carousel className="w-full mt-5">
+                                <CarouselContent className="flex gap-5 ">
+                                    {notificationsList.map((notification, idx) => (
+                                        <CarouselItem key={idx} className="basis-[300px] h-32">
+                                            <NotificationCard notification={notification} />
+                                        </CarouselItem>
+                                    ))}
+                                </CarouselContent>
+                                <CarouselPrevious className="w-5 h-5" />
+                                <CarouselNext className="w-5 h-5" />
+                            </Carousel>
                         </div>
                     );
                 })}
