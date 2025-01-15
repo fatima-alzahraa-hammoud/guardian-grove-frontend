@@ -36,11 +36,20 @@ interface Goal {
     isCompleted: boolean;
 }
 
+interface IChallenge {
+    title: string;
+    content: string;
+    starsReward: number;
+    coinsReward: number;
+}
+
 interface Adventure {
     startDate: string;
     title: string;
     description: string;
-    challenges: string[];
+    challenges: IChallenge[];
+    starsReward: number;
+    coinsReward: number;
 }
 
 const GoalsAndAdventures : React.FC<FamilyTreeProps> = ({collapsed}) => {
@@ -237,7 +246,7 @@ const GoalsAndAdventures : React.FC<FamilyTreeProps> = ({collapsed}) => {
                         />
                     </div>
                 ) : (
-                    <Adventures />
+                    <Adventures adventure={selectedAdventure}/>
                 )}
             </div>
         </div>
