@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Coins, Star } from "lucide-react";
 
 interface IChallenge {
@@ -23,6 +23,7 @@ interface AdventureProps {
 
 const Adventures: React.FC<AdventureProps> = ({ adventure }) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [selectedChallenge, setSelectedChallenge] = useState<number | null>(null);
 
     if (!adventure) {
         return (
@@ -51,6 +52,10 @@ const Adventures: React.FC<AdventureProps> = ({ adventure }) => {
         }
     };
 
+    const handleChallengeClick = (index: number) => {
+        setSelectedChallenge(selectedChallenge === index ? null : index);
+    };
+
     return (
         <div className="-mt-32">
             <div className="mb-4">
@@ -76,12 +81,12 @@ const Adventures: React.FC<AdventureProps> = ({ adventure }) => {
             </div>
 
             {/* Challenges Section */}
-            <div className="relative mt-12 flex justify-center items-center">
+            <div className="relative mt-10 flex justify-center items-center">
                 <button 
                     onClick={() => scroll('left')} 
-                    className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-50"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-lg p-1 hover:bg-gray-50 border-[2px]"
                 >
-                    <ChevronLeft className="w-6 h-6" />
+                    <ChevronLeft className="w-5 h-5" />
                 </button>
                 
                 <div 
@@ -93,18 +98,20 @@ const Adventures: React.FC<AdventureProps> = ({ adventure }) => {
                         margin: '0 auto'
                     }}
                 >
-                    <div className="flex items-center justify-center gap-4 min-w-min mx-auto">
+                    <div className="flex items-center justify-center gap-4 min-w-min mx-auto h-52">
                         {adventure.challenges.map((challenge, index) => (
                             <div 
                                 key={index}
-                                className="flex-shrink-0 snap-center"
+                                className="flex-shrink-0 snap-center text-center"
+                                onClick={() => handleChallengeClick(index)}
                             >
                                 <div 
                                     className={`w-32 h-32 rounded-full flex items-center justify-center cursor-pointer transition-transform hover:scale-105
                                         ${index % 5 === 0 ? 'bg-blue-100' : 
                                         index % 5 === 1 ? 'bg-purple-100' : 
                                         index % 5 === 2 ? 'bg-pink-100' : 
-                                        index % 5 === 3 ? 'bg-blue-100' : 'bg-red-100'}`}
+                                        index % 5 === 3 ? 'bg-blue-100' : 'bg-red-100'}
+                                        ${selectedChallenge === index ? 'ring-2 ring-[#3A8EBA]' : ''}`}
                                 >
                                     <div className='flex flex-col items-center justify-center space-y-2'>
                                         <p className="font-medium text-sm mb-1">{challenge.title}</p>
@@ -127,7 +134,7 @@ const Adventures: React.FC<AdventureProps> = ({ adventure }) => {
 
                 <button 
                     onClick={() => scroll('right')} 
-                    className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-50"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-lg p-1 hover:bg-gray-50 border-[2px]"
                 >
                     <ChevronRight className="w-6 h-6" />
                 </button>
