@@ -13,7 +13,7 @@ import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import AddMembersQuestion from './components/SignUp Components/AddMembersQuestion';
 import AddMembersForm from './pages/AddMembersForm';
-import AddMembersBackground from './components/common/addMembersBackground';
+import AddMembersBackground from './components/common/AddMembersBackground';
 import { setFamily } from './redux/slices/familySlice';
 
 interface DecodedToken {
@@ -89,6 +89,7 @@ function App() {
 
   return (
     <>
+    
       <div className='App'>
         <Routes>
           <Route path='/' element={<Login />}/>

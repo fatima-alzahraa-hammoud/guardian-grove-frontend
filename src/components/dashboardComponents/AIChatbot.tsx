@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addChat, addMessageToChat, selectActiveChatId, selectActiveChatTitle, selectChats, setActiveChat, updateChatTitle } from "../../redux/slices/chatSlice";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
+import ReactMarkdown from 'react-markdown';
 
 const AIChatbot : React.FC  = () => {
 
@@ -109,7 +110,7 @@ const AIChatbot : React.FC  = () => {
                                         <div
                                             className={`max-w-[70%] rounded-2xl p-3 ${message.sender === "user" ? "bg-[#0D358C] text-white" : "bg-white text-black"}`}
                                         >
-                                            <div className="text-sm">{message.message}</div>
+                                            <div className="text-sm"><ReactMarkdown>{JSON.stringify(message.message, null, 2)}</ReactMarkdown></div>
                                             <div className={`text-xs mt-1 ${message.sender === "user" ? "text-gray-300" : "text-gray-500"}`}>
                                                 {formatTimestamp(message.timestamp)}
                                             </div>
