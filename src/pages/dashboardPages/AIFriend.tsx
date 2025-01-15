@@ -5,7 +5,7 @@ import AIChatbot from "../../components/dashboardComponents/AIChatbot";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { useDispatch } from "react-redux";
-import { addChat } from "../../redux/slices/chatSlice";
+import { addChat, setActiveChat } from "../../redux/slices/chatSlice";
 import { Chat } from "../../libs/types/chat.types";
 
 const AIFriend : React.FC = () => {
@@ -32,9 +32,14 @@ const AIFriend : React.FC = () => {
                     fetchedChats.forEach((chat: Chat) => {
                         dispatch(addChat(chat));
                     });
+
+                    if (fetchedChats.length === 1 && fetchedChats[0].title === "Welcome Chat") {
+                        dispatch(setActiveChat(fetchedChats[0]._id));
+                    }
+    
                 }
                 else{
-                    console.log("failed to loa data", response.message);
+                    console.log("failed to load data", response.message);
                 }
             }
         } catch (error) {

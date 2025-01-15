@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/dashboardComponents/Sidebar";
 import Achievements from "../../components/dashboardComponents/Achievements";
 import MyProfile from "../../components/dashboardComponents/MyProfile";
 import FamilyTree from "../../components/dashboardComponents/FamilyTree";
+import { useDispatch } from "react-redux";
+import { resetChats } from "../../redux/slices/chatSlice";
 
 const Main : React.FC = () => {
 
+    const dispatch = useDispatch();
     const [collapsed, setCollapsed] = useState<boolean>(false);
     const [activeSection, setActiveSection] = useState<string>('profile');
 
@@ -23,6 +26,12 @@ const Main : React.FC = () => {
                 return <div>Select a section</div>;
         }
     };
+
+    useEffect(() => {
+        return () => {
+            dispatch(resetChats()); // Reset chats when component unmounts
+        };
+    }, []);
 
     return(
         <div className="flex">

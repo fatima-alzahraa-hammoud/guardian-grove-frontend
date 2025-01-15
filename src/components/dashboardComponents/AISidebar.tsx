@@ -11,6 +11,7 @@ import { organizeChatsByPeriod } from "../../libs/categorizeChatsHelper";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { toast, ToastContainer } from "react-toastify";
+import { Chat } from "../../libs/types/chat.types";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -187,7 +188,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                                             </CollapsibleTrigger>
                                             <CollapsibleContent>
                                                 <SidebarMenuSub>
-                                                    {chats.map((chat) => (
+                                                    {chats.map((chat: Chat) => (
                                                         <SidebarMenuSubItem key={chat._id}>
                                                             <SidebarMenuSubButton
                                                                 asChild

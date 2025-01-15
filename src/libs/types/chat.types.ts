@@ -1,4 +1,5 @@
 export interface Message {
+    id: string;
     sender: "user" | "bot";
     message: string; 
     timestamp: string;

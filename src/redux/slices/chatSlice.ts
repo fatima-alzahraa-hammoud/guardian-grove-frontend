@@ -25,12 +25,13 @@ const chatSlice = createSlice({
         },
         addMessageToChat: (
             state, 
-            action: PayloadAction<{ chatId: string; sender: "user" | "bot"; message: string }>
+            action: PayloadAction<{ chatId: string; sender: "user" | "bot"; message: string; id: string }>
         ) => {
-            const { chatId, sender, message } = action.payload;
+            const { chatId, sender, message, id } = action.payload;
             const chat = state.chats.find(chat => chat._id === chatId);
             if (chat) {
                 chat.messages.push({ 
+                    id,
                     sender, 
                     message, 
                     timestamp: new Date().toISOString(),
@@ -44,10 +45,14 @@ const chatSlice = createSlice({
               chat.title = action.payload.title;
             }
         },
+        resetChats: (state) => {
+            state.chats = [];
+            state.activeChatId = null;
+        },
     },
 });
   
-export const { addChat, renameChat, deleteChat, setActiveChat, addMessageToChat, updateChatTitle } = chatSlice.actions;
+export const { addChat, renameChat, deleteChat, setActiveChat, addMessageToChat, updateChatTitle, resetChats } = chatSlice.actions;
 
 export const selectChats = (state: { chat: ChatState }) => state.chat.chats;
 export const selectActiveChatId = (state: { chat: ChatState }) => state.chat.activeChatId;
