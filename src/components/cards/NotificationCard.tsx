@@ -26,8 +26,11 @@ const NotificationCard : React.FC<NotificationProp> = ({notification}) => {
         <div
             className={`p-4 rounded-lg shadow-md font-poppins ${categoryColors[notification.category]} w-full max-w-sm`}
         >
-            <h3 className="font-bold text-base">{notification.title}</h3>
-            <p className="text-sm mt-2">{notification.message}</p>
+            <div className="flex justify-between items-center">
+                <h3 className="font-bold text-base">{notification.title}</h3>
+                <p className="text-xs text-gray-500">{notification.category}</p>
+            </div>
+            <p className="text-sm mt-3">{notification.message}</p>
             <p className="text-xs mt-4 text-gray-600">
                 {new Date(notification.timestamp).toLocaleString()}
             </p>
