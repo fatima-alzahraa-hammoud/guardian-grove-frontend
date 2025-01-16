@@ -217,11 +217,54 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
         }
     };
 
+    const handleGenerateStory = async () => {
+        try {
+            const response = await requestApi({
+                route: "/users/generateStory",
+                method: requestMethods.POST, 
+                body: { userId }
+            });
+            
+            if (response && response.story) {
+                const storyMessage = {
+                    sender: "bot",
+                    message: response.story,
+                };
+    
+                // If there's an active chat, add the plan message to the chat
+                const updateResponse = await requestApi({
+                    route: `/chats/handle`,
+                    method: requestMethods.POST,
+                    body: { message: storyMessage.message, sender: "bot", chatId: activeChatId }
+                });
+    
+                if (updateResponse?.chat) {
+                    if (activeChatId) {
+                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: storyMessage.message }));
+                        if (activeChatTitle !== updateResponse.chat.title) {
+                            dispatch(updateChatTitle({ chatId: activeChatId, title: updateResponse.chat.title }));
+                        }
+                    } else {
+                        dispatch(addChat(updateResponse.chat));
+                        dispatch(setActiveChat(updateResponse.chat._id));
+                    }
+                } else {
+                    toast.error("Failed to add story", updateResponse.message);
+                }
+            } else {
+                toast.error("Failed to generate story", response.message);
+            }
+        } catch (error) {
+            console.error("Error generating story:", error);
+            toast.error("An error occurred while generating the story. Please try again.");
+        }
+    };
+
     const features = [
         { title: "Generate plans", icon: Calendar, method: handleGenerateGrowthPlan},
         { title: "Learning Zone", icon: Bot, method: handleGenerateLearningZone},
         { title: "Track My Day", icon: Timer, method: handleGenerateTrackDay},
-        { title: "Tell Me a Story", icon: MessageCircle},
+        { title: "Tell Me a Story", icon: MessageCircle, method: handleGenerateStory},
         { title: "View Tasks", icon: List},
         { title: "Progress Tracker", icon: Layout},
     ];  
