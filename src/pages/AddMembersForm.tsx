@@ -112,6 +112,9 @@ const AddMembersForm : React.FC = () => {
     });
 
     const handleSaveAndContinue = handleSubmit(async (data) => {
+        if(!data){
+            navigate("/dashboard");
+        }
         const success = await onSubmit(data);
         if (success) {
             resetData();

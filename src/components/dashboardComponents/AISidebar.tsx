@@ -89,7 +89,6 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
     };    
 
     const handleGenerateGrowthPlan = async () => {
-        console.log("hello");
         try {
             const response = await requestApi({
                 route: "/users/generatePlan",
@@ -132,10 +131,52 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
         }
     };
     
+    const handleGenerateLearningZone = async () => {
+        try {
+            const response = await requestApi({
+                route: "/users/generateLearningZone",
+                method: requestMethods.POST, 
+                body: { userId }
+            });
+            
+            if (response && response.learningZone) {
+                const learningZoneMessage = {
+                    sender: "bot",
+                    message: response.learningZone,
+                };
+    
+                // If there's an active chat, add the plan message to the chat
+                const updateResponse = await requestApi({
+                    route: `/chats/handle`,
+                    method: requestMethods.POST,
+                    body: { message: learningZoneMessage.message, sender: "bot", chatId: activeChatId }
+                });
+    
+                if (updateResponse?.chat) {
+                    if (activeChatId) {
+                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: learningZoneMessage.message }));
+                        if (activeChatTitle !== updateResponse.chat.title) {
+                            dispatch(updateChatTitle({ chatId: activeChatId, title: updateResponse.chat.title }));
+                        }
+                    } else {
+                        dispatch(addChat(updateResponse.chat));
+                        dispatch(setActiveChat(updateResponse.chat._id));
+                    }
+                } else {
+                    toast.error("Failed to add plan to the chat", updateResponse.message);
+                }
+            } else {
+                toast.error("Failed to generate growth plan", response.message);
+            }
+        } catch (error) {
+            console.error("Error generating growth plan:", error);
+            toast.error("An error occurred while generating the growth plan. Please try again.");
+        }
+    };
 
     const features = [
         { title: "Generate plans", icon: Calendar, method: handleGenerateGrowthPlan},
-        { title: "Learning Zone", icon: Bot},
+        { title: "Learning Zone", icon: Bot, method: handleGenerateLearningZone},
         { title: "Track My Day", icon: Timer},
         { title: "Tell Me a Story", icon: MessageCircle},
         { title: "View Tasks", icon: List},
