@@ -54,6 +54,7 @@
     "react-select": "^5.9.0",
     "react-slick": "^0.30.3",
     "react-toastify": "^11.0.2",
+    "remark-gfm": "^4.0.0",
     "slick-carousel": "^1.8.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
