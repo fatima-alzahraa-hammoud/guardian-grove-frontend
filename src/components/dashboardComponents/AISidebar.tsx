@@ -6,12 +6,13 @@ import AIFriend from "/assets/images/ai-friend.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteChat, renameChat, selectActiveChatId, selectChats, setActiveChat } from "../../redux/slices/chatSlice";
+import { addChat, addMessageToChat, deleteChat, renameChat, selectActiveChatId, selectActiveChatTitle, selectChats, setActiveChat, updateChatTitle } from "../../redux/slices/chatSlice";
 import { organizeChatsByPeriod } from "../../libs/categorizeChatsHelper";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { toast, ToastContainer } from "react-toastify";
 import { Chat } from "../../libs/types/chat.types";
+import { selectUserId } from "../../redux/slices/userSlice";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -23,11 +24,11 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
     collapsed = state === "collapsed";
 
     const dispatch = useDispatch();
+    const userId = useSelector(selectUserId);
     const chats = useSelector(selectChats);
     const activeChatId = useSelector(selectActiveChatId);
     const chatHistory = useMemo(() => organizeChatsByPeriod(chats), [chats]);
-
-    const [activeItem, setActiveItem] = useState<string | null>(null);
+    const activeChatTitle = useSelector(selectActiveChatTitle);
     const [hoveredChat, setHoveredChat] = React.useState<string | null>(null);
     const [editingChatId, setEditingChatId] = useState<string | null>(null);
 
@@ -87,13 +88,58 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
         setEditingChatId(null);    
     };    
 
+    const handleGenerateGrowthPlan = async () => {
+        console.log("hello");
+        try {
+            const response = await requestApi({
+                route: "/users/generatePlan",
+                method: requestMethods.POST, 
+                body: { userId }
+            });
+            
+            if (response && response.plan) {
+                const planMessage = {
+                    sender: "bot",
+                    message: response.plan,
+                };
+    
+                // If there's an active chat, add the plan message to the chat
+                const updateResponse = await requestApi({
+                    route: `/chats/handle`,
+                    method: requestMethods.POST,
+                    body: { message: planMessage.message, sender: "bot", chatId: activeChatId }
+                });
+    
+                if (updateResponse?.chat) {
+                    if (activeChatId) {
+                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: planMessage.message }));
+                        if (activeChatTitle !== updateResponse.chat.title) {
+                            dispatch(updateChatTitle({ chatId: activeChatId, title: updateResponse.chat.title }));
+                        }
+                    } else {
+                        dispatch(addChat(updateResponse.chat));
+                        dispatch(setActiveChat(updateResponse.chat._id));
+                    }
+                } else {
+                    toast.error("Failed to add plan to the chat", updateResponse.message);
+                }
+            } else {
+                toast.error("Failed to generate growth plan", response.message);
+            }
+        } catch (error) {
+            console.error("Error generating growth plan:", error);
+            toast.error("An error occurred while generating the growth plan. Please try again.");
+        }
+    };
+    
+
     const features = [
-        { title: "Generate plans", icon: Calendar, url: "#" },
-        { title: "Learning Zone", icon: Bot, url: "#" },
-        { title: "Track My Day", icon: Timer, url: "#" },
-        { title: "Tell Me a Story", icon: MessageCircle, url: "#" },
-        { title: "View Tasks", icon: List, url: "#" },
-        { title: "Progress Tracker", icon: Layout, url: "#" },
+        { title: "Generate plans", icon: Calendar, method: handleGenerateGrowthPlan},
+        { title: "Learning Zone", icon: Bot},
+        { title: "Track My Day", icon: Timer},
+        { title: "Tell Me a Story", icon: MessageCircle},
+        { title: "View Tasks", icon: List},
+        { title: "Progress Tracker", icon: Layout},
     ];  
   
     return(
@@ -142,19 +188,17 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                                 <SidebarMenuItem key={feature.title}>
                                     <SidebarMenuButton
                                         asChild
-                                        className={`${
-                                            activeItem === feature.title
-                                                ? "bg-white text-sky-800 hover:text-sky-800"
-                                                : "text-sky-800 hover:bg-[#3A8EBA] hover:text-white"
-                                        } transition-colors duration-200 font-poppins text-xs`}
-                                        onClick={() => setActiveItem(feature.title)}
+                                        className={`hover:bg-white text-sky-800 hover:text-sky-800  transition-colors duration-200 font-poppins text-xs`}
+                                        onClick={() => {
+                                            feature.method?.();
+                                        }}
                                     >
-                                        <a href={feature.url}>
+                                        <button>
                                             <feature.icon className="w-4 h-4" />
                                             <span className="group-data-[collapsible=icon]:hidden pl-1">
                                                 {feature.title}
                                             </span>
-                                        </a>
+                                        </button>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}

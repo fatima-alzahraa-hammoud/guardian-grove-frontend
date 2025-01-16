@@ -54,10 +54,8 @@ const AIChatbot : React.FC  = () => {
                 });
                 if (response){
                     if (activeChatId !== null){
-                        console.log(response.sendedMessage.sender);
-                        console.log(response.sendedMessage.message);
-                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "user", message: response.sendedMessage.message, id:  response.sendedMessage.message._id}));
-                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: response.aiResponse.content, id:  response.sendedMessage.message._id }));
+                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "user", message: response.sendedMessage.message}));
+                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: response.aiResponse.content }));
                         if (activeChatTitle !== response.chat.title){
                             dispatch(updateChatTitle({chatId: activeChatId, title: response.chat.title}))
                         }
