@@ -148,6 +148,27 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
         }
     };
 
+    const handleGenerateTasks = async () => {
+        try {
+            console.log("hello");
+
+            const response = await requestApi({
+                route: "/users/generateGoals",
+                method: requestMethods.POST,
+                body: {userId}
+            });
+
+            if (response && response.goal){
+                setGoals((prevGoals) => [...prevGoals, response.goal]);
+            }
+            else{
+                toast.error("Failed to generate goal", response.message);
+            }
+        } catch (error) {
+            console.log("Something wents wrong", error);
+        }
+    }
+
     return(
         <div className={`pt-24 min-h-screen flex flex-col items-center`}>
             <div className={`w-full flex-grow font-poppins ${ collapsed ? "mx-auto max-w-6xl" : "max-w-5xl" }`} >
@@ -195,7 +216,10 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
                                         </svg>                            
                                         <span className="text-sm font-semibold text-white">Add Goal</span>
                                     </Button>
-                                    <Button className="flex items-center bg-[#3A8EBA] px-3 py-2 rounded-full hover:bg-[#326E9F] transition">
+                                    <Button
+                                        onClick={handleGenerateTasks}
+                                        className="flex items-center bg-[#3A8EBA] px-3 py-2 rounded-full hover:bg-[#326E9F] transition"
+                                    >
                                         <img src={magicImage} alt="Sort" className="w-4 h-4 mr-1" />
                                         <span className="text-sm font-semibold text-white">Generate Goal</span>
                                     </Button>
@@ -235,8 +259,8 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
                             <div className="mt-10 mb-3">
                                 <h2 className="text-lg font-semibold mb-4">Completed</h2>
                                 <div className="flex overflow-x-auto gap-6 scroll-smooth hide-scrollbar relative px-12">
-                                    {goals.filter(goal => goal.isCompleted).map((goal) => (
-                                        <GoalCard key={goal._id} goal={goal} onViewTasks={() => {handleViewTasks(goal)}} />
+                                    {goals.filter(goal => goal.isCompleted).map((goal, index) => (
+                                        <GoalCard key={goal._id || index} goal={goal} onViewTasks={() => {handleViewTasks(goal)}} />
                                     ))}
                                 </div>
                             </div>
