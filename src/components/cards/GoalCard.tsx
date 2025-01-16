@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
-import { CircleDollarSign, Star, Stars } from "lucide-react";
+import { CircleDollarSign, Star } from "lucide-react";
 import ProgressBar from "../common/ProgressBar";
 
 interface Goal {
@@ -26,6 +26,11 @@ interface GoalCardProps {
 }
 
 const GoalCard : React.FC<GoalCardProps> = ({goal, onViewTasks }) => {
+
+    const formattedDueDate = goal.dueDate && !isNaN(new Date(goal.dueDate).getTime())
+        ? new Date(goal.dueDate).toLocaleDateString() // Format it if valid
+        : 'No due date';
+
     return (
         <Card className="bg-[#FDE3EC] border-none shadow-none w-[250px] font-poppins">
             <CardContent className="p-6 flex flex-col justify-between h-full">
@@ -37,7 +42,7 @@ const GoalCard : React.FC<GoalCardProps> = ({goal, onViewTasks }) => {
                     <ProgressBar label="Tasks" completed={goal.nbOfTasksCompleted} total={goal.tasks.length} />
                 </div>
         
-                <p className="text-xs mb-4">Complete by: {goal.dueDate?.toLocaleDateString()}</p>
+                <p className="text-xs mb-4">Complete by: {formattedDueDate}</p>
                 
                 <div className="flex flex-col mb-4">
                     <div className="text-xs">

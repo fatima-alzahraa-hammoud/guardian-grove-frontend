@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+/src/components/LocationTracker.tsx
+/src/components/MapComponent.tsx
+/src/components/useDetailedLocation.tsx
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

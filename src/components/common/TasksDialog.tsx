@@ -7,6 +7,11 @@ interface Task {
     _id: string;
     title: string;
     completed: boolean;
+    description: string;
+    rewards: {
+        stars: number;
+        coins: number;
+    };
 }
 
 interface Goal {
@@ -99,16 +104,19 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
                                     <span className="w-6 h-6 flex items-center justify-center bg-[#3A8EBA] text-white rounded-full">
                                         {index + 1}
                                     </span>
-                                    <span>{task.title}</span>
+                                    <p className="flex flex-col">
+                                        <span>{task.title}</span>
+                                        <span className="text-xs">{task.description}</span>
+                                    </p>
                                 </div>
                                 <div className="flex items-center gap-5">
                                     <div className="flex items-center gap-2">
                                         <Star className="w-4 h-4 text-yellow-500" />
-                                        <span>5</span>
+                                        <span>{task.rewards.stars}</span>
                                     </div>
                                     <div className="flex items-center gap-1">
                                         <Coins className="w-4 h-4 text-yellow-500" />
-                                        <span>1</span>
+                                        <span>{task.rewards.coins}</span>
                                     </div>
                                     <Button
                                         variant="outline"
