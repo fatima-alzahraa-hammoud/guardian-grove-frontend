@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import microphone from "/assets/images/microphone.png";
 import stop from "/assets/images/stop.png";
 import send from "/assets/images/send.png";
+import { useChat } from 'ai/react'
 
 interface VoiceDialogProps {
     open: boolean;
@@ -13,17 +14,74 @@ interface VoiceDialogProps {
 const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange}) => {
 
     const [isListening, setIsListening] = useState(false)
+    const [transcript, setTranscript] = useState("")
+
+    const recognitionRef = useRef<any>(null)
+
+
+    useEffect(() => {
+        return () => {
+            if (recognitionRef.current) {
+                recognitionRef.current.stop()
+            }
+        }
+    }, [])
 
     const toggleListening = () => {
         if (isListening) {
-            setIsListening(false)
+            stopListening()
         } else {
-            setIsListening(true)
+            startListening()
         }
     }
 
+    const startListening = () => {
+        if (!('webkitSpeechRecognition' in window)) {
+        alert("Speech recognition not supported in this browser.")
+        return
+        }
+
+        recognitionRef.current = new (window as any).webkitSpeechRecognition()
+        recognitionRef.current.continuous = true
+        recognitionRef.current.interimResults = true
+        recognitionRef.current.lang = 'en-US'
+
+        recognitionRef.current.onstart = () => {
+            setIsListening(true)
+        }
+
+        recognitionRef.current.onresult = (event: any) => {
+            const currentTranscript = Array.from(event.results)
+                .map((result: any) => result[0].transcript)
+                .join('')
+            setTranscript(currentTranscript)
+        }
+
+        recognitionRef.current.onerror = (event: any) => {
+            console.error("Speech recognition error:", event.error)
+            stopListening()
+        }
+
+        recognitionRef.current.start()
+    }
+
+    const stopListening = () => {
+        if (recognitionRef.current) {
+            recognitionRef.current.stop();
+        }
+        setIsListening(false);
+    }
+
+    const handleCloseDialog = (open: boolean) => {
+        onOpenChange(open);
+        if (!open) {
+            setIsListening(false);
+            setTranscript(""); 
+        }
+    };
+
     return(
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={handleCloseDialog}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle className="text-center font-comic">Speak with Glowy, your AI Friend</DialogTitle>
@@ -43,7 +101,7 @@ const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange}) => {
 
                 {/* Display the transcript */}
                 <div className="w-full p-2 h-[100px] border rounded text-center font-poppins text-xs overflow-y-auto">
-                    Start talking to Glowy...
+                    { transcript|| "Start talking to Glowy..."}
                 </div>
 
                 {/* button start if not listening, and make it stop if listening and button send*/}
