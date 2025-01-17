@@ -50,6 +50,22 @@ const AIChatbot : React.FC  = () => {
     // Handle voice input from dialog
     const handleVoiceInput = async (transcript: string) => {
         try {
+            if (activeChatId !== null) {
+                dispatch(addMessageToChat({ chatId: activeChatId, sender: "user", message: transcript }));
+            } else{
+                const result = await requestApi({
+                    route: "/chats/",
+                    method: requestMethods.POST,
+                    body: {sender: "user", message: transcript},
+                });
+                if (result && result.chat){
+                    dispatch(addChat(result.chat));
+                    dispatch(setActiveChat(result.chat._id));
+                }else{
+                    toast.error("something went wrong ", result.message);
+                }
+            }
+        
             const data = { sender: "user", message: transcript.trim(), chatId: activeChatId };
             if (transcript.trim()) {
                 const response = await requestApi({
@@ -59,14 +75,12 @@ const AIChatbot : React.FC  = () => {
                 });
                 if (response) {
                     if (activeChatId !== null) {
-                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "user", message: response.sendedMessage.message }));
                         dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: response.aiResponse.content }));
                         if (activeChatTitle !== response.chat.title) {
                             dispatch(updateChatTitle({ chatId: activeChatId, title: response.chat.title }));
                         }
                     } else {
-                        dispatch(addChat(response.chat));
-                        dispatch(setActiveChat(response.chat._id));
+                        toast.error("something went wrong ", response.message);
                     }
                 }
             } else {
@@ -83,6 +97,24 @@ const AIChatbot : React.FC  = () => {
      const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            if (activeChatId !== null) {
+                dispatch(addMessageToChat({ chatId: activeChatId, sender: "user", message: input.trim() }));
+                setInput("");
+            } else{
+                const result = await requestApi({
+                    route: "/chats/",
+                    method: requestMethods.POST,
+                    body: {sender: "user", message: input.trim()},
+                });
+                if (result && result.chat){
+                    dispatch(addChat(result.chat));
+                    dispatch(setActiveChat(result.chat._id));
+                    setInput("");
+                }else{
+                    toast.error("something went wrong ", result.message);
+                }
+            }
+
             const data = {sender:"user", message: input.trim(), chatId: activeChatId};
             if (input.trim()) {
                 const response = await requestApi({
@@ -92,15 +124,13 @@ const AIChatbot : React.FC  = () => {
                 });
                 if (response){
                     if (activeChatId !== null){
-                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "user", message: response.sendedMessage.message}));
                         dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: response.aiResponse.content }));
                         if (activeChatTitle !== response.chat.title){
                             dispatch(updateChatTitle({chatId: activeChatId, title: response.chat.title}))
                         }
                     }
                     else{
-                        dispatch(addChat(response.chat))
-                        dispatch(setActiveChat(response.chat._id));
+                        toast.error("something went wrong ", response.message);
                     }
                 }
                 setInput("");
