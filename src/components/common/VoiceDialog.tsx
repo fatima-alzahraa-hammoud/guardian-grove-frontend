@@ -4,17 +4,18 @@ import { Button } from "../ui/button";
 import microphone from "/assets/images/microphone.png";
 import stop from "/assets/images/stop.png";
 import send from "/assets/images/send.png";
-import { useChat } from 'ai/react'
 
 interface VoiceDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    onSendMessage: (message: string) => Promise<void>;
 }
 
-const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange}) => {
+const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange, onSendMessage}) => {
 
     const [isListening, setIsListening] = useState(false)
     const [transcript, setTranscript] = useState("")
+    const [isProcessing, setIsProcessing] = useState(false);
 
     const recognitionRef = useRef<any>(null)
 
@@ -80,6 +81,21 @@ const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange}) => {
         }
     };
 
+    const handleSendMessage = async () => {
+        if (transcript.trim() && !isProcessing) {
+            setIsListening(false);
+            setIsProcessing(true);
+            try {
+                await onSendMessage(transcript);
+                setTranscript("");
+            } catch (error) {
+                console.error("Error sending message:", error);
+            } finally {
+                setIsProcessing(false);
+            }
+        }
+    };
+
     return(
         <Dialog open={open} onOpenChange={handleCloseDialog}>
             <DialogContent>
@@ -111,6 +127,7 @@ const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange}) => {
                         onClick={toggleListening}
                         className="cursor-pointer border-[1px] rounded-full p-3 hover:bg-[#f7f7f7]"
                         type="button"
+                        disabled={isProcessing}
                     >
                         {!isListening ? (
                             <img src={microphone} className="h-8 w-8" />
@@ -119,7 +136,9 @@ const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange}) => {
                         )}
                     </button>
                     <button
+                        onClick={handleSendMessage}
                         className="cursor-pointer border-[1px] rounded-full p-3 hover:bg-[#f7f7f7]"
+                        disabled={!transcript.trim() || isProcessing}
                     >
                         <img src={send} className="h-7 w-7" />
                     </button>

@@ -47,6 +47,12 @@ const AIChatbot : React.FC  = () => {
         }
     }, [input]);
 
+    // Handle voice input from dialog
+    const handleVoiceInput = async (transcript: string) => {
+        
+    };
+
+
      // Handle message submission
      const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -167,7 +173,7 @@ const AIChatbot : React.FC  = () => {
 
                         </div>
                     </form>
-                    <VoiceDialog open={isDialogOpen} onOpenChange={setDialogOpen}/>
+                    <VoiceDialog open={isDialogOpen} onOpenChange={setDialogOpen} onSendMessage={handleVoiceInput}/>
 
                 </div>
             </div>
