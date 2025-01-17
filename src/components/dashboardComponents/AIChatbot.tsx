@@ -49,7 +49,33 @@ const AIChatbot : React.FC  = () => {
 
     // Handle voice input from dialog
     const handleVoiceInput = async (transcript: string) => {
-        
+        try {
+            const data = { sender: "user", message: transcript.trim(), chatId: activeChatId };
+            if (transcript.trim()) {
+                const response = await requestApi({
+                    route: "/chats/handle",
+                    method: requestMethods.POST,
+                    body: data
+                });
+                if (response) {
+                    if (activeChatId !== null) {
+                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "user", message: response.sendedMessage.message }));
+                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: response.aiResponse.content }));
+                        if (activeChatTitle !== response.chat.title) {
+                            dispatch(updateChatTitle({ chatId: activeChatId, title: response.chat.title }));
+                        }
+                    } else {
+                        dispatch(addChat(response.chat));
+                        dispatch(setActiveChat(response.chat._id));
+                    }
+                }
+            } else {
+                toast.warn("Message cannot be empty!", { position: "top-center" });
+            }
+        } catch (error) {
+            toast.error("Something went wrong!", { position: "top-center" });
+            throw error; // Propagate error to handle in VoiceDialog
+        }
     };
 
 
