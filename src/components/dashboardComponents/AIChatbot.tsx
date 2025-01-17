@@ -126,7 +126,7 @@ const AIChatbot : React.FC  = () => {
                     </Card>
                     
                     {/* Messaging container */}
-                    <form onSubmit={handleSubmit} className="absolute -bottom-2 w-full bg-[#3A8EBA] rounded-3xl z-10 p-3 text-white">
+                    <form className="absolute -bottom-2 w-full bg-[#3A8EBA] rounded-3xl z-10 p-3 text-white">
                         <div className="relative flex items-center justify-center rounded-xl border-0">       
                             <div className="flex gap-2">
                                 <label htmlFor="fileUpload" className="inline-flex shrink-0 cursor-pointer select-none items-center justify-center gap-1.5 whitespace-nowrap text-nowrap border font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-offset-1 [&>svg]:pointer-events-none [&>svg]:size-4 [&_svg]:shrink-0 px-3 text-sm has-[>kbd]:gap-2 has-[>svg]:px-2 has-[>kbd]:pr-[6px] rounded-full focus:bg-muted size-7 hover:bg-gray-100  hover:text-black">
@@ -155,7 +155,7 @@ const AIChatbot : React.FC  = () => {
                                     type="submit"
                                 >
                                 {input.trim() ? (
-                                    <Send className="h-5 w-5 text-black" />
+                                    <Send className="h-5 w-5 text-black" onClick={handleSubmit}/>
                                 ) : (
                                     <Mic className="h-5 w-5 text-black" onClick={handleVoiceMode} />
                                 )}
