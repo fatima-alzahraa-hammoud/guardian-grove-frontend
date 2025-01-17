@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import microphone from "/assets/images/microphone.png";
 import stop from "/assets/images/stop.png";
+import send from "/assets/images/send.png";
 
 interface VoiceDialogProps {
     open: boolean;
@@ -47,7 +48,7 @@ const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange}) => {
 
                 {/* button start if not listening, and make it stop if listening and button send*/}
                 
-                <div className=" flex items-center justify-center gap-2">
+                <div className=" flex items-center justify-center gap-5">
                     <button
                         onClick={toggleListening}
                         className="cursor-pointer border-[1px] rounded-full p-3 hover:bg-[#f7f7f7]"
@@ -58,6 +59,11 @@ const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange}) => {
                         ) : (
                             <img src={stop} className="h-7 w-7" />
                         )}
+                    </button>
+                    <button
+                        className="cursor-pointer border-[1px] rounded-full p-3 hover:bg-[#f7f7f7]"
+                    >
+                        <img src={send} className="h-7 w-7" />
                     </button>
                 </div>
 
