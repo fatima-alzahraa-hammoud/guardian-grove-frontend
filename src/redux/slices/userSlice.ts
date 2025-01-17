@@ -15,6 +15,7 @@ interface UserState {
     rankInFamily: number | 0;
     memberSince: string;
     purchasedItems: string[];
+    dailyMessage: string ;
 }
 
 const initialState: UserState = {
@@ -30,7 +31,8 @@ const initialState: UserState = {
     coins: 0,
     rankInFamily: 0,
     memberSince: format(new Date(), "yyyy-MM-dd"),
-    purchasedItems: []
+    purchasedItems: [],
+    dailyMessage: "You are shining! 💫",
 }
 
 const userSlice = createSlice({
@@ -68,5 +70,6 @@ export const selectPurchasedItems = (state: { user: UserState }) => state.user.p
 export const selectRole = (state: { user: UserState }) => state.user.role;
 export const selectGender = (state: { user: UserState }) => state.user.gender;
 export const selectFamilyId = (state: { user: UserState }) => state.user.familyId;
+export const selectDialyMessage = (state: { user: UserState }) => state.user.dailyMessage;
 
 export default userSlice.reducer;

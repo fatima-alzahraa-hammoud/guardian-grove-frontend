@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAvatar, selectBirthday, selectCoins, selectEmail, selectMmeberSince, selectName, selectRank, selectRole, setEmail, setUser } from "../../redux/slices/userSlice";
+import { selectAvatar, selectBirthday, selectCoins, selectDialyMessage, selectEmail, selectMmeberSince, selectName, selectRank, selectRole, setEmail, setUser } from "../../redux/slices/userSlice";
 import coinImage from "/assets/images/coins.png";
 import starsImage from "/assets/images/stars.png";
 import rankImage from "/assets/images/rank.png";
@@ -32,11 +32,11 @@ const MyProfile : React.FC = () => {
     const familyName = useSelector(selectFamilyName);
     const totalStars = useSelector(selectFamilyStars);
     const nbOfMembers = useSelector(selectFamilyMembers).length;
+    const dailyMessage = useSelector(selectDialyMessage);
 
     const [currentDate, setCurrentDate] = useState<string>("");
     const [age, setAge] = useState<number>();
     const [formattedMemberSince, setFormattedMemberSince] = useState<string>("");
-    const [dailyMessage, setDailyMessage] = useState<string> ('You are shining!');
     const [lastUnlocked, setLastUnlocked] = useState<{title: string, photo: string, description: string, unlockedAt: Date}> ();
     const [noAchievements, setNoAchievements] = useState<boolean> (false);
     const [goals, setGoals] = useState<{completedGoals: number, totalGoals: number}>();
