@@ -40,6 +40,11 @@ const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange}) => {
                     </Button>
                 </div>
 
+                {/* Display the transcript */}
+                <div className="w-full p-2 h-[100px] border rounded text-center font-poppins text-xs overflow-y-auto">
+                    Start talking to Glowy...
+                </div>
+
                 {/* button start if not listening, and make it stop if listening and button send*/}
                 
                 <div className=" flex items-center justify-center gap-2">
