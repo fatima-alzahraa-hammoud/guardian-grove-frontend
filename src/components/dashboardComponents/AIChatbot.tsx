@@ -8,6 +8,7 @@ import { addChat, addMessageToChat, selectActiveChatId, selectActiveChatTitle, s
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import MessageComponent from "../common/MessageComponent";
+import VoiceDialog from "../common/VoiceDialog";
 
 const AIChatbot : React.FC  = () => {
 
@@ -24,6 +25,11 @@ const AIChatbot : React.FC  = () => {
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
+    const [isDialogOpen, setDialogOpen] = useState(false);
+    
+    const handleDialogOpen = () => {
+        setDialogOpen(true);
+    };
           
     // Auto-scroll to bottom when new messages arrive
     useEffect(() => {
@@ -82,11 +88,6 @@ const AIChatbot : React.FC  = () => {
         }
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
-
-    // Handle voice mode action
-    const handleVoiceMode = () => {
-        console.log("Voice mode activated");
-  };
 
     return(
         <div className="max-w-5xl flex flex-col font-poppins">
@@ -152,18 +153,22 @@ const AIChatbot : React.FC  = () => {
                             <div className="ml-auto flex items-center gap-2">
                                 <button
                                     className="inline-flex shrink-0 cursor-pointer select-none items-center justify-center gap-1.5 whitespace-nowrap text-nowrap border font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-offset-1 has-[:focus-visible]:ring-2 [&>svg]:pointer-events-none [&>svg]:size-5 [&_svg]:shrink-0 text-background border-white bg-white hover:border-[#eae9e9] focus:border-[#eae9e9] focus:bg-[#eae9e9] focus-visible:border-[#eae9e9] focus-visible:bg-[#eae9e9] px-3 text-sm rounded-full size-9 text-black hover:bg-[#eae9e9]"
-                                    type="submit"
+                                    type="button"
+                                    onClick={input.trim() ? handleSubmit : handleDialogOpen}
                                 >
-                                {input.trim() ? (
-                                    <Send className="h-5 w-5 text-black" onClick={handleSubmit}/>
-                                ) : (
-                                    <Mic className="h-5 w-5 text-black" onClick={handleVoiceMode} />
-                                )}
-                                <span className="sr-only">{input.trim() ? "Send Message" : "Voice Mode"}</span>
+                                    {input.trim() ? (
+                                        <Send className="h-5 w-5 text-black" />
+                                    ) : (
+                                        <Mic className="h-5 w-5 text-black" />
+                                    )}
+                                    <span className="sr-only">{input.trim() ? "Send Message" : "Voice Mode"}</span>
                                 </button>
                             </div>
+
                         </div>
                     </form>
+                    <VoiceDialog open={isDialogOpen} onOpenChange={setDialogOpen}/>
+
                 </div>
             </div>
         </div>
