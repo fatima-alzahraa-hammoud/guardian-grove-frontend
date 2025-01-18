@@ -11,8 +11,6 @@ import { Button } from '../ui/button';
 import profileImage from '/assets/images/dashboard/profile.png';
 import notesImage from '/assets/images/dashboard/notes.png';
 import familyImage from '/assets/images/dashboard/family.png';
-import familyTreeImage from '/assets/images/dashboard/familyTree.png';
-import familyJournalImage from '/assets/images/dashboard/familyJournal.png';
 import tipsImage from '/assets/images/dashboard/tips.png';
 import adventureImage from '/assets/images/dashboard/adventures.png';
 import achievementsImage from '/assets/images/dashboard/achievements.png';
@@ -79,12 +77,6 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, coll
             </Button>
           </div>
 
-          <div className="flex flex-col items-center mt-4">
-            <div className="w-14 h-14 bg-white rounded-full mb-2">
-              <img src={avatar || profileImage} alt="User Profile" className="w-full h-full rounded-full" />
-            </div>
-            {!collapsed && <h1 className="text-md font-semibold">{name}</h1>}
-          </div>
 
           <nav className="flex flex-col space-y-2 mt-6 overflow-y-auto md:custom-scrollbar md:max-h-[50vh] lg:max-h-screen">
             <SidebarItem icon={profileImage} label="My Profile" collapsed={collapsed} onClick={() => setActiveSection('profile')} isActive={activeSection === 'profile'} />
@@ -112,8 +104,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, coll
               </div>
               {isFamilyOpen && !collapsed && (
                 <div className="ml-10">
-                  <SidebarItem icon={familyTreeImage} label="Family Tree" collapsed={collapsed} onClick={() => setActiveSection('familyTree')} isActive={activeSection === 'familyTree'} />
-                  <SidebarItem icon={familyJournalImage} label="Family Journal" collapsed={collapsed} onClick={() => setActiveSection('familyJournal')} isActive={activeSection === 'familyJournal'} />
+                  <SidebarItem label="Family Tree" collapsed={collapsed} onClick={() => setActiveSection('familyTree')} isActive={activeSection === 'familyTree'} />
+                  <SidebarItem label="Family Journal" collapsed={collapsed} onClick={() => setActiveSection('familyJournal')} isActive={activeSection === 'familyJournal'} />
                 </div>
               )}
             </div>
@@ -147,7 +139,7 @@ function SidebarItem({
     onClick,
     isActive,
 }: {
-    icon: string;
+    icon?: string;
     label: string;
     collapsed: boolean;
     onClick: () => void;
@@ -156,14 +148,17 @@ function SidebarItem({
     return (
         <div
             onClick={onClick}
-            className={`flex items-center text-sm text-black px-6 py-2 hover:bg-[#3a8dba89] cursor-pointer hover:text-black ${
+            className={`flex items-center text-sm text-black px-6 py-3 hover:bg-[#3a8dba89] cursor-pointer hover:text-black ${
                 isActive ? 'bg-[#3A8EBA] text-white' : 'hover:bg-[#3a8dba89] hover:text-black'
             } ${ collapsed ? 'justify-center' : 'pl-10' }`}
         >
-            <div className="w-4 h-4">
+          {icon &&
+            <div className="w-5 h-5">
                 <img src={icon} alt={label} className="w-full h-full" />
             </div>
+          }
             {!collapsed && <span className="ml-4">{label}</span>}
+          
         </div>
     );
 }
