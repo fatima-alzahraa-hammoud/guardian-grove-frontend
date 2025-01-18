@@ -27,7 +27,20 @@ const AdminSidebar : React.FC = () => {
                 <h1 className="text-2xl font-bold text-white">Guardian Grove</h1>
                 <p className="text-sm text-white">Admin Dashboard</p>
             </SidebarHeader>
-            
+            <SidebarContent className="pt-6 px-6 bg-[#3A8EBA] text-lg">
+                <SidebarMenu>
+                {navItems.map((item) => (
+                    <SidebarMenuItem key={item.name} className="text-base hover:text-black">
+                        <SidebarMenuButton className="flex items-center px-2 py-5 text-white text-sm hover:text-black">
+                            <item.icon className="w-6 h-6 mr-1" />
+                                <span className="flex items-center px-1 py-3 text-white text-sm hover:text-black">
+                                {item.name}
+                            </span>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                ))}
+                </SidebarMenu>
+            </SidebarContent>
         </Sidebar>
     );
 };
