@@ -17,7 +17,7 @@ const AdminSidebar : React.FC<AdminSidebarProps> = ({setActiveSection}) => {
 
     const navItems = [
         { name: 'Dashboard', href: '/admin/', icon: Home },
-        { name: 'Users', href: '/admin/users', icon: Users },
+        { name: 'users', href: '/admin/users', icon: Users },
         { name: 'Families', href: '/admin/families', icon: Family },
         { name: 'Analytics', href: '/admin/analytics', icon: BarChart },
         { name: 'Store', href: '/admin/store', icon: ShoppingBag },

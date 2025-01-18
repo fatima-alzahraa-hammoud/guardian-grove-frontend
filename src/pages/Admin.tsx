@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AdminSidebar from "../admin/AdminSidebar";
 import AdminDashboard from "../admin/AdminDashboard";
+import Users from "../admin/users";
 
 
 const Admin : React.FC = () => {
@@ -10,6 +11,8 @@ const Admin : React.FC = () => {
         switch (activeSection) {
             case 'dashboard':
                 return <AdminDashboard />;
+            case 'users':
+                return <Users />
             default:
                 return <div>Select a section</div>;
         }
