@@ -21,7 +21,7 @@ const UserActivityChart : React.FC = () => {
             <CardTitle>User Activity Overview</CardTitle>
         </CardHeader>
         <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={300} className="text-xs">
                 <LineChart data={data}>
                     <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
                     <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} />
