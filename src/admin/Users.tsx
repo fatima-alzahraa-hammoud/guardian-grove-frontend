@@ -8,6 +8,7 @@ import { Input } from "../components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import UserManageDialog from '../components/common/UserManageDialog';
+import EditUserDialog from '../components/common/EditUserDialog';
 
 
 interface User {
@@ -41,7 +42,19 @@ const Users: React.FC = () => {
     const [filter, setFilter] = useState<'all' | 'parent' | 'child'>('all')
     const [search, setSearch] = useState('')
     const [selectedUser, setSelectedUser] = useState<User | null>(null)
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+    const handleRowClick = (user: User) => {
+      setSelectedUser(user);
+      setIsDialogOpen(true);
+    };
+  
+    const handleSave = (updatedUser: User) => {
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+      );
+    };
+  
     const filteredUsers = users.filter(user =>
         (filter === 'all' || user.type === filter) &&
         user.name.toLowerCase().includes(search.toLowerCase())
@@ -133,7 +146,11 @@ const Users: React.FC = () => {
                         </TableHeader>
                         <TableBody>
                             {filteredUsers.map((user) => (
-                                <TableRow key={user.id}>
+                                <TableRow
+                                    key={user.id}
+                                    className="cursor-pointer hover:bg-gray-100"
+                                    onClick={() => handleRowClick(user)}
+                                >
                                     <TableCell>{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell className="capitalize">{user.type}</TableCell>
@@ -160,6 +177,13 @@ const Users: React.FC = () => {
                     </Table>
                 </CardContent>
             </Card>
+
+            <EditUserDialog
+                user={selectedUser}
+                isOpen={isDialogOpen}
+                onClose={() => setIsDialogOpen(false)}
+                onSave={handleSave}
+            />
         </div>
     );
 }

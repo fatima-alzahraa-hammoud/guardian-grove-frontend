@@ -42,6 +42,7 @@ const UserManageDialog: React.FC<UserManageDialogProps> = ({ user, onStatusChang
                     <div className="flex items-center space-x-2">
                         <Switch
                             id="user-status"
+                            className="bg-[#3A8EBA]"
                             checked={user.status === "active"}
                             onCheckedChange={(checked) => onStatusChange(user.id, checked ? "active" : "banned")}
                         />
