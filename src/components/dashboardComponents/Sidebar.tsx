@@ -23,8 +23,10 @@ import settingsImage from '/assets/images/dashboard/settings.svg';
 import logoutImage from '/assets/images/dashboard/logout.svg';
 import infoImage from '/assets/images/dashboard/badge-info.svg';
 import "../../styles/sidebar.css";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectAvatar, selectGender, selectName } from '../../redux/slices/userSlice';
+import { logout } from '../../redux/slices/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 interface SidebarProps {
   activeSection: string;
@@ -38,6 +40,9 @@ function classNames(...classes: string[]) {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, collapsed, setCollapsed }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [isFamilyOpen, setIsFamilyOpen] = useState(false);
   const gender = useSelector(selectGender);
 
@@ -47,6 +52,11 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, coll
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
   };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
+  }
 
   return (
     <div className="flex">
@@ -118,7 +128,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, coll
         </div>
 
         <div className="flex justify-between pt-3 pb-6 pl-9 pr-9">
-          <FooterIcon icon={logoutImage} />
+          <FooterIcon icon={logoutImage} onClick={handleLogout}/>
           <FooterIcon icon={infoImage} />
           <FooterIcon icon={settingsImage} />
         </div>
@@ -159,10 +169,13 @@ function SidebarItem({
 }
 
 // Footer Icon Component
-function FooterIcon({ icon }: { icon: string }) {
-    return (
-        <div className="text-black hover:text-[#3a8dba89] cursor-pointer transition-all duration-300 ease-in-out hover:scale-110">
-            <img src={icon} alt="footer icon" className="w-4 h-4" />
-        </div>
-    );
+function FooterIcon({ icon, onClick }: { icon: string; onClick?: () => void }) {
+  return (
+      <div
+          className="text-black hover:text-[#3a8dba89] cursor-pointer transition-all duration-300 ease-in-out hover:scale-110"
+          onClick={onClick}
+      >
+          <img src={icon} alt="footer icon" className="w-4 h-4" />
+      </div>
+  );
 }
