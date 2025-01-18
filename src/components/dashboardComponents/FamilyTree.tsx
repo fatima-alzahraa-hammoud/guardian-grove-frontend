@@ -34,8 +34,8 @@ const FamilyTree : React.FC<FamilyTreeProps> = ({collapsed}) => {
 
 
     return(
-        <div className={`pt-24 min-h-screen flex flex-col items-center`}>
-            <div className={`w-full flex-grow font-poppins ${ collapsed ? "mx-auto max-w-6xl" : "max-w-5xl" }`} >
+        <div className={`pt-24 min-h-screen flex flex-col items-center mx-auto px-4 `}>
+            <div className={`w-full flex-grow font-poppins mx-auto px-4 max-w-5xl`} >
                 
                 {/* Header */}
                 <div className="text-left">

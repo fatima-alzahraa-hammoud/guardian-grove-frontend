@@ -27,7 +27,7 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = ({
 }) => (
     <div
         className={cn(
-            "flex items-center justify-between bg-[#301DAD21] rounded-lg mb-4 p-4 h-20",
+            "mx-auto px-4 flex items-center justify-between bg-[#301DAD21] rounded-lg mb-4 p-4 h-20",
             isFamily ? "border-2 border-dashed border-[#3A8EBA] bg-[#E3F2FD]" : ""
         )}
     >

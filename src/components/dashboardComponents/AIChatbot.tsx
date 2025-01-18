@@ -10,7 +10,13 @@ import { requestMethods } from "../../libs/enum/requestMethods";
 import MessageComponent from "../common/MessageComponent";
 import VoiceDialog from "../common/VoiceDialog";
 
-const AIChatbot : React.FC  = () => {
+
+interface AIChatbotProps {
+    collapsed: boolean;
+  }
+  
+
+const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
 
     const [input, setInput] = useState<string>("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -171,7 +177,7 @@ const AIChatbot : React.FC  = () => {
     };
 
     return(
-        <div className="max-w-5xl flex flex-col font-poppins">
+        <div className={`max-w-5xl flex flex-col font-poppins mx-auto ${collapsed ? " mx-20" : ""}`}>
             <ToastContainer className="text-xs" />
             <div className="flex gap-3 w-full">
                 <div className="flex h-24 w-24 items-center justify-center rounded-full ml-2">

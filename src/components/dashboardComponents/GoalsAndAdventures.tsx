@@ -171,7 +171,7 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
 
     return(
         <div className={`pt-24 min-h-screen flex flex-col items-center`}>
-            <div className={`w-full flex-grow font-poppins ${ collapsed ? "mx-auto max-w-6xl" : "max-w-5xl" }`} >
+            <div className={`w-full flex-grow font-poppins mx-auto ${ collapsed ? " max-w-6xl" : "max-w-5xl" }`} >
                 <div className="flex justify-between w-full">
                     <div className="w-full">
                         {/* Header */}
