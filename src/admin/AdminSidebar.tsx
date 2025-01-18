@@ -9,10 +9,14 @@ import {
     SidebarMenuButton
   } from "../components/ui/sidebar"
 
-const AdminSidebar : React.FC = () => {
+interface AdminSidebarProps {
+    setActiveSection: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const AdminSidebar : React.FC<AdminSidebarProps> = ({setActiveSection}) => {
 
     const navItems = [
-        { name: 'Dashboard', href: '/admin', icon: Home },
+        { name: 'Dashboard', href: '/admin/', icon: Home },
         { name: 'Users', href: '/admin/users', icon: Users },
         { name: 'Families', href: '/admin/families', icon: Family },
         { name: 'Analytics', href: '/admin/analytics', icon: BarChart },
@@ -31,7 +35,7 @@ const AdminSidebar : React.FC = () => {
                 <SidebarMenu>
                 {navItems.map((item) => (
                     <SidebarMenuItem key={item.name} className="text-base hover:text-black">
-                        <SidebarMenuButton className="flex items-center px-2 py-5 text-white text-sm hover:text-black">
+                        <SidebarMenuButton onClick={() => setActiveSection(item.name.toLowerCase())} className="flex items-center px-2 py-5 text-white text-sm hover:text-black">
                             <item.icon className="w-6 h-6 mr-1" />
                                 <span className="flex items-center px-1 py-3 text-white text-sm hover:text-black">
                                 {item.name}
