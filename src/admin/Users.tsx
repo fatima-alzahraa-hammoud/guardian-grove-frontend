@@ -6,11 +6,8 @@ import { Coins, UserCheck, UserPlus, UsersIcon } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table"
 import { Input } from "../components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
-import { Button } from "../components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog"
-import { Switch } from "../components/ui/switch"
-import { Label } from "../components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
+import UserManageDialog from '../components/common/UserManageDialog';
 
 
 interface User {
@@ -150,7 +147,12 @@ const Users: React.FC = () => {
                                         {user.status}
                                         </span>
                                     </TableCell>
-                                    <TableCell>     
+                                    <TableCell> 
+                                        <UserManageDialog
+                                            user={user}
+                                            onStatusChange={handleStatusChange}
+                                            onRoleChange={handleRoleChange}
+                                        />    
                                     </TableCell>
                                 </TableRow>
                             ))}
