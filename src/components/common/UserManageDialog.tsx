@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
@@ -27,39 +27,78 @@ interface UserManageDialogProps {
 const UserManageDialog: React.FC<UserManageDialogProps> = ({ user, onStatusChange, onRoleChange }) => {
     if (!user) return null;
 
+    const [isOpen, setIsOpen] = useState(false);
+
+
     return (
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="border border-[#3A8EBA] text-[#3A8EBA] hover:bg-[#3A8EBA] hover:text-white"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setIsOpen(true);
+                    }}
+                >
                     Manage
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-md bg-white rounded-lg shadow-lg border border-gray-200" onClick={(e) => e.stopPropagation()}>
                 <DialogHeader>
-                    <DialogTitle>Manage User: {user.name}</DialogTitle>
+                    <DialogTitle className="text-xl font-semibold text-[#3A8EBA]">
+                        Manage User: {user.name}
+                    </DialogTitle>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    <div className="flex items-center space-x-2">
+                <div className="grid gap-6 py-4">
+                    {/* Status Toggle */}
+                    <div className="flex items-center space-x-4">
                         <Switch
                             id="user-status"
-                            className="bg-[#3A8EBA]"
+                            className="bg-[#3A8EBA] border border-gray-300 focus:ring-2 focus:ring-[#3A8EBA]"
                             checked={user.status === "active"}
                             onCheckedChange={(checked) => onStatusChange(user.id, checked ? "active" : "banned")}
+                            onClick={(e) => e.stopPropagation()} 
                         />
-                        <Label htmlFor="user-status">Active</Label>
+                        <Label
+                            htmlFor="user-status"
+                            className="text-[#3A8EBA] font-medium"
+                        >
+                            Active
+                        </Label>
                     </div>
-                    <Select
-                        value={user.role}
-                        onValueChange={(value: "user" | "admin") => onRoleChange(user.id, value)}
+
+                    {/* Role Selector */}
+                    <div>
+                        <Label
+                            htmlFor="user-role"
+                            className="text-[#3A8EBA] font-medium"
+                        >
+                            Role
+                        </Label>
+                        <Select
+                            value={user.role}
+                            onValueChange={(value: "user" | "admin") => onRoleChange(user.id, value)}
+                        >
+                            <SelectTrigger className="border border-[#3A8EBA] focus:ring-[#3A8EBA] focus:border-[#3A8EBA]">
+                                <SelectValue placeholder="Select role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="user">User</SelectItem>
+                                <SelectItem value="admin">Admin</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+                <div className="flex justify-end">
+                    <Button
+                        variant="outline"
+                        className="border border-[#3A8EBA] text-[#3A8EBA] hover:bg-[#3A8EBA] hover:text-white"
+                        onClick={() => setIsOpen(false)}
                     >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="user">User</SelectItem>
-                            <SelectItem value="admin">Admin</SelectItem>
-                        </SelectContent>
-                    </Select>
+                        Close
+                    </Button>
                 </div>
             </DialogContent>
         </Dialog>
