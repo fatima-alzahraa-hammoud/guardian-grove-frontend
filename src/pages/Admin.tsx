@@ -4,7 +4,7 @@ import AdminDashboard from "../admin/AdminDashboard";
 
 
 const Admin : React.FC = () => {
-    const [activeSection, setActiveSection] = useState<string>('profile');
+    const [activeSection, setActiveSection] = useState<string>('dashboard');
 
     const renderContent = () => {
         switch (activeSection) {
