@@ -45,6 +45,38 @@ const AdminDashboard: React.FC = () => {
                 <UserActivityChart />
             </div>
 
+            {/* Bottom Cards Row */}
+            <div className="grid gap-6 md:grid-cols-2">
+                {/* Top Performing Families Card */}
+                <Card className="w-full">
+                    <CardHeader className="pb-4">
+                        <CardTitle className="text-xl">Top Performing Families</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-6">
+                            {['Smith Family', 'Johnson Family', 'Williams Family'].map((family, index) => (
+                                <div key={family} className="flex items-center space-x-4">
+                                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                                        <span className="text-lg font-bold text-primary">{index + 1}</span>
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="flex justify-between mb-2">
+                                            <span className="text-sm font-medium">{family}</span>
+                                            <span className="text-sm font-medium">{90 - index * 5}%</span>
+                                        </div>
+                                        <Progress.Root className="h-2.5 w-full bg-secondary overflow-hidden rounded-full">
+                                            <Progress.Indicator
+                                                className="h-full bg-primary transition-all duration-500 ease-in-out"
+                                                style={{ width: `${90 - index * 5}%` }}
+                                            />
+                                        </Progress.Root>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     )
 }
