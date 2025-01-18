@@ -76,6 +76,32 @@ const AdminDashboard: React.FC = () => {
                         </div>
                     </CardContent>
                 </Card>
+
+                {/* Recent Activity Card */}
+                <Card className="w-full">
+                    <CardHeader className="pb-4">
+                        <CardTitle className="text-xl">Recent Activity</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-6">
+                            {[
+                                { user: 'Alice', action: 'completed a task', time: '2 minutes ago' },
+                                { user: 'Bob', action: 'earned 50 coins', time: '15 minutes ago' },
+                                { user: 'Charlie', action: 'added a new family member', time: '1 hour ago' },
+                            ].map((activity, index) => (
+                                <div key={index} className="flex items-center space-x-4 p-3 rounded-lg hover:bg-secondary/50 transition-colors">
+                                    <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                                        <span className="text-primary-foreground text-lg font-semibold">{activity.user[0]}</span>
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-sm font-medium">{activity.user} {activity.action}</p>
+                                        <p className="text-xs text-muted-foreground mt-1">{activity.time}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     )
