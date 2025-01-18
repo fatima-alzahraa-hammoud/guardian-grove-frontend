@@ -36,26 +36,30 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({ user, isOpen, onClose, 
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-lg">
+            <DialogContent className="max-w-lg bg-white rounded-lg shadow-lg border border-gray-200">
                 <DialogHeader>
-                    <DialogTitle className="text-xl font-semibold">Edit User Details</DialogTitle>
+                    <DialogTitle className="text-xl font-semibold text-[#3A8EBA]">
+                        Edit User Details
+                    </DialogTitle>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
+                <div className="grid gap-6 py-4">
                     {/* Name */}
                     <div>
-                        <Label htmlFor="name">Name</Label>
+                        <Label htmlFor="name" className="text-[#3A8EBA] font-medium">Name</Label>
                         <Input
-                        id="name"
-                        value={editedUser.name}
-                        onChange={(e) => setEditedUser({ ...editedUser, name: e.target.value })}
+                            id="name"
+                            className="border border-[#3A8EBA] focus:ring-[#3A8EBA] focus:border-[#3A8EBA]"
+                            value={editedUser.name}
+                            onChange={(e) => setEditedUser({ ...editedUser, name: e.target.value })}
                         />
                     </div>
 
                     {/* Email */}
                     <div>
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="email" className="text-[#3A8EBA] font-medium">Email</Label>
                         <Input
                             id="email"
+                            className="border border-[#3A8EBA] focus:ring-[#3A8EBA] focus:border-[#3A8EBA]"
                             value={editedUser.email}
                             onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })}
                         />
@@ -63,48 +67,53 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({ user, isOpen, onClose, 
 
                     {/* Type */}
                     <div>
-                        <Label htmlFor="type">Type</Label>
+                        <Label htmlFor="type" className="text-[#3A8EBA] font-medium">Type</Label>
                         <Select
                             value={editedUser.type}
                             onValueChange={(value: "parent" | "child") =>
                                 setEditedUser({ ...editedUser, type: value })
                             }
                         >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="parent">Parent</SelectItem>
-                            <SelectItem value="child">Child</SelectItem>
-                        </SelectContent>
+                            <SelectTrigger className="border border-[#3A8EBA] focus:ring-[#3A8EBA] focus:border-[#3A8EBA]">
+                                <SelectValue placeholder="Select type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="parent">Parent</SelectItem>
+                                <SelectItem value="child">Child</SelectItem>
+                            </SelectContent>
                         </Select>
                     </div>
 
                     {/* Role */}
                     <div>
-                        <Label htmlFor="role">Role</Label>
+                        <Label htmlFor="role" className="text-[#3A8EBA] font-medium">Role</Label>
                         <Select
                             value={editedUser.role}
                             onValueChange={(value: "user" | "admin") =>
                                 setEditedUser({ ...editedUser, role: value })
                             }
                         >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="user">User</SelectItem>
-                            <SelectItem value="admin">Admin</SelectItem>
-                        </SelectContent>
+                            <SelectTrigger className="border border-[#3A8EBA] focus:ring-[#3A8EBA] focus:border-[#3A8EBA]">
+                                <SelectValue placeholder="Select role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="user">User</SelectItem>
+                                <SelectItem value="admin">Admin</SelectItem>
+                            </SelectContent>
                         </Select>
                     </div>
                 </div>
 
                 <div className="flex justify-end space-x-4">
-                    <Button variant="outline" onClick={onClose}>
+                    <Button
+                        variant="outline"
+                        className="border border-[#3A8EBA] text-[#3A8EBA] hover:bg-[#3A8EBA] hover:text-white"
+                        onClick={onClose}
+                    >
                         Cancel
                     </Button>
                     <Button
+                        className="bg-[#3A8EBA] text-white hover:bg-[#317799]"
                         onClick={() => {
                             if (editedUser) onSave(editedUser);
                             onClose();
