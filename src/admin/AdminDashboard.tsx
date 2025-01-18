@@ -1,6 +1,9 @@
 'use client'
 import React from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { BarChart, Users, Star, Coins } from 'lucide-react'
+import UserActivityChart from "./UserActivityChart"
+import * as Progress from '@radix-ui/react-progress'
 import StatCard from "./StatCard"
 
 const AdminDashboard: React.FC = () => {
@@ -36,6 +39,12 @@ const AdminDashboard: React.FC = () => {
                     trend={{ value: 30, isPositive: true }}
                 />
             </div>
+
+            {/* Chart Section */}
+            <div className="w-full">
+                <UserActivityChart />
+            </div>
+
         </div>
     )
 }
