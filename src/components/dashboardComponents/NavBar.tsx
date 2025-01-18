@@ -13,7 +13,7 @@ import { Search, ShoppingCart, Star } from "lucide-react";
 import "../../styles/global.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectGender, selectStars } from "../../redux/slices/userSlice";
+import { selectAvatar, selectGender, selectStars } from "../../redux/slices/userSlice";
 import logo from "/assets/logo/GuardianGrove_logo_NoText.png";
 
 // Classnames utility function
@@ -28,6 +28,7 @@ const Navbar: React.FC= () => {
     const gender = useSelector(selectGender);
     const [isStoreActive, setIsStoreActive] = useState(false);
     const stars = useSelector(selectStars);
+    const avatar = useSelector(selectAvatar);
 
     const navigate = useNavigate();
 
@@ -123,6 +124,15 @@ const Navbar: React.FC= () => {
                     <div className="absolute inset-y-0 right-0 flex items-center sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                         <div className="ml-16 flex items-center space-x-4">
 
+                            <Button
+                                variant="ghost"
+                                className="flex h-7 items-center gap-3 rounded-full bg-white px-2 text-[#FFC044] justify-center pt-3 pb-3 hover:bg-[#fcf7ef] hover:text-[#FFC044]"
+                                size="sm"
+                            >
+                                <Star className="h-4 w-4" />
+                                <span className="text-[13px] font-medium">{stars}</span>
+                            </Button>
+
                             <div className="relative p-[2px] rounded-full border-rotate-wrapper">
                                 <div className="border-[1.8px] border-dashed border-[#FA9DB7] rounded-full border-rotate h-10 w-10"></div>
                                 <Button
@@ -152,15 +162,14 @@ const Navbar: React.FC= () => {
                                 </Button>
                             </div>
 
-                            <Button
-                                variant="ghost"
-                                className="flex h-7 items-center gap-3 rounded-full bg-white px-2 text-[#FFC044] justify-center pt-3 pb-3 hover:bg-[#fcf7ef] hover:text-[#FFC044]"
-                                size="sm"
-                            >
-                                <Star className="h-4 w-4" />
-                                <span className="text-[13px] font-medium">{stars}</span>
-                            </Button>
-
+                            <div className="relative p-[2px] rounded-full border-rotate-wrapper">
+                                <div className="border-[1.8px] border-dashed border-[#1140A6] rounded-full border-rotate h-12 w-12"></div>
+                                <img
+                                    className="avatar-image h-10 w-10 rounded-full"
+                                    src={avatar || "src/assets/image/parent/avatar1.png"}
+                                    alt=""
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

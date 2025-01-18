@@ -22,7 +22,7 @@ import logoutImage from '/assets/images/dashboard/logout.svg';
 import infoImage from '/assets/images/dashboard/badge-info.svg';
 import "../../styles/sidebar.css";
 import { useDispatch, useSelector } from 'react-redux';
-import { selectAvatar, selectGender, selectName } from '../../redux/slices/userSlice';
+import { selectGender } from '../../redux/slices/userSlice';
 import { logout } from '../../redux/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
 
@@ -43,9 +43,6 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, coll
 
   const [isFamilyOpen, setIsFamilyOpen] = useState(false);
   const gender = useSelector(selectGender);
-
-  const avatar = useSelector(selectAvatar);
-  const name = useSelector(selectName);
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
