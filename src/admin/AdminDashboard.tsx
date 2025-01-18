@@ -19,24 +19,28 @@ const AdminDashboard: React.FC = () => {
                     value="1,234"
                     icon={<Users className="h-5 w-5 text-primary" />}
                     trend={{ value: 20, isPositive: true }}
+                    padding={"pl-10"}
                 />
                 <StatCard
                     title="Active Families"
                     value="567"
                     icon={<BarChart className="h-5 w-5 text-primary" />}
                     trend={{ value: 15, isPositive: true }}
+                    padding={"pl-10"}
                 />
                 <StatCard
                     title="Total Stars Earned"
                     value="50,234"
                     icon={<Star className="h-5 w-5 text-primary" />}
                     trend={{ value: 25, isPositive: true }}
+                    padding={"pl-10"}
                 />
                 <StatCard
                     title="Total Coins Earned"
                     value="100,567"
                     icon={<Coins className="h-5 w-5 text-primary" />}
                     trend={{ value: 30, isPositive: true }}
+                    padding={"pl-10"}
                 />
             </div>
 

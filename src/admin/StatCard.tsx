@@ -2,17 +2,18 @@ import { TrendingDown, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 
 interface StatCardProps {
-    title: string
-    value: string
-    icon: React.ReactNode
-    trend: { value: number; isPositive: boolean }
+    title: string;
+    value: string;
+    icon: React.ReactNode;
+    trend: { value: number; isPositive: boolean };
+    padding: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, value, icon, trend }) => (
+const StatCard: React.FC<StatCardProps> = ({ title, value, icon, trend, padding = "pl-10" }) => (
     <Card className="hover:shadow-lg transition-shadow pl-2 pr-0">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{title}</CardTitle>
-            <div className="rounded-full pl-10">{icon}</div>
+            <div className={`rounded-full ${padding}`}>{icon}</div>
         </CardHeader>
         <CardContent>
             <div className="text-xl font-bold mb-2">{value}</div>
