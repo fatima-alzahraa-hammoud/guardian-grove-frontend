@@ -103,25 +103,6 @@ const AddMembersForm : React.FC = () => {
         }
     };
 
-
-    const handleSaveAndAddAnother = handleSubmit(async (data) => {
-        const success = await onSubmit(data);
-        if (success) {
-            resetData();
-        }
-    });
-
-    const handleSaveAndContinue = handleSubmit(async (data) => {
-        if(!data){
-            navigate("/dashboard");
-        }
-        const success = await onSubmit(data);
-        if (success) {
-            resetData();
-            navigate("/dashboard"); // Redirect to dashboard if successful
-        }
-    });
-
     useEffect(() => {
         reset({
             gender: "female", // Reset default values
@@ -131,6 +112,7 @@ const AddMembersForm : React.FC = () => {
             avatar: "",
         });
         selectRef.current?.clearValue();
+        setValue("role", tab.toLowerCase(), { shouldValidate: true });
     }, [tab, setValue]);
 
     useEffect(() => {
@@ -312,7 +294,18 @@ const AddMembersForm : React.FC = () => {
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row justify-evenly pt-4">
                         <Button variant="outline" className="flex-1 rounded-full mr-20" 
-                            onClick={handleSaveAndAddAnother}>
+                            onClick={handleSubmit(
+                                async (data) => {
+                                    console.log('Valid submission:', data);
+                                    const success = await onSubmit(data);
+                                    if (success) resetData();
+                                },
+                                (errors) => {
+                                    console.log('Validation errors:', errors);
+                                }
+                            )}
+                            type="button"
+                        >
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round-plus">
                                 <path d="M2 21a8 8 0 0 1 13.292-6"/><circle cx="10" cy="8" r="5"/>
                                 <path d="M19 16v6"/>
@@ -321,7 +314,20 @@ const AddMembersForm : React.FC = () => {
                             <span>Add Another {tab}</span>
                         </Button>
                         <Button className="flex-1 bg-[#3A8EBA] hover:bg-[#347ea5] rounded-full" 
-                                onClick={handleSaveAndContinue}
+                                onClick={handleSubmit(
+                                    async (data) => {
+                                        const success = await onSubmit(data);
+                                        if (success) {
+                                            resetData();
+                                            navigate("/dashboard");
+                                        }
+                                    },
+                                    (errors) => {
+                                        console.log('Validation errors:', errors);
+                                    }
+                                )}
+                                type="button"
+    
                         >
                             Save and Continue
                         </Button>
