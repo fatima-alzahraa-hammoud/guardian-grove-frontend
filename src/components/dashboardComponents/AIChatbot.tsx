@@ -15,7 +15,7 @@ const AIChatbot : React.FC  = () => {
     const [input, setInput] = useState<string>("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const chats = useSelector(selectChats);
-    const activeChatId = useSelector(selectActiveChatId);
+    let activeChatId = useSelector(selectActiveChatId);
     const activeChatTitle = useSelector(selectActiveChatTitle);
 
     const dispatch = useDispatch();
@@ -56,11 +56,12 @@ const AIChatbot : React.FC  = () => {
                 const result = await requestApi({
                     route: "/chats/",
                     method: requestMethods.POST,
-                    body: {sender: "user", message: transcript},
+                    body: {sender: "user", message: transcript.trim()},
                 });
                 if (result && result.chat){
                     dispatch(addChat(result.chat));
                     dispatch(setActiveChat(result.chat._id));
+                    activeChatId = result.chat._id;
                 }else{
                     toast.error("something went wrong ", result.message);
                 }
@@ -108,7 +109,8 @@ const AIChatbot : React.FC  = () => {
                 });
                 if (result && result.chat){
                     dispatch(addChat(result.chat));
-                    dispatch(setActiveChat(result.chat._id));
+                    await dispatch(setActiveChat(result.chat._id));
+                    activeChatId = result.chat._id;
                     setInput("");
                 }else{
                     toast.error("something went wrong ", result.message);
