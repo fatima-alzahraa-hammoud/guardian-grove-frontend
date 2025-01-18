@@ -1,5 +1,13 @@
 import React from "react";
 import { Home, Users, GroupIcon as Family, BarChart, ShoppingBag, Award, Shield } from 'lucide-react'
+import { 
+    Sidebar, 
+    SidebarHeader, 
+    SidebarContent,
+    SidebarMenu,
+    SidebarMenuItem,
+    SidebarMenuButton
+  } from "../components/ui/sidebar"
 
 const AdminSidebar : React.FC = () => {
 
@@ -14,7 +22,13 @@ const AdminSidebar : React.FC = () => {
       ]
 
     return(
-        <div></div>
+        <Sidebar className="shadow-md bg-[#3A8EBA] text-white font-poppins">
+            <SidebarHeader className="p-6 bg-[#3A8EBA] pt-20">
+                <h1 className="text-2xl font-bold text-white">Guardian Grove</h1>
+                <p className="text-sm text-white">Admin Dashboard</p>
+            </SidebarHeader>
+            
+        </Sidebar>
     );
 };
 

@@ -15,6 +15,8 @@ import AddMembersQuestion from './components/SignUp Components/AddMembersQuestio
 import AddMembersForm from './pages/AddMembersForm';
 import AddMembersBackground from './components/common/AddMembersBackground';
 import { setFamily } from './redux/slices/familySlice';
+import AdminSidebar from './admin/AdminSidebar';
+import { SidebarProvider } from './components/ui/sidebar';
 
 interface DecodedToken {
   userId: string;
@@ -98,6 +100,7 @@ function App() {
           <Route path='/dashboard/*' element={ <ProtectedRoute> <Dashboard /> </ProtectedRoute> } />
           <Route path='/addMembersQuestion' element={ <ProtectedRoute> <AddMembersBackground ChildComponent={AddMembersQuestion} /> </ProtectedRoute> } />
           <Route path='/addMembers' element={ <ProtectedRoute> <AddMembersBackground ChildComponent={AddMembersForm} /> </ProtectedRoute> } />
+          <Route path='/adminDashboard' element={<SidebarProvider><AdminSidebar /></SidebarProvider>}/>
         </Routes>
       </div>
     </>
