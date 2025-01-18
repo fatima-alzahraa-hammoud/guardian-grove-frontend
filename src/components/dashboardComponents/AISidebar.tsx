@@ -13,6 +13,7 @@ import { requestMethods } from "../../libs/enum/requestMethods";
 import { toast, ToastContainer } from "react-toastify";
 import { Chat } from "../../libs/types/chat.types";
 import { selectUserId } from "../../redux/slices/userSlice";
+import { useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -22,6 +23,8 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
 
     const { toggleSidebar, state } = useSidebar();
     collapsed = state === "collapsed";
+
+    const navigate = useNavigate();
 
     const dispatch = useDispatch();
     const userId = useSelector(selectUserId);
@@ -446,8 +449,8 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                     </Button>
                 </div>
                 <div className="flex items-center justify-around mt-4 group-data-[collapsible=icon]:flex-col">
-                    <Button variant="ghost" size="icon" className="w-8 h-8">
-                        <Home className="w-4 h-4 text-[#0284c7]" />
+                    <Button  onClick={() => navigate("/dashboard/")} variant="ghost" size="icon" className="w-8 h-8">
+                        <Home className="w-4 h-4 text-[#0284c7]"/>
                     </Button>
                     <Button variant="ghost" size="icon" className="w-8 h-8 group-data-[collapsible=icon]:hidden">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284c7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-badge-info text-[#0284c7]">
