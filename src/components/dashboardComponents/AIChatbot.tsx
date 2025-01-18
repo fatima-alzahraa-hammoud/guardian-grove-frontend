@@ -17,6 +17,8 @@ const AIChatbot : React.FC  = () => {
     const chats = useSelector(selectChats);
     let activeChatId = useSelector(selectActiveChatId);
     const activeChatTitle = useSelector(selectActiveChatTitle);
+    const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+    const [isCall, setIsCall] = useState(true);
 
     const dispatch = useDispatch();
 
@@ -83,6 +85,10 @@ const AIChatbot : React.FC  = () => {
                     } else {
                         toast.error("something went wrong ", response.message);
                     }
+
+                    if (isCall && response.audio) {
+                        setAudio(new Audio("data:audio/mp3;base64," + response.audio));
+                    }
                 }
             } else {
                 toast.warn("Message cannot be empty!", { position: "top-center" });
@@ -93,6 +99,14 @@ const AIChatbot : React.FC  = () => {
         }
     };
 
+    useEffect(() => {
+        if (audio) {
+            audio.play().catch((err) => console.error("Audio play failed", err));
+            audio.onended = () => {
+                console.log("Audio playback ended");
+            };
+        }
+    }, [audio]);
 
      // Handle message submission
      const handleSubmit = async (e: React.FormEvent) => {
@@ -124,6 +138,8 @@ const AIChatbot : React.FC  = () => {
                     method: requestMethods.POST,
                     body: data
                 });
+                console.log("API Response:", response);  // Log the response structure
+
                 if (response){
                     if (activeChatId !== null){
                         dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: response.aiResponse.content }));
@@ -142,6 +158,7 @@ const AIChatbot : React.FC  = () => {
             }
         } catch (error) {
             toast.error("Something went wrong!", { position: "top-center" });
+            console.log(error);
         }
     };
     
