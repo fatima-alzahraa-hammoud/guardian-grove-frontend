@@ -26,8 +26,8 @@ const UserActivityChart : React.FC = () => {
                     <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
                     <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} />
                     <Tooltip />
-                    <Line type="monotone" dataKey="activeUsers" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
-                    <Line type="monotone" dataKey="newUsers" stroke="hsl(var(--secondary))" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="activeUsers" stroke="#3A8EBA" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="newUsers" stroke="#dddddd" strokeWidth={2} dot={false} />
                 </LineChart>
             </ResponsiveContainer>
         </CardContent>

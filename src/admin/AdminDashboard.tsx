@@ -8,7 +8,7 @@ import StatCard from "./StatCard"
 
 const AdminDashboard: React.FC = () => {
     return (
-        <div className="p-8 ml-10 mt-10 space-y-8">
+        <div className="p-8 ml-10 mt-10 space-y-8 font-poppins">
 
             <h2 className="font-poppins text-lg font-semibold">Admin Dashboard</h2>
 
@@ -50,14 +50,14 @@ const AdminDashboard: React.FC = () => {
                 {/* Top Performing Families Card */}
                 <Card className="w-full">
                     <CardHeader className="pb-4">
-                        <CardTitle className="text-xl">Top Performing Families</CardTitle>
+                        <CardTitle className="text-base">Top Performing Families</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="space-y-6">
+                        <div className="space-y-10 mt-6">
                             {['Smith Family', 'Johnson Family', 'Williams Family'].map((family, index) => (
-                                <div key={family} className="flex items-center space-x-4">
-                                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
-                                        <span className="text-lg font-bold text-primary">{index + 1}</span>
+                                <div key={family} className="flex items-end justify-center space-x-4">
+                                    <div className="flex items-center justify-center w-8 h-8 rounded-full  bg-[#3A8EBA]">
+                                        <span className="text-lg font-bold text-white">{index + 1}</span>
                                     </div>
                                     <div className="flex-1">
                                         <div className="flex justify-between mb-2">
@@ -66,7 +66,7 @@ const AdminDashboard: React.FC = () => {
                                         </div>
                                         <Progress.Root className="h-2.5 w-full bg-secondary overflow-hidden rounded-full">
                                             <Progress.Indicator
-                                                className="h-full bg-primary transition-all duration-500 ease-in-out"
+                                                className="h-full bg-[#028E4D] transition-all duration-500 ease-in-out"
                                                 style={{ width: `${90 - index * 5}%` }}
                                             />
                                         </Progress.Root>
@@ -80,7 +80,7 @@ const AdminDashboard: React.FC = () => {
                 {/* Recent Activity Card */}
                 <Card className="w-full">
                     <CardHeader className="pb-4">
-                        <CardTitle className="text-xl">Recent Activity</CardTitle>
+                        <CardTitle className="text-base">Recent Activity</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-6">
@@ -90,7 +90,7 @@ const AdminDashboard: React.FC = () => {
                                 { user: 'Charlie', action: 'added a new family member', time: '1 hour ago' },
                             ].map((activity, index) => (
                                 <div key={index} className="flex items-center space-x-4 p-3 rounded-lg hover:bg-secondary/50 transition-colors">
-                                    <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                                    <div className="w-10 h-10 rounded-full bg-[#3A8EBA] flex items-center justify-center">
                                         <span className="text-primary-foreground text-lg font-semibold">{activity.user[0]}</span>
                                     </div>
                                     <div className="flex-1">
