@@ -268,12 +268,56 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
         }
     };
 
+    const handleGenerateViewTasks = async () => {
+        try {
+            dispatch(setBotResponding({ chatId: activeChatId, isResponding: true }));
+            const response = await requestApi({
+                route: "/users/generateViewTasks",
+                method: requestMethods.POST, 
+                body: { userId }
+            });
+            
+            if (response && response.viewTasks) {
+                const viewTasksMessage = {
+                    sender: "bot",
+                    message: response.viewTasks,
+                };
+    
+                // If there's an active chat, add the plan message to the chat
+                const updateResponse = await requestApi({
+                    route: `/chats/handle`,
+                    method: requestMethods.POST,
+                    body: { message: viewTasksMessage.message, sender: "bot", chatId: activeChatId }
+                });
+
+                dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
+                if (updateResponse?.chat) {
+                    if (activeChatId) {
+                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: viewTasksMessage.message }));
+                        if (activeChatTitle !== updateResponse.chat.title) {
+                            dispatch(updateChatTitle({ chatId: activeChatId, title: updateResponse.chat.title }));
+                        }
+                    } else {
+                        dispatch(addChat(updateResponse.chat));
+                        dispatch(setActiveChat(updateResponse.chat._id));
+                    }
+                } else {
+                    toast.error("Failed to add view tasks to the chat", updateResponse.message);
+                }
+            } else {
+                toast.error("Failed to generate view tasks", response.message);
+            }
+        } catch (error) {
+            console.error("Error generating view tasks:", error);
+        }
+    };
+
     const features = [
         { title: "Generate plans", icon: Calendar, method: handleGenerateGrowthPlan},
         { title: "Learning Zone", icon: Bot, method: handleGenerateLearningZone},
         { title: "Track My Day", icon: Timer, method: handleGenerateTrackDay},
         { title: "Tell Me a Story", icon: MessageCircle, method: handleGenerateStory},
-        { title: "View Tasks", icon: List},
+        { title: "View Tasks", icon: List, method: handleGenerateViewTasks},
         { title: "Progress Tracker", icon: Layout},
     ];  
   
