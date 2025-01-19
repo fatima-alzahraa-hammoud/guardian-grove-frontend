@@ -8,6 +8,7 @@ import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import LeaderboardItem from "../../components/dashboardComponents/LeaderboardItem";
 import FamilyDialog, { FamilyDialogProps } from "../../components/common/FamilyDialog";
+import { selectFamilyName, selectFamilyStars } from "../../redux/slices/familySlice";
 
 interface LeaderboardEntry {
     rank: number;
@@ -35,6 +36,8 @@ const Leaderboard: React.FC = () => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedFamily, setSelectedFamily] = useState<FamilyDialogProps | null>(null);
 
+    const familyName = useSelector(selectFamilyName);
+    const totalStars = useSelector(selectFamilyStars);
 
     const filters = ["Daily Stars", "Weekly Champions", "Monthly Achievers", "Yearly Legends"];
     const [activeFilter, setActiveFilter] = useState<string>("Daily Stars");
@@ -206,7 +209,22 @@ const Leaderboard: React.FC = () => {
                             Shine together! See how your family ranks among others.
                         </p>
                     </div>
-                    <Button className="flex items-center bg-[#3A8EBA] px-3 py-2 rounded-full hover:bg-[#347ea5] transition">
+                    <Button 
+                        onClick={() => {
+                            // Set family data and open the dialog
+                            setSelectedFamily({
+                                familyName: familyName || "Family",
+                                rank: currentFamilyRank?.rank || null,
+                                totalStars: totalStars,
+                                wonChallenges: 30,
+                                familyId: familyId,
+                                open: true,
+                                onOpenChange: (open) => setDialogOpen(open)
+                            });
+                            setDialogOpen(true);
+                        }} 
+                        className="flex items-center bg-[#3A8EBA] px-3 py-2 rounded-full hover:bg-[#347ea5] transition"
+                    >
                         <p className="text-sm font-semibold text-white">
                             View Your Achievements
                         </p>

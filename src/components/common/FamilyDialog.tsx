@@ -6,10 +6,10 @@ import ProgressBar from "./ProgressBar";
 
 export interface FamilyDialogProps {
     familyName: string;
-    rank: number;
+    rank: number | null;
     totalStars: number;
     wonChallenges: number;
-    familyId: string;
+    familyId: string | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
@@ -17,22 +17,23 @@ export interface FamilyDialogProps {
 const FamilyDialog : React.FC<FamilyDialogProps> = ({open, onOpenChange, familyName, rank, totalStars, wonChallenges, familyId}) => {
 
     const [lastUnlocked, setLastUnlocked] = useState<{title: string, photo: string, description: string, unlockedAt: Date}> ();
-        const [noAchievements, setNoAchievements] = useState<boolean> (false);
     
     useEffect(() => {
         const fetchLastUnlockedAchievement = async () => {
             try {
                 const response = await requestApi({
                     route: "/achievements/lastFamilyUnlocked",
-                    method: requestMethods.GET,
+                    method: requestMethods.POST,
                     body: {familyId}
                 });
 
                 if (response){
-                    if (response.message === "No achievements"){
-                        setNoAchievements(true);
+                    if (response.message !== "No achievements"){
+                        setLastUnlocked(response.lastUnlockedAchievement);
                     }
-                    setLastUnlocked(response.lastUnlockedAchievement);
+                }
+                else{
+                    console.log(response.message)
                 }
             } catch (error) {
                 console.log("something wents wrong in getting achievements", error);
@@ -86,6 +87,8 @@ const FamilyDialog : React.FC<FamilyDialogProps> = ({open, onOpenChange, familyN
                                 <p className="font-semibold text-sm">Adventure of the day:</p>
                                 <p className="pt-4 text-xs">4 challenges solved out of 10!</p>
                             </div>
+
+                            {/* Send feedback to family */}
                         </div>
 
                         {/* Family Progress section */}
