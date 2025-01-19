@@ -8,7 +8,6 @@ import AIMessage from "/assets/images/message.png";
 import motivationImage from "/assets/images/motivation.png";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
-import { toast } from "react-toastify";
 import ProgressBar from "../common/ProgressBar";
 import "../../styles/card.css";
 import "../../styles/global.css";
@@ -162,7 +161,6 @@ const MyProfile : React.FC = () => {
                 }
             } catch (error) {
                 console.log(error);
-                toast.error("Error fetching monthly stats")
             }
         }
         fetchMonthlyStats();

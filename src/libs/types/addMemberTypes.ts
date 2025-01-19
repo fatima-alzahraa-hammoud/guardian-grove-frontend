@@ -6,13 +6,10 @@ export const addMemberSchema = z.object({
     birthday: z.date({
         required_error: "A date of birth is required.",
     }),
-    gender: z.enum(["male", "female"], {
-        required_error: "Gender is required.",
-    }),
+    gender: z.string().nonempty({ message: "Gender is required." }),
     interests: z.array(z.string()).min(1, { message: "At least one interest is required." }),
-    role: z.enum(["child", "parent"], {
-        required_error: "Family member type is required.",
-    }),
+    role: z.string().nonempty({message: "Family member type is required."}),
+
 });
 
 export type TAddMember = z.infer<typeof addMemberSchema>;

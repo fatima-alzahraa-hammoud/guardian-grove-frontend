@@ -110,7 +110,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <ToastContainer />
+            <ToastContainer className="text-xs"/>
             <DialogContent className='flex flex-col items-center justify-center font-poppins max-h-screen'>
                 <DialogHeader>
                     <DialogTitle className='mt-2'>{title}</DialogTitle>

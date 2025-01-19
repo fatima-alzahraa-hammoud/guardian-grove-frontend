@@ -93,12 +93,12 @@ const AddMembersForm : React.FC = () => {
             if (result) {
                 console.log(result.user);
                 // Success Toast
-                toast.success("Create your child successful, check your email.");
+                toast.success(`Create your ${tab} successful, check your email.`);
                 return true;
             }
         } catch (error) {
             console.log("Something wrong happened", error);
-            toast.error("There was an error creating the child. Please try again.");
+            toast.error(`There was an error creating the ${tab}. Please try again.`);
             return false; 
         }
     };
@@ -132,7 +132,7 @@ const AddMembersForm : React.FC = () => {
     
     return(
         <>
-            <ToastContainer />
+            <ToastContainer className="text-xs"/>
             {/* Header */}
             <h1 className="text-xl md:text-2xl font-bold font-comic">
                 Add Your Loved Ones to Begin the Adventure!

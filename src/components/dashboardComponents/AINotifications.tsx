@@ -5,7 +5,6 @@ import { Button } from "../ui/button";
 import { cn } from "../../lib/utils";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
-import { toast } from "react-toastify";
 import NotificationCard from "../cards/NotificationCard";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 
@@ -42,7 +41,7 @@ const AINotifications: React.FC<AINotificationsProps> = ({ collapsed }) => {
                 setNotifications(response.notifications);
                 console.log(response.notifications);
             } else {
-                toast.error("Failed to retrieve notifications", response.message);
+                console.log("Failed to retrieve notifications", response.message);
             }
         } catch (error) {
             console.log("Something went wrong", error);

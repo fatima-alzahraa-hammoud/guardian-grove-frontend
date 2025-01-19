@@ -50,7 +50,6 @@ const Signup : React.FC = () => {
             }
         } catch (error : any ) {
             const errorMessage = error.response?.data?.error || 'An unexpected error occurred';
-            toast.error(errorMessage);        
         }
     }
 

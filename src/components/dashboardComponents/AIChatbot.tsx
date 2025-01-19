@@ -100,8 +100,7 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                 toast.warn("Message cannot be empty!", { position: "top-center" });
             }
         } catch (error) {
-            toast.error("Something went wrong!", { position: "top-center" });
-            throw error; // Propagate error to handle in VoiceDialog
+            console.log("Something went wrong!",error);
         }
     };
 
@@ -163,8 +162,7 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                 toast.warn("Message cannot be empty!", { position: "top-center" });
             }
         } catch (error) {
-            toast.error("Something went wrong!", { position: "top-center" });
-            console.log(error);
+            console.log("Something went wrong!",error);
         }
     };
     
