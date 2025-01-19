@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Coins, Star } from "lucide-react";
+import { requestApi } from "../../libs/requestApi";
+import { requestMethods } from "../../libs/enum/requestMethods";
+import { useSelector } from "react-redux";
+import { selectUserId } from "../../redux/slices/userSlice";
 
 interface Task {
     _id: string;
@@ -34,15 +38,33 @@ interface TasksDialogProps {
 const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) => {
     if (!goal) return null;
 
+    const userId = useSelector(selectUserId);
+
     const [showAiPopup, setShowAiPopup] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [aiQuestion, setAiQuestion] = useState<string>("What did you learn from completing this task?");
     const [userAnswer, setUserAnswer] = useState<string>("");
     const [aiResponse, setAiResponse] = useState<string>("");
 
-    const handleDoItClick = (task: Task) => {
+    const handleDoItClick = async (task: Task) => {
         setSelectedTask(task);
-        setShowAiPopup(true); // Show the AI pop-up when the "Do it" button is clicked
+
+        try {
+            const response = await requestApi({
+                route: "/users/generateQusetion",
+                method: requestMethods.POST,
+                body: {userId, taskDescription: task.description}
+            });
+
+            if (response && response.question){
+                setShowAiPopup(true);
+                setAiQuestion(response.question);
+            }else{
+                console.log("something went wrong", response.message);
+            }
+        } catch (error) {
+            console.log("something went wrong", error);
+        }
     };
 
     const handleAiSubmit = () => {
