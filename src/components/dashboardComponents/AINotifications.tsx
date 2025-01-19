@@ -123,39 +123,58 @@ const AINotifications: React.FC<AINotificationsProps> = ({ collapsed }) => {
                     ))}
                 </div>
 
-                {/* Notifications Sections */}
-                {/* Notifications Sections */}
-                {(["today", "last7Days", "old"] as const).map((category) => {
-                    const notificationsList = filteredNotifications(category);
-                    if (notificationsList.length === 0) {
-                        return null; // Skip if no notifications in this category
-                    }
+                {/* Check if there are no notifications for the active filter */}
+                {(["today", "last7Days", "old"] as const).every(
+                    (category) => filteredNotifications(category).length === 0
+                ) ? (
+                    <div className="text-center mt-20">
+                        <h3 className="text-xl font-bold text-[#3A8EBA] mb-4">
+                            No {activeFilter} Yet!
+                        </h3>
+                        <p className="text-gray-600 text-base mb-6">
+                            Start exploring and engaging with your AI companion to receive updates and insights.<br /><br />
+                            Stay tuned for something exciting!
+                        </p>
+                        <img
+                            src="/assets/images/ai-notifications.png"
+                            alt="AI Notifications Illustration"
+                            className="w-40 h-40 mb-6 mx-auto"
+                        />
+                    </div>
+                ) : (
 
-                    return (
-                        <div key={category} className="mt-10">
-                            <h3 className="text-lg font-bold font-comic capitalize">
-                                {category === "today"
-                                ? "Today"
-                                : category === "last7Days"
-                                ? "Previous 7 Days"
-                                : "Old"}
-                            </h3>
+                    (["today", "last7Days", "old"] as const).map((category) => {
+                        const notificationsList = filteredNotifications(category);
+                        if (notificationsList.length === 0) {
+                            return null; // Skip if no notifications in this category
+                        }
 
-                            {/* Horizontal Scrollable Carousel */}
-                            <Carousel className="w-full mt-5">
-                                <CarouselContent className="flex gap-5 ">
-                                    {notificationsList.map((notification, idx) => (
-                                        <CarouselItem key={idx} className="basis-[300px] h-32">
-                                            <NotificationCard notification={notification} />
-                                        </CarouselItem>
-                                    ))}
-                                </CarouselContent>
-                                <CarouselPrevious className="w-5 h-5" />
-                                <CarouselNext className="w-5 h-5" />
-                            </Carousel>
-                        </div>
-                    );
-                })}
+                        return (
+                            <div key={category} className="mt-10">
+                                <h3 className="text-lg font-bold font-comic capitalize">
+                                    {category === "today"
+                                    ? "Today"
+                                    : category === "last7Days"
+                                    ? "Previous 7 Days"
+                                    : "Old"}
+                                </h3>
+
+                                {/* Horizontal Scrollable Carousel */}
+                                <Carousel className="w-full mt-5">
+                                    <CarouselContent className="flex gap-5 ">
+                                        {notificationsList.map((notification, idx) => (
+                                            <CarouselItem key={idx} className="basis-[300px] h-32">
+                                                <NotificationCard notification={notification} />
+                                            </CarouselItem>
+                                        ))}
+                                    </CarouselContent>
+                                    <CarouselPrevious className="w-5 h-5" />
+                                    <CarouselNext className="w-5 h-5" />
+                                </Carousel>
+                            </div>
+                        );
+                    })
+                )}
             </div>
         </div>
     );
