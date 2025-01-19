@@ -3,6 +3,7 @@ import AdminSidebar from "../admin/AdminSidebar";
 import AdminDashboard from "../admin/AdminDashboard";
 import Users from "../admin/users";
 import Families from "../admin/Families";
+import AdminStore from "../admin/AdminStore";
 
 
 const Admin : React.FC = () => {
@@ -16,6 +17,8 @@ const Admin : React.FC = () => {
                 return <Users />
             case 'families':
                 return <Families />
+            case 'store':
+                return <AdminStore />
             default:
                 return <div>Select a section</div>;
         }
