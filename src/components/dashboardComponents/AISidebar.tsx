@@ -14,6 +14,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { Chat } from "../../libs/types/chat.types";
 import { selectUserId } from "../../redux/slices/userSlice";
 import { useNavigate } from "react-router-dom";
+import QuickTipDialog from "../common/QuickTipDialog";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -520,6 +521,12 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
                     <Button onClick={generateQuickTip} variant="secondary" className="w-full bg-[#3A8EBA] hover:bg-[#326E9F] text-white transition-colors duration-200">
                         Quick Tip
                     </Button>
+
+                    <QuickTipDialog
+                        open={isQuickTipOpen} 
+                        onOpenChange={setIsQuickTipOpen}
+                        tip={quickTip}
+                    />
                 </div>
                 <div className="flex items-center justify-around mt-4 group-data-[collapsible=icon]:flex-col">
                     <Button  onClick={() => navigate("/dashboard/")} variant="ghost" size="icon" className="w-8 h-8">

@@ -27,7 +27,7 @@ const QuickTipDialog : React.FC<QuickTipProps> = ({ open, onOpenChange, tip }) =
                         <Lightbulb className="w-5 h-5 text-[#3A8EBA]" />
                         {tip.title}
                     </DialogTitle>
-                    <DialogDescription className="text-sky-800">
+                    <DialogDescription className="text-sky-800 pt-5">
                         {tip.message}
                     </DialogDescription>
                 </DialogHeader>
