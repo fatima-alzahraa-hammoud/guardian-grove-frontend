@@ -77,7 +77,7 @@ const AdminStore : React.FC = () => {
 
             <h2 className="font-poppins text-lg font-semibold">Store Management</h2>
 
-                <Card className="p-6 w-[1000px]">
+                <Card className="p-6 w-[1080px]">
                     <div className="space-y-6">
                         <div className="flex justify-end items-center">
                             <Dialog>
@@ -112,11 +112,21 @@ const AdminStore : React.FC = () => {
                                             value={newItem.price.toString()}
                                             onChange={(e) => setNewItem({ ...newItem, price: Number(e.target.value) })}
                                         />
-                                        <Input
-                                            placeholder="Category"
+                                        <Select
                                             value={newItem.category}
-                                            onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
-                                        />
+                                            onValueChange={(value) => setNewItem({ ...newItem, category: value })}
+                                        >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {uniqueCategories.filter(cat => cat !== 'all').map(category => (
+                                                <SelectItem key={category} value={category}>
+                                                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                     </div>
                                     <DialogFooter>
                                         <Button onClick={handleAddItem} className="bg-[#3A8EBA] hover:bg-[#347ea5]">
@@ -158,7 +168,7 @@ const AdminStore : React.FC = () => {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>Image</TableHead>
+                                        <TableHead className='pl-4'>Image</TableHead>
                                         <TableHead onClick={() => handleSort('name')} className="cursor-pointer hover:bg-gray-50">
                                             <div className="flex items-center">
                                                 Name
@@ -188,7 +198,7 @@ const AdminStore : React.FC = () => {
                                                 alt={item.name}
                                                 width={48}
                                                 height={48}
-                                                className="rounded-md object-cover"
+                                                className="rounded-md object-cover pl-4"
                                             />
                                         </TableCell>
                                         <TableCell className="font-medium">{item.name}</TableCell>
