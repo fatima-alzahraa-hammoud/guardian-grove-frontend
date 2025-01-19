@@ -7,6 +7,7 @@ import { selectFamilyId } from "../../redux/slices/userSlice";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import LeaderboardItem from "../../components/dashboardComponents/LeaderboardItem";
+import FamilyDialog, { FamilyDialogProps } from "../../components/common/FamilyDialog";
 
 interface LeaderboardEntry {
     rank: number;
@@ -30,6 +31,10 @@ const Leaderboard: React.FC = () => {
     const familyId = useSelector(selectFamilyId);
     const [rankingUpMessage, setRankingUpMessage] = useState<string>("");
     const [motivationalMessage, setMotivationalMessage] = useState<string>("");
+
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [selectedFamily, setSelectedFamily] = useState<FamilyDialogProps | null>(null);
+
 
     const filters = ["Daily Stars", "Weekly Champions", "Monthly Achievers", "Yearly Legends"];
     const [activeFilter, setActiveFilter] = useState<string>("Daily Stars");
@@ -242,6 +247,19 @@ const Leaderboard: React.FC = () => {
                                     familyAvatar={entry.familyAvatar}
                                     isFamily={isFamily}
                                     rankStyle={isFamily ? "font-bold text-lg text-[#3A8EBA]" : "font-semibold"}
+                                    onView={() => {
+                                        // Set family data and open the dialog
+                                        setSelectedFamily({
+                                            familyName: entry.familyName,
+                                            rank: entry.rank,
+                                            totalStars: entry.stars,
+                                            wonChallenges: entry.tasks, // Assuming tasks as wonChallenges
+                                            familyId: entry.familyId,
+                                            open: true,
+                                            onOpenChange: (open) => setDialogOpen(open)
+                                        });
+                                        setDialogOpen(true);
+                                    }}
                                 />
                             );
                         })}
@@ -274,6 +292,12 @@ const Leaderboard: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {dialogOpen && selectedFamily && (
+                <FamilyDialog
+                    {...selectedFamily}
+                />
+            )}
         </div>
     );
 };

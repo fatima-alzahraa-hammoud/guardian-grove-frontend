@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Dialog, DialogHeader } from "../ui/dialog";
-import { DialogContent, DialogTitle } from "@mui/material";
+import { Dialog, DialogHeader, DialogContent, DialogTitle } from "../ui/dialog";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 
-interface FamilyDialogProps {
+export interface FamilyDialogProps {
     familyName: string;
     rank: number;
     totalStars: number;
     wonChallenges: number;
     familyId: string;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
 }
 
-const FamilyDialog : React.FC<FamilyDialogProps> = ({familyName, rank, totalStars, wonChallenges, familyId}) => {
+const FamilyDialog : React.FC<FamilyDialogProps> = ({open, onOpenChange, familyName, rank, totalStars, wonChallenges, familyId}) => {
 
     const [lastUnlocked, setLastUnlocked] = useState<{title: string, photo: string, description: string, unlockedAt: Date}> ();
         const [noAchievements, setNoAchievements] = useState<boolean> (false);
@@ -40,10 +41,10 @@ const FamilyDialog : React.FC<FamilyDialogProps> = ({familyName, rank, totalStar
     }, []);
 
     return (
-        <Dialog>
-            <DialogContent>
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="max-w-xl p-10">
                 <DialogHeader>
-                    <DialogTitle>
+                    <DialogTitle className="flex items-center justify-between font-comic text-lg">
                         <div>
                             <span className=" font-bold">Family Name: </span>
                             <span className="font-semibold">{familyName}</span>
