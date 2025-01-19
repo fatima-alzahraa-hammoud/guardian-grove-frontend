@@ -4,6 +4,7 @@ import AdminDashboard from "../admin/AdminDashboard";
 import Users from "../admin/users";
 import Families from "../admin/Families";
 import AdminStore from "../admin/AdminStore";
+import AdminAchievement from "../admin/AdminAchievement";
 
 
 const Admin : React.FC = () => {
@@ -19,6 +20,8 @@ const Admin : React.FC = () => {
                 return <Families />
             case 'store':
                 return <AdminStore />
+            case 'achievements':
+                return <AdminAchievement />
             default:
                 return <div>Select a section</div>;
         }
