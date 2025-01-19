@@ -183,7 +183,7 @@ const Families: React.FC = () => {
                                                 value={family.overallProgress} 
                                                 className="w-full mr-2"
                                             />
-                                            <span className={`text-sm ${getProgressColorClass(family.overallProgress)}`}>
+                                            <span className={`text-sm  ${getProgressColorClass(family.overallProgress)}`}>
                                                 {family.overallProgress}%
                                             </span>
                                         </div>
@@ -194,10 +194,10 @@ const Families: React.FC = () => {
                                                 <Button 
                                                     variant="outline" 
                                                     size="sm" 
-                                                    className="flex items-center gap-2 mx-auto"
+                                                    className="flex items-center gap-2 mx-auto text-[#3A8EBA] border-[#3A8EBA] hover:bg-[#3A8EBA] hover:text-white"
                                                     onClick={() => setSelectedFamily(family)}
                                                 >
-                                                    <Mail className="h-4 w-4" />
+                                                    <Mail className="h-4 w-4 text-[#3A8EBA] hover:text-white" />
                                                     Message
                                                 </Button>
                                             </DialogTrigger>
@@ -219,7 +219,7 @@ const Families: React.FC = () => {
                                                     />
                                                     <Button 
                                                         onClick={handleSendMessage}
-                                                        className="w-full"
+                                                        className="w-full bg-[#3A8EBA] hover:bg-[#347ea5]"
                                                     >
                                                         Send Message
                                                     </Button>

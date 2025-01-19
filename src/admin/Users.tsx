@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import StatCard from './StatCard';
-import { Coins, UserCheck, UserPlus, UsersIcon } from 'lucide-react';
+import { Coins, UserCheck, UserPlus, UsersIcon, UserX } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table"
 import { Input } from "../components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
@@ -104,7 +104,7 @@ const Users: React.FC = () => {
                 <StatCard
                     title="Banned Users"
                     value={bannedUsers.toString()}
-                    icon={<Coins className="h-5 w-5 text-primary" />}
+                    icon={<UserX className="h-5 w-5 text-primary" />}
                     trend={{ value: 5, isPositive: false }}
                     padding={"pl-20"}
                 />
