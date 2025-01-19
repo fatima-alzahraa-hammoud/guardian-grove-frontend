@@ -6,7 +6,7 @@ import AIFriend from "/assets/images/ai-friend.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { useDispatch, useSelector } from "react-redux";
-import { addChat, addMessageToChat, deleteChat, renameChat, selectActiveChatId, selectActiveChatTitle, selectChats, setActiveChat, updateChatTitle } from "../../redux/slices/chatSlice";
+import { addChat, addMessageToChat, deleteChat, renameChat, selectActiveChatId, selectActiveChatTitle, selectChats, setActiveChat, setBotResponding, updateChatTitle } from "../../redux/slices/chatSlice";
 import { organizeChatsByPeriod } from "../../libs/categorizeChatsHelper";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
@@ -17,9 +17,10 @@ import { useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   collapsed: boolean;
+  setIsBotResponding: (isResponding: boolean) => void;
 }
 
-const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
+const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => {
 
     const { toggleSidebar, state } = useSidebar();
     collapsed = state === "collapsed";
@@ -93,6 +94,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
 
     const handleGenerateGrowthPlan = async () => {
         try {
+            dispatch(setBotResponding({ chatId: activeChatId, isResponding: true }));
             const response = await requestApi({
                 route: "/users/generatePlan",
                 method: requestMethods.POST, 
@@ -111,7 +113,8 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                     method: requestMethods.POST,
                     body: { message: planMessage.message, sender: "bot", chatId: activeChatId }
                 });
-    
+
+                dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
                 if (updateResponse?.chat) {
                     if (activeChatId) {
                         dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: planMessage.message }));
@@ -135,6 +138,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
     
     const handleGenerateLearningZone = async () => {
         try {
+            dispatch(setBotResponding({ chatId: activeChatId, isResponding: true }));
             const response = await requestApi({
                 route: "/users/generateLearningZone",
                 method: requestMethods.POST, 
@@ -153,7 +157,8 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                     method: requestMethods.POST,
                     body: { message: learningZoneMessage.message, sender: "bot", chatId: activeChatId }
                 });
-    
+
+                dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
                 if (updateResponse?.chat) {
                     if (activeChatId) {
                         dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: learningZoneMessage.message }));
@@ -177,6 +182,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
 
     const handleGenerateTrackDay = async () => {
         try {
+            dispatch(setBotResponding({ chatId: activeChatId, isResponding: true }));
             const response = await requestApi({
                 route: "/users/generateTrackDay",
                 method: requestMethods.POST, 
@@ -196,6 +202,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                     body: { message: dailySummaryMessage.message, sender: "bot", chatId: activeChatId }
                 });
     
+                dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
                 if (updateResponse?.chat) {
                     if (activeChatId) {
                         dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: dailySummaryMessage.message }));
@@ -219,6 +226,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
 
     const handleGenerateStory = async () => {
         try {
+            dispatch(setBotResponding({ chatId: activeChatId, isResponding: true }));
             const response = await requestApi({
                 route: "/users/generateStory",
                 method: requestMethods.POST, 
@@ -238,6 +246,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                     body: { message: storyMessage.message, sender: "bot", chatId: activeChatId }
                 });
     
+                dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
                 if (updateResponse?.chat) {
                     if (activeChatId) {
                         dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: storyMessage.message }));

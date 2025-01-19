@@ -36,6 +36,15 @@ const chatSlice = createSlice({
                     timestamp: new Date().toISOString(),
                 });
                 chat.updatedAt = new Date().toISOString();
+
+                if (action.payload.sender === "bot") 
+                    chat.isResponding = false;
+            }
+        },
+        setBotResponding: (state, action) => {
+            const chat = state.chats.find(chat => chat._id === action.payload.chatId);
+            if (chat) {
+                chat.isResponding = action.payload.isResponding;
             }
         },
         updateChatTitle(state, action: PayloadAction<{ chatId: string; title: string }>) {
@@ -51,7 +60,7 @@ const chatSlice = createSlice({
     },
 });
   
-export const { addChat, renameChat, deleteChat, setActiveChat, addMessageToChat, updateChatTitle, resetChats } = chatSlice.actions;
+export const { addChat, renameChat, deleteChat, setActiveChat, addMessageToChat, updateChatTitle, resetChats, setBotResponding } = chatSlice.actions;
 
 export const selectChats = (state: { chat: ChatState }) => state.chat.chats;
 export const selectActiveChatId = (state: { chat: ChatState }) => state.chat.activeChatId;
@@ -59,5 +68,10 @@ export const selectActiveChatTitle = (state: { chat: ChatState }) => {
     const activeChat = state.chat.chats.find((chat) => chat._id === state.chat.activeChatId);
     return activeChat ? activeChat.title : "No active chat";
 };
+export const selectIsResponding = (state: { chat: ChatState }) => {
+    const activeChat = state.chat.chats.find(chat => chat._id === state.chat.activeChatId);
+    return activeChat ? activeChat.isResponding === true : false;
+};
+
 
 export default chatSlice.reducer;

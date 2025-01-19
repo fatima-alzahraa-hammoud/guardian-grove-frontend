@@ -10,6 +10,7 @@ export interface Chat {
     messages: Message[];
     createdAt: Date;
     updatedAt: string;
+    isResponding: boolean;
 }
 
 export interface ChatState {

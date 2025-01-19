@@ -4,7 +4,7 @@ import { Card } from "../ui/card";
 import { Mic, Paperclip, Send } from "lucide-react";
 import {toast, ToastContainer } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { addChat, addMessageToChat, selectActiveChatId, selectActiveChatTitle, selectChats, setActiveChat, updateChatTitle } from "../../redux/slices/chatSlice";
+import { addChat, addMessageToChat, selectActiveChatId, selectActiveChatTitle, selectChats, selectIsResponding, setActiveChat, setBotResponding, updateChatTitle } from "../../redux/slices/chatSlice";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import MessageComponent from "../common/MessageComponent";
@@ -26,7 +26,8 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
     const [isCall, setIsCall] = useState(true);
 
-    const [isBotResponding, setIsBotResponding] = useState<boolean>(false);
+
+    const isBotResponding = useSelector(selectIsResponding);
 
     const dispatch = useDispatch();
 
@@ -79,13 +80,13 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
         
             const data = { sender: "user", message: transcript.trim(), chatId: activeChatId };
             if (transcript.trim()) {
-                setIsBotResponding(true);
+                dispatch(setBotResponding({ chatId: activeChatId, isResponding: true }));
                 const response = await requestApi({
                     route: "/chats/handle",
                     method: requestMethods.POST,
                     body: data
                 });
-                setIsBotResponding(false);
+                dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
                 if (response) {
                     if (activeChatId !== null) {
                         dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: response.aiResponse.content }));
@@ -142,13 +143,13 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
 
             const data = {sender:"user", message: input.trim(), chatId: activeChatId};
             if (input.trim()) {
-                setIsBotResponding(true);
+                dispatch(setBotResponding({ chatId: activeChatId, isResponding: true }));
                 const response = await requestApi({
                     route: "/chats/handle",
                     method: requestMethods.POST,
                     body: data
                 });
-                setIsBotResponding(false);
+                dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
                 if (response){
                     if (activeChatId !== null){
                         dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: response.aiResponse.content }));
@@ -192,12 +193,12 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                     {/* Chatbot Container */}
                     <Card className="h-[calc(100vh-9rem)] bg-[#CDE7FE] border-none shadow-none w-full mt-4">
                         <div className="max-h-[530px]  overflow-y-auto p-4 space-y-6">
-                        {messages.length > 0 ? (
+                            {messages.length > 0 ? (
                                 messages.map((message, index) => (
-                                    <div key={index} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
-                                        <div className={`max-w-[70%] rounded-2xl p-3 ${message.sender === "user" ? "bg-[#3A8EBA] text-white" : "bg-white text-black"}`}>
+                                    <div className={`flex ${message.sender === "user" ? "justify-end items-end" : "justify-start items-start"}`}>
+                                        <div className={`max-w-[70%] rounded-2xl p-3 ${message.sender === "user" ? "bg-[#3A8EBA] text-white" : "bg-white text-black"} overflow-hidden`}>
                                             <MessageComponent key={index} message={message.message} />
-                                            <div className={`text-xs mt-1 ${message.sender === "user" ? "text-gray-300" : "text-gray-500"}`}>
+                                            <div className={`text-xs mt-1 text-left ${message.sender === "user" ? "text-gray-300" : "text-gray-500"}`}>
                                                 {formatTimestamp(message.timestamp)}
                                             </div>
                                         </div>
@@ -241,11 +242,12 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                                 spellCheck="false"
                                 className="resize-none overflow-auto w-full flex-1 bg-transparent p-4 pb-0 text-sm outline-none ring-0 placeholder:text-[#ffffff76]"
                                 style={{
-                                    height: "58px",
-                                    minHeight: "42px",
-                                    maxHeight: "384px",
+                                    height: "auto", 
+                                    minHeight: "42px", 
+                                    maxHeight: "200px", 
                                 }}
                             />
+
 
                             <div className="ml-auto flex items-center gap-2">
                                 <button

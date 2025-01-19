@@ -8,7 +8,7 @@ interface MessageProps {
 
 const MessageComponent: React.FC<MessageProps> = ({ message }) => {
   return (
-    <div className="text-sm">
+    <div className="text-sm text-left">
       {/* Use remark-gfm to support line breaks and GitHub-flavored Markdown */}
       <ReactMarkdown remarkPlugins={[remarkGfm]}>{message}</ReactMarkdown>
     </div>
