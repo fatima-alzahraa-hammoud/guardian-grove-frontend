@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, DialogHeader } from "../ui/dialog";
 import { DialogContent, DialogTitle } from "@mui/material";
+import { requestApi } from "../../libs/requestApi";
+import { requestMethods } from "../../libs/enum/requestMethods";
 
 interface FamilyDialogProps {
     familyName: string;
@@ -10,6 +12,30 @@ interface FamilyDialogProps {
 }
 
 const FamilyDialog : React.FC<FamilyDialogProps> = ({familyName, rank, totalStars, wonChallenges}) => {
+
+    const [lastUnlocked, setLastUnlocked] = useState<{title: string, photo: string, description: string, unlockedAt: Date}> ();
+        const [noAchievements, setNoAchievements] = useState<boolean> (false);
+    
+    useEffect(() => {
+        const fetchLastUnlockedAchievement = async () => {
+            try {
+                const response = await requestApi({
+                    route: "/achievements/lastFamilyUnlocked",
+                    method: requestMethods.GET
+                });
+
+                if (response){
+                    if (response.message === "No achievements"){
+                        setNoAchievements(true);
+                    }
+                    setLastUnlocked(response.lastUnlockedAchievement);
+                }
+            } catch (error) {
+                console.log("something wents wrong in getting achievements", error);
+            }
+        }
+        fetchLastUnlockedAchievement();
+    }, []);
 
     return (
         <Dialog>
@@ -28,7 +54,7 @@ const FamilyDialog : React.FC<FamilyDialogProps> = ({familyName, rank, totalStar
                     </DialogTitle>
                 </DialogHeader>
 
-                <div className="mt-2">
+                <div className="mt-2 space-y-6">
                     {/* winning section */}
                     <div className="mb-6 font-comic">
                         <div className="flex items-center justify-between">
