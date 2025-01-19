@@ -9,9 +9,10 @@ interface FamilyDialogProps {
     rank: number;
     totalStars: number;
     wonChallenges: number;
+    familyId: string;
 }
 
-const FamilyDialog : React.FC<FamilyDialogProps> = ({familyName, rank, totalStars, wonChallenges}) => {
+const FamilyDialog : React.FC<FamilyDialogProps> = ({familyName, rank, totalStars, wonChallenges, familyId}) => {
 
     const [lastUnlocked, setLastUnlocked] = useState<{title: string, photo: string, description: string, unlockedAt: Date}> ();
         const [noAchievements, setNoAchievements] = useState<boolean> (false);
@@ -21,7 +22,8 @@ const FamilyDialog : React.FC<FamilyDialogProps> = ({familyName, rank, totalStar
             try {
                 const response = await requestApi({
                     route: "/achievements/lastFamilyUnlocked",
-                    method: requestMethods.GET
+                    method: requestMethods.GET,
+                    body: {familyId}
                 });
 
                 if (response){
@@ -67,6 +69,12 @@ const FamilyDialog : React.FC<FamilyDialogProps> = ({familyName, rank, totalStar
                                 <span>{wonChallenges}</span>
                             </div>
                         </div>
+                    </div>
+
+                    {/* Last Unlocked Achievements Section */}
+                    <div>
+                        <p className="font-semibold">Last Unlocked Achievement:</p>
+                        <p>{lastUnlocked?.title}</p>
                     </div>
                 </div>
             </DialogContent>
