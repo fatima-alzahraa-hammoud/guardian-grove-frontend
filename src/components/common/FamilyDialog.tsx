@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Dialog, DialogHeader, DialogContent, DialogTitle } from "../ui/dialog";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
+import ProgressBar from "./ProgressBar";
 
 export interface FamilyDialogProps {
     familyName: string;
@@ -71,17 +72,31 @@ const FamilyDialog : React.FC<FamilyDialogProps> = ({open, onOpenChange, familyN
                             </div>
                         </div>
                     </div>
+                    
+                    <div className="flex items-start justify-between  w-full">
+                        <div className="space-y-5 w-[60%]">
+                            {/* Last Unlocked Achievements Section */}
+                            <div className="pt-10">
+                                <p className="font-semibold text-sm">Last Unlocked Achievement:</p>
+                                <p className="pt-4 text-xs">{lastUnlocked?.title || "No achievements yet 😮‍💨"}</p>
+                            </div>
 
-                    {/* Last Unlocked Achievements Section */}
-                    <div className="pt-10">
-                        <p className="font-semibold text-sm">Last Unlocked Achievement:</p>
-                        <p className="pt-4 text-xs">{lastUnlocked?.title || "No achievements yet 😮‍💨"}</p>
-                    </div>
+                            {/* Adventure of the day */}
+                            <div className="pt-5">
+                                <p className="font-semibold text-sm">Adventure of the day:</p>
+                                <p className="pt-4 text-xs">4 challenges solved out of 10!</p>
+                            </div>
+                        </div>
 
-                    {/* Adventure of the day */}
-                    <div className="pt-5">
-                        <p className="font-semibold text-sm">Adventure of the day:</p>
-                        <p className="pt-4 text-xs">4 challenges solved out of 10!</p>
+                        {/* Family Progress section */}
+                        <div className="pt-10 w-[40%]">
+                            <p className="font-semibold text-sm">Progress Summary</p>
+                            <div className="space-y-2 w-full">
+                                <ProgressBar label="Tasks" completed={4} total={5}/>
+                                <ProgressBar label="Goals" completed={6} total={10}/>
+                                <ProgressBar label="Achievements" completed={3} total={20}/>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </DialogContent>
