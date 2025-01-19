@@ -26,6 +26,8 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
     const [isCall, setIsCall] = useState(true);
 
+    const [isBotResponding, setIsBotResponding] = useState<boolean>(false);
+
     const dispatch = useDispatch();
 
     const activeChat = chats.find((chat) => chat._id === activeChatId) || null;
@@ -77,11 +79,13 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
         
             const data = { sender: "user", message: transcript.trim(), chatId: activeChatId };
             if (transcript.trim()) {
+                setIsBotResponding(true);
                 const response = await requestApi({
                     route: "/chats/handle",
                     method: requestMethods.POST,
                     body: data
                 });
+                setIsBotResponding(false);
                 if (response) {
                     if (activeChatId !== null) {
                         dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: response.aiResponse.content }));
@@ -138,13 +142,13 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
 
             const data = {sender:"user", message: input.trim(), chatId: activeChatId};
             if (input.trim()) {
+                setIsBotResponding(true);
                 const response = await requestApi({
                     route: "/chats/handle",
                     method: requestMethods.POST,
                     body: data
                 });
-                console.log("API Response:", response);  // Log the response structure
-
+                setIsBotResponding(false);
                 if (response){
                     if (activeChatId !== null){
                         dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: response.aiResponse.content }));
@@ -187,14 +191,12 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                         
                     {/* Chatbot Container */}
                     <Card className="h-[calc(100vh-9rem)] bg-[#CDE7FE] border-none shadow-none w-full mt-4">
-                            <div className="max-h-[530px]  overflow-y-auto p-4 space-y-6">
-                            {messages.length > 0 ? (
+                        <div className="max-h-[530px]  overflow-y-auto p-4 space-y-6">
+                        {messages.length > 0 ? (
                                 messages.map((message, index) => (
                                     <div key={index} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
-                                        <div
-                                            className={`max-w-[70%] rounded-2xl p-3 ${message.sender === "user" ? "bg-[#3A8EBA] text-white" : "bg-white text-black"}`}
-                                        >
-                                            <MessageComponent key={index} message={message.message} />                                      
+                                        <div className={`max-w-[70%] rounded-2xl p-3 ${message.sender === "user" ? "bg-[#3A8EBA] text-white" : "bg-white text-black"}`}>
+                                            <MessageComponent key={index} message={message.message} />
                                             <div className={`text-xs mt-1 ${message.sender === "user" ? "text-gray-300" : "text-gray-500"}`}>
                                                 {formatTimestamp(message.timestamp)}
                                             </div>
@@ -202,9 +204,19 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                                     </div>
                                 ))
                             ) : (
-                                <p className="text-center text-gray-500 italic font-semibold font-comic text-lg">
+                                <p className="text-center text-gray-500 font-semibold font-comic text-lg">
                                     🗨️ Hey there! Start the conversation, and I’ll be happy to chat with you! 😊
                                 </p>
+                            )}
+                            {/* Show preloader when bot is responding */}
+                            {isBotResponding && (
+                                <div className="flex justify-start">
+                                    <div className=" bg-white text-black p-3 rounded-2xl">
+                                        <div className="flex items-center justify-center w-full">
+                                            <img src="/assets/images/preloader.gif" alt="loading..." className="w-16" />
+                                        </div>
+                                    </div>
+                                </div>
                             )}
                             {/* Scroll target at the bottom */}
                             <div ref={messagesEndRef} />
