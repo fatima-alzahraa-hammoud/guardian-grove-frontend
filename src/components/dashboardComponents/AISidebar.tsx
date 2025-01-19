@@ -35,6 +35,8 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
     const activeChatTitle = useSelector(selectActiveChatTitle);
     const [hoveredChat, setHoveredChat] = React.useState<string | null>(null);
     const [editingChatId, setEditingChatId] = useState<string | null>(null);
+    const [isQuickTipOpen, setIsQuickTipOpen] = useState<boolean>(false);
+    const [quickTip, setQuickTip] = useState({ title: '', message: '' });
 
     const handleClickChat = (chatId: string) => {
         dispatch(setActiveChat(chatId));
@@ -312,6 +314,28 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
         }
     };
 
+    const generateQuickTip = async() => {
+        try {
+            const response = await requestApi({
+                route:"/users/generateQuickTip",
+                method: requestMethods.POST,
+                body: {userId}
+            });
+
+            if (response && response.quickTip){
+                setQuickTip({
+                    title: response.quickTip.title || 'Quick Tip',
+                    message: response.quickTip.message
+                });
+                setIsQuickTipOpen(true);
+            }else{
+                console.log(response.message);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     const features = [
         { title: "Generate plans", icon: Calendar, method: handleGenerateGrowthPlan},
         { title: "Learning Zone", icon: Bot, method: handleGenerateLearningZone},
@@ -493,7 +517,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
             {/* Sidebar footer */}
             <SidebarFooter className="bg-[#B2D1F1] p-4 pt-6">
                 <div className="flex flex-col gap-4 group-data-[collapsible=icon]:hidden">
-                    <Button variant="secondary" className="w-full bg-[#3A8EBA] hover:bg-[#326E9F] text-white transition-colors duration-200">
+                    <Button onClick={generateQuickTip} variant="secondary" className="w-full bg-[#3A8EBA] hover:bg-[#326E9F] text-white transition-colors duration-200">
                         Quick Tip
                     </Button>
                 </div>
