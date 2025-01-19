@@ -73,9 +73,9 @@ const FamilyDialog : React.FC<FamilyDialogProps> = ({open, onOpenChange, familyN
                     </div>
 
                     {/* Last Unlocked Achievements Section */}
-                    <div>
+                    <div className="pt-10">
                         <p className="font-semibold">Last Unlocked Achievement:</p>
-                        <p>{lastUnlocked?.title}</p>
+                        <p className="pt-4">{lastUnlocked?.title || "No achievements yet 😮‍💨"}</p>
                     </div>
                 </div>
             </DialogContent>
