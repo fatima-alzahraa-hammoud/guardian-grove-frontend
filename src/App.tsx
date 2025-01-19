@@ -18,6 +18,7 @@ import { setFamily } from './redux/slices/familySlice';
 import AdminSidebar from './admin/AdminSidebar';
 import { SidebarProvider } from './components/ui/sidebar';
 import Admin from './pages/Admin';
+import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 
 interface DecodedToken {
   userId: string;
@@ -101,7 +102,7 @@ function App() {
           <Route path='/dashboard/*' element={ <ProtectedRoute> <Dashboard /> </ProtectedRoute> } />
           <Route path='/addMembersQuestion' element={ <ProtectedRoute> <AddMembersBackground ChildComponent={AddMembersQuestion} /> </ProtectedRoute> } />
           <Route path='/addMembers' element={ <ProtectedRoute> <AddMembersBackground ChildComponent={AddMembersForm} /> </ProtectedRoute> } />
-          <Route path='/admin/*' element={<SidebarProvider><Admin /></SidebarProvider>}/>
+          <Route path='/admin/*' element={<SidebarProvider><ProtectedAdminRoute><Admin /></ProtectedAdminRoute></SidebarProvider>}/>
         </Routes>
       </div>
     </>

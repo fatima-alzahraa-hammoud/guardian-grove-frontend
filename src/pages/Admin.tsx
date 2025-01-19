@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import AdminSidebar from "../admin/AdminSidebar";
 import AdminDashboard from "../admin/AdminDashboard";
-import Users from "../admin/users";
+import Users from "../admin/Users";
 import Families from "../admin/Families";
 import AdminStore from "../admin/AdminStore";
 import AdminAchievement from "../admin/AdminAchievement";
