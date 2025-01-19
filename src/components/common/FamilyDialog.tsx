@@ -42,7 +42,7 @@ const FamilyDialog : React.FC<FamilyDialogProps> = ({open, onOpenChange, familyN
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-xl p-10">
+            <DialogContent className="max-w-xl p-10 font-poppins">
                 <DialogHeader>
                     <DialogTitle className="flex items-center justify-between font-comic text-lg">
                         <div>
@@ -74,8 +74,14 @@ const FamilyDialog : React.FC<FamilyDialogProps> = ({open, onOpenChange, familyN
 
                     {/* Last Unlocked Achievements Section */}
                     <div className="pt-10">
-                        <p className="font-semibold">Last Unlocked Achievement:</p>
-                        <p className="pt-4">{lastUnlocked?.title || "No achievements yet 😮‍💨"}</p>
+                        <p className="font-semibold text-sm">Last Unlocked Achievement:</p>
+                        <p className="pt-4 text-xs">{lastUnlocked?.title || "No achievements yet 😮‍💨"}</p>
+                    </div>
+
+                    {/* Adventure of the day */}
+                    <div className="pt-5">
+                        <p className="font-semibold text-sm">Adventure of the day:</p>
+                        <p className="pt-4 text-xs">4 challenges solved out of 10!</p>
                     </div>
                 </div>
             </DialogContent>
