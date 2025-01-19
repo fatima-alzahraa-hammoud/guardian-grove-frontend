@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {  useState } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
@@ -8,15 +8,25 @@ import {
 import { Button } from '../ui/button';
 
 // Custom Icons
-import profileImage from '/assets/images/dashboard/profile.png';
-import notesImage from '/assets/images/dashboard/notes.png';
-import familyImage from '/assets/images/dashboard/family.png';
-import tipsImage from '/assets/images/dashboard/tips.png';
-import adventureImage from '/assets/images/dashboard/adventures.png';
-import achievementsImage from '/assets/images/dashboard/achievements.png';
-import exploreImage from '/assets/images/dashboard/exploreAndLearn.png';
-import funImage from '/assets/images/dashboard/funZone.png';
-import calendarImage from '/assets/images/dashboard/calendar.png';
+import profileBlackImage from '/assets/images/dashboard/profileBlack.png';
+import notesBlackImage from '/assets/images/dashboard/notesBlack.png';
+import familyBlackImage from '/assets/images/dashboard/familyBlack.png';
+import tipsBlackImage from '/assets/images/dashboard/tipsBlack.png';
+import adventureBlackImage from '/assets/images/dashboard/adventuresBlack.png';
+import achievementsBlackImage from '/assets/images/dashboard/achievementsBlack.png';
+import exploreBlackImage from '/assets/images/dashboard/exploreAndLearnBlack.png';
+import funBlackImage from '/assets/images/dashboard/funZoneBlack.png';
+import calendarBlackImage from '/assets/images/dashboard/calendarBlack.png';
+
+import profileWhiteImage from '/assets/images/dashboard/profileWhite.png';
+import notesWhiteImage from '/assets/images/dashboard/notesWhite.png';
+import familyWhiteImage from '/assets/images/dashboard/familyWhite.png';
+import tipsWhiteImage from '/assets/images/dashboard/tipsWhite.png';
+import adventureWhiteImage from '/assets/images/dashboard/adventuresWhite.png';
+import achievementsWhiteImage from '/assets/images/dashboard/achievementsWhite.png';
+import exploreWhiteImage from '/assets/images/dashboard/exploreAndLearnWhite.png';
+import funWhiteImage from '/assets/images/dashboard/funZoneWhite.png';
+import calendarWhiteImage from '/assets/images/dashboard/calendarWhite.png';
 import settingsImage from '/assets/images/dashboard/settings.svg';
 import logoutImage from '/assets/images/dashboard/logout.svg';
 import infoImage from '/assets/images/dashboard/badge-info.svg';
@@ -76,21 +86,21 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, coll
 
 
           <nav className="flex flex-col space-y-2 mt-6 overflow-y-auto md:custom-scrollbar md:max-h-[50vh] lg:max-h-screen">
-            <SidebarItem icon={profileImage} label="My Profile" collapsed={collapsed} onClick={() => setActiveSection('profile')} isActive={activeSection === 'profile'} />
-            <SidebarItem icon={notesImage} label="My Notes" collapsed={collapsed} onClick={() => setActiveSection('notes')} isActive={activeSection === 'notes'} />
+            <SidebarItem icon={activeSection === "profile" ? profileWhiteImage : profileBlackImage} label="My Profile" collapsed={collapsed} onClick={() => setActiveSection('profile')} isActive={activeSection === 'profile'} />
+            <SidebarItem icon={activeSection === "notes" ? notesWhiteImage : notesBlackImage} label="My Notes" collapsed={collapsed} onClick={() => setActiveSection('notes')} isActive={activeSection === 'notes'} />
 
             {/* Family Dropdown */}
             <div
               className={`flex flex-col ${collapsed ? 'items-center' : ''}`}
             >
               <div
-                className={`flex items-center text-sm text-black hover:text-black px-6 py-2 hover:bg-[#3a8dba89] ${
-                  collapsed ? 'justify-center' : 'pl-10'
+                className={`flex items-center text-sm text-black px-6 py-2 hover:bg-purple-200 ${(activeSection === 'familyJournal' || activeSection === 'familyTree' ) && collapsed ? 'bg-[#3A8EBA]' : ''} ${
+                collapsed ? 'justify-center' : 'pl-10'
                 } cursor-pointer`}
                 onClick={() => setIsFamilyOpen(!isFamilyOpen)}
               >
                 <div className="w-4 h-4">
-                  <img src={familyImage} alt="Family" className="w-full h-full" />
+                  <img src={(activeSection === 'familyJournal' || activeSection === 'familyTree' ) && collapsed ? familyWhiteImage : familyBlackImage} alt="Family" className="w-full h-full" />
                 </div>
                 {!collapsed && (
                   <>
@@ -107,12 +117,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, coll
               )}
             </div>
 
-            <SidebarItem icon={tipsImage} label="AI Tips & Alerts" collapsed={collapsed} onClick={() => setActiveSection('notifications')} isActive={activeSection === 'notifications'} />
-            <SidebarItem icon={adventureImage} label="Adventures & Goals" collapsed={collapsed} onClick={() => setActiveSection('goals&adventures')} isActive={activeSection === 'goals&adventures'} />
-            <SidebarItem icon={achievementsImage} label="Achievements" collapsed={collapsed} onClick={() => setActiveSection('achievements')} isActive={activeSection === 'achievements'} />
-            <SidebarItem icon={exploreImage} label="Explore & Learn" collapsed={collapsed} onClick={() => setActiveSection('explore&learn')} isActive={activeSection === 'explore&learn'} />
-            <SidebarItem icon={funImage} label="Fun Zone" collapsed={collapsed} onClick={() => setActiveSection('funZone')} isActive={activeSection === 'funZone'} />
-            <SidebarItem icon={calendarImage} label="Calendar" collapsed={collapsed} onClick={() => setActiveSection('calendar')} isActive={activeSection === 'calendar'} />
+            <SidebarItem icon={activeSection === "notifications" ? tipsWhiteImage : tipsBlackImage} label="AI Tips & Alerts" collapsed={collapsed} onClick={() => setActiveSection('notifications')} isActive={activeSection === 'notifications'} />
+            <SidebarItem icon={activeSection === "goals&adventures" ? adventureWhiteImage : adventureBlackImage} label="Adventures & Goals" collapsed={collapsed} onClick={() => setActiveSection('goals&adventures')} isActive={activeSection === 'goals&adventures'} />
+            <SidebarItem icon={activeSection === "achievements" ? achievementsWhiteImage : achievementsBlackImage} label="Achievements" collapsed={collapsed} onClick={() => setActiveSection('achievements')} isActive={activeSection === 'achievements'} />
+            <SidebarItem icon={activeSection === "explore&learn" ? exploreWhiteImage : exploreBlackImage} label="Explore & Learn" collapsed={collapsed} onClick={() => setActiveSection('explore&learn')} isActive={activeSection === 'explore&learn'} />
+            <SidebarItem icon={activeSection === "funZone" ? funWhiteImage : funBlackImage} label="Fun Zone" collapsed={collapsed} onClick={() => setActiveSection('funZone')} isActive={activeSection === 'funZone'} />
+            <SidebarItem icon={activeSection === "calendar" ? calendarWhiteImage : calendarBlackImage} label="Calendar" collapsed={collapsed} onClick={() => setActiveSection('calendar')} isActive={activeSection === 'calendar'} />
           </nav>
         </div>
 
