@@ -35,6 +35,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectGender } from '../../redux/slices/userSlice';
 import { logout } from '../../redux/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
+import SettingsDialog from '../common/UpdatePasswordDialog';
 
 interface SidebarProps {
   activeSection: string;
@@ -129,7 +130,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, coll
         <div className="flex justify-between pt-3 pb-6 pl-9 pr-9">
           <FooterIcon icon={logoutImage} onClick={handleLogout}/>
           <FooterIcon icon={infoImage} />
-          <FooterIcon icon={settingsImage} />
+          <SettingsDialog />
         </div>
       </div>
     </div>

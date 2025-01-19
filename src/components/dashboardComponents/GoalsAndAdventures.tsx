@@ -253,8 +253,8 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
                                     <Carousel className="w-full mt-5">
                                         <CarouselContent className="flex gap-5 ">
                                             {goals.filter(goal => !goal.isCompleted).map((goal) => (
-                                                <CarouselItem key={goal._id} className="basis-[300px]">
-                                                    <GoalCard key={goal._id} goal={goal} onViewTasks={() => {handleViewTasks(goal)}} />
+                                                <CarouselItem key={goal._id} className="basis-[300px] h-[400px]">
+                                                    <GoalCard key={goal._id} goal={goal} onViewTasks={() => {handleViewTasks(goal)}} classname="h-full" />
                                                 </CarouselItem>
                                             ))}
                                         </CarouselContent>
@@ -269,12 +269,12 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
                         {goals.some(goal => goal.isCompleted) && (
                             <div className="mt-10 mb-3">
                                 <h2 className="text-lg font-semibold mb-4">Completed</h2>
-                                <div className="flex overflow-x-auto gap-6 scroll-smooth hide-scrollbar relative px-12">
+                                <div className="flex relative px-12">
                                     <Carousel className="w-full mt-5">
-                                        <CarouselContent className="flex gap-5 ">
+                                        <CarouselContent className="flex ">
                                             {goals.filter(goal => goal.isCompleted).map((goal, index) => (
                                                 <CarouselItem key={goal._id} className="basis-[300px]">
-                                                    <GoalCard key={goal._id || index} goal={goal} onViewTasks={() => {handleViewTasks(goal)}} />
+                                                    <GoalCard key={goal._id || index} goal={goal} onViewTasks={() => {handleViewTasks(goal)}} classname="h-full"/>
                                                 </CarouselItem>
                                             ))}
                                         </CarouselContent>
