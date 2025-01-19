@@ -15,6 +15,8 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../../styles/calendar.css";
 import { Value } from "react-calendar/dist/esm/shared/types.js";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
+import NotificationCard from "../cards/NotificationCard";
 
 interface GoalsAndAdventuresProps {
     collapsed: boolean;
@@ -240,6 +242,7 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
                     )}
                 </div>
 
+
                 {activeFilter === "Goals" ? (
                     <div className="mt-8">
                         {/* In Progress Goals */}
@@ -247,9 +250,17 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
                             <div className="mt-10">
                                 <h2 className="text-lg font-semibold mb-4">In Progress</h2>
                                 <div className="flex overflow-x-auto gap-6 scroll-smooth hide-scrollbar relative px-12">
-                                    {goals.filter(goal => !goal.isCompleted).map((goal) => (
-                                        <GoalCard key={goal._id} goal={goal} onViewTasks={() => {handleViewTasks(goal)}} />
-                                    ))}
+                                    <Carousel className="w-full mt-5">
+                                        <CarouselContent className="flex gap-5 ">
+                                            {goals.filter(goal => !goal.isCompleted).map((goal) => (
+                                                <CarouselItem key={goal._id} className="basis-[300px]">
+                                                    <GoalCard key={goal._id} goal={goal} onViewTasks={() => {handleViewTasks(goal)}} />
+                                                </CarouselItem>
+                                            ))}
+                                        </CarouselContent>
+                                        <CarouselPrevious className="w-5 h-5" />
+                                        <CarouselNext className="w-5 h-5" />
+                                    </Carousel>
                                 </div>
                             </div>
                         )}
@@ -259,9 +270,17 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
                             <div className="mt-10 mb-3">
                                 <h2 className="text-lg font-semibold mb-4">Completed</h2>
                                 <div className="flex overflow-x-auto gap-6 scroll-smooth hide-scrollbar relative px-12">
-                                    {goals.filter(goal => goal.isCompleted).map((goal, index) => (
-                                        <GoalCard key={goal._id || index} goal={goal} onViewTasks={() => {handleViewTasks(goal)}} />
-                                    ))}
+                                    <Carousel className="w-full mt-5">
+                                        <CarouselContent className="flex gap-5 ">
+                                            {goals.filter(goal => goal.isCompleted).map((goal, index) => (
+                                                <CarouselItem key={goal._id} className="basis-[300px]">
+                                                    <GoalCard key={goal._id || index} goal={goal} onViewTasks={() => {handleViewTasks(goal)}} />
+                                                </CarouselItem>
+                                            ))}
+                                        </CarouselContent>
+                                        <CarouselPrevious className="w-5 h-5" />
+                                        <CarouselNext className="w-5 h-5" />
+                                    </Carousel>
                                 </div>
                             </div>
                         )}
