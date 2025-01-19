@@ -161,11 +161,15 @@ const AINotifications: React.FC<AINotificationsProps> = ({ collapsed }) => {
 
                                 {/* Horizontal Scrollable Carousel */}
                                 <Carousel className="w-full mt-5">
-                                    <CarouselContent className="flex gap-5 ">
+                                    <CarouselContent className="flex gap-5">
                                         {notificationsList.map((notification, idx) => (
-                                            <CarouselItem key={idx} className="basis-[300px] h-32">
+                                        <CarouselItem key={idx} className="basis-[300px]">
+                                            <div className="h-full">
+                                            <div className="h-[200px]"> {/* Fixed height container */}
                                                 <NotificationCard notification={notification} />
-                                            </CarouselItem>
+                                            </div>
+                                            </div>
+                                        </CarouselItem>
                                         ))}
                                     </CarouselContent>
                                     <CarouselPrevious className="w-5 h-5" />
