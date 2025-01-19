@@ -27,7 +27,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ completed, total, label }) =>
                     <p className="text-xs">{`${completed}/${total}`}</p>
                 }
             </div>
-            <div className="w-full bg-[#ebebeb] rounded-full h-2 mt-3">
+            <div className="w-full bg-[#fff9f9] rounded-full h-2 mt-3">
                 <div
                     className={`h-2 rounded-full ${getColor()}`}
                     style={{ width: `${percentage}%` }}
