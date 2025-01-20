@@ -16,10 +16,20 @@ import "react-calendar/dist/Calendar.css";
 import "../../styles/calendar.css";
 import { Value } from "react-calendar/dist/esm/shared/types.js";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
-import NotificationCard from "../cards/NotificationCard";
 
 interface GoalsAndAdventuresProps {
     collapsed: boolean;
+}
+
+interface Task {
+    _id: string;
+    title: string;
+    isCompleted: boolean; 
+    description: string;
+    rewards: {
+        stars: number;
+        coins: number;
+    };
 }
 
 interface Goal {
@@ -28,21 +38,12 @@ interface Goal {
     type: string;
     description: string;
     nbOfTasksCompleted: number;
-    tasks: { 
-        _id: string; 
-        title: string; 
-        completed: boolean; 
-        description: string; 
-        rewards :{
-            stars: number;
-            coins: number;
-        }
-    }[];
+    tasks: Task[];  // Now using the Task interface
     dueDate: Date;
     rewards: {
-      stars: number;
-      coins: number;
-      achievementName?: string;
+        stars: number;
+        coins: number;
+        achievementName?: string;
     };
     isCompleted: boolean;
 }

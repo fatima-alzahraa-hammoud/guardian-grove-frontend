@@ -10,7 +10,7 @@ interface Goal {
     type: string;
     description: string;
     nbOfTasksCompleted: number;
-    tasks: { _id: string; title: string; completed: boolean }[];
+    tasks: { _id: string; title: string; isCompleted: boolean }[];
     dueDate: Date;
     rewards: {
       stars: number;

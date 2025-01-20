@@ -3,7 +3,7 @@ import sortImage from "/assets/images/sort.png";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import AchievementCard from "../cards/AchievementCard";
-import notesImage from '/assets/images/dashboard/notes.png';
+import notesImage from '/assets/images/dashboard/notesBlack.png';
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { toast } from "react-toastify";

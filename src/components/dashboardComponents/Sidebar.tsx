@@ -27,7 +27,6 @@ import achievementsWhiteImage from '/assets/images/dashboard/achievementsWhite.p
 import exploreWhiteImage from '/assets/images/dashboard/exploreAndLearnWhite.png';
 import funWhiteImage from '/assets/images/dashboard/funZoneWhite.png';
 import calendarWhiteImage from '/assets/images/dashboard/calendarWhite.png';
-import settingsImage from '/assets/images/dashboard/settings.svg';
 import logoutImage from '/assets/images/dashboard/logout.svg';
 import infoImage from '/assets/images/dashboard/badge-info.svg';
 import "../../styles/sidebar.css";
