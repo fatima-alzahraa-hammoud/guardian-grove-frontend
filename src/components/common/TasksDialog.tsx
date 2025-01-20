@@ -4,13 +4,13 @@ import { Button } from "../ui/button";
 import { Coins, Star } from "lucide-react";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
-import { useSelector } from "react-redux";
-import { selectUserId } from "../../redux/slices/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUserId, setCoins, setStars } from "../../redux/slices/userSlice";
 
 interface Task {
     _id: string;
     title: string;
-    completed: boolean;
+    isCompleted: boolean;
     description: string;
     rewards: {
         stars: number;
@@ -27,6 +27,7 @@ interface Goal {
         coins: number;
         achievementName?: string;
     };
+    isCompleted: boolean;
 }
 
 interface TasksDialogProps {
@@ -39,16 +40,18 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
     if (!goal) return null;
 
     const userId = useSelector(selectUserId);
+    const dispatch = useDispatch();
 
     const [showAiPopup, setShowAiPopup] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+    const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
     const [aiQuestion, setAiQuestion] = useState<string>("What did you learn from completing this task?");
     const [userAnswer, setUserAnswer] = useState<string>("");
     const [aiResponse, setAiResponse] = useState<string>("");
 
-    const handleDoItClick = async (task: Task) => {
+    const handleDoItClick = async (task: Task, goal: Goal) => {
         setSelectedTask(task);
-
+        setSelectedGoal(goal);
         try {
             const response = await requestApi({
                 route: "/users/generateQusetion",
@@ -67,12 +70,43 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
         }
     };
 
-    const handleAiSubmit = () => {
-        if (userAnswer.trim() !== "") {
-            setAiResponse(`Great job! You said: "${userAnswer}". Now, you've completed the task!`);
-            selectedTask && (selectedTask.completed = true);
-        } else {
-            setAiResponse("Please provide a response before submitting.");
+    const handleAiSubmit = async() => {
+        try {
+
+            if(!userAnswer.trim()) return false;
+            const response = await requestApi({
+                route: "/users/checkAnswer",
+                method: requestMethods.POST,
+                body: {userId, question: aiQuestion, userAnswer: userAnswer.trim()}
+            });
+            if (response && response.taskCompleted){
+                setAiResponse("Good Job! 😊");
+
+                const result = await requestApi({
+                    route: "/userGoals/taskDone",
+                    method: requestMethods.POST,
+                    body: {userId, goalId: selectedGoal?._id, taskId: selectedTask?._id}
+                });
+                if(result && result.task && result.goal){
+                    dispatch(setStars(result.task.rewards.stars));
+                    dispatch(setCoins(result.task.rewards.coins));
+                    if (selectedTask) {
+                        selectedTask.isCompleted = true;
+                    }
+                    if (result.goal.isCompleted){
+                        if (selectedGoal) {
+                            selectedGoal.isCompleted = true;
+                        }
+                        dispatch(setStars(result.goal.rewards.stars));
+                        dispatch(setCoins(result.goal.rewards.coins));
+                    }
+                }
+            }else{
+                setAiResponse("Oops! Try again.. 😮‍💨");
+                console.log("wrong answer", response.message);
+            }
+        } catch (error) {
+            console.log("something went wrong", error);
         }
     };
 
@@ -143,10 +177,10 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
                                     <Button
                                         variant="outline"
                                         className="text-xs"
-                                        disabled={task.completed}
-                                        onClick={() => handleDoItClick(task)}
+                                        disabled={task.isCompleted}
+                                        onClick={() => handleDoItClick(task, goal)}
                                     >
-                                        {task.completed ? "Done!" : "Do it"}
+                                        {task.isCompleted ? "Done!" : "Do it"}
                                     </Button>
                                 </div>
                             </div>

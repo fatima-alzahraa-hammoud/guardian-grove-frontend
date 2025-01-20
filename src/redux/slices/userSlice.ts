@@ -46,7 +46,10 @@ const userSlice = createSlice({
             state.purchasedItems = action.payload;
         },
         setCoins(state, action: PayloadAction<number>) {
-            state.coins = action.payload;
+            state.coins += action.payload;
+        },
+        setStars(state, action: PayloadAction<number>) {
+            state.stars += action.payload;
         },
         setEmail (state, action: PayloadAction<string>){
             state.email = action.payload
@@ -55,7 +58,7 @@ const userSlice = createSlice({
     },
 });
 
-export const { setUser, clearUser, setPurchasedItems, setCoins, setEmail } = userSlice.actions;
+export const { setUser, clearUser, setPurchasedItems, setCoins, setEmail, setStars } = userSlice.actions;
 
 export const selectStars = (state: { user: UserState }) => state.user.stars;
 export const selectAvatar = (state: { user: UserState }) => state.user.avatar;
