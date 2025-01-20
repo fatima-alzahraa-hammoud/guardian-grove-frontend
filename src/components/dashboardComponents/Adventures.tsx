@@ -1,8 +1,14 @@
-import React, { useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, Coins, Star } from "lucide-react";
+import React, { useEffect, useRef, useState } from 'react';
+import { Check, ChevronLeft, ChevronRight, Coins, Star } from "lucide-react";
 import ChallengeDialog from '../common/ChallengeDialog';
 
+interface IChallengeProgress {
+    challengeId: string;
+    isCompleted: boolean;
+    completedAt?: Date;
+}
 interface IChallenge {
+    _id: string;
     title: string;
     content: string;
     starsReward: number;
@@ -10,6 +16,7 @@ interface IChallenge {
 }
 
 interface Adventure {
+    _id: string;
     startDate: string;
     title: string;
     description: string;
@@ -20,12 +27,17 @@ interface Adventure {
 
 interface AdventureProps {
     adventure: Adventure | null;
+    userProgress?: {
+        challenges: IChallengeProgress[];
+    };
 }
 
-const Adventures: React.FC<AdventureProps> = ({ adventure }) => {
+const Adventures: React.FC<AdventureProps> = ({ adventure, userProgress }) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [selectedChallenge, setSelectedChallenge] = useState<number | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [completedChallenges, setCompletedChallenges] = useState<Set<string>>(new Set());
+
 
     if (!adventure) {
         return (
@@ -34,6 +46,21 @@ const Adventures: React.FC<AdventureProps> = ({ adventure }) => {
             </div>
         );
     }
+
+    const handleChallengeComplete = (challengeId: string) => {
+        setCompletedChallenges(prev => new Set([...prev, challengeId]));
+    };
+
+    useEffect(() => {
+        if (userProgress?.challenges) {
+            const completed = new Set(
+                userProgress.challenges
+                    .filter(challenge => challenge.isCompleted)
+                    .map(challenge => challenge.challengeId)
+            );
+            setCompletedChallenges(completed);
+        }
+    }, [userProgress]);
 
     const formattedDate = new Intl.DateTimeFormat('en-US', {
         weekday: 'long',
@@ -102,36 +129,45 @@ const Adventures: React.FC<AdventureProps> = ({ adventure }) => {
                     }}
                 >
                     <div className="flex items-center justify-center gap-4 min-w-min mx-auto h-52">
-                        {adventure.challenges.map((challenge, index) => (
-                            <div 
-                                key={index}
-                                className="flex-shrink-0 snap-center text-center"
-                                onClick={() => handleChallengeClick(index)}
-                            >
+                        {adventure.challenges.map((challenge, index) => {
+                            const isCompleted = completedChallenges.has(challenge._id);
+                            return (
                                 <div 
-                                    className={`w-32 h-32 rounded-full flex items-center justify-center cursor-pointer transition-transform hover:scale-105
-                                        ${index % 5 === 0 ? 'bg-blue-100' : 
-                                        index % 5 === 1 ? 'bg-purple-100' : 
-                                        index % 5 === 2 ? 'bg-pink-100' : 
-                                        index % 5 === 3 ? 'bg-blue-100' : 'bg-red-100'}
-                                        ${selectedChallenge === index ? 'ring-2 ring-[#3A8EBA]' : ''}`}
+                                    key={index}
+                                    className="flex-shrink-0 snap-center text-center relative"
+                                    onClick={() => handleChallengeClick(index)}
                                 >
-                                    <div className='flex flex-col items-center justify-center space-y-2'>
-                                        <p className="font-medium text-sm mb-1">{challenge.title}</p>
-                                        <div className="flex gap-3 justify-center">
-                                            <div className="flex items-center gap-1">
-                                                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                                                <span className="text-xs font-medium">{challenge.starsReward}</span>
-                                            </div>
-                                            <div className="flex items-center gap-1">
-                                                <Coins className="w-4 h-4 text-gray-600" />
-                                                <span className="text-xs font-medium">{challenge.coinsReward}</span>
+                                    <div 
+                                        className={`w-32 h-32 rounded-full flex items-center justify-center cursor-pointer transition-transform hover:scale-105
+                                            ${index % 5 === 0 ? 'bg-blue-100' : 
+                                            index % 5 === 1 ? 'bg-purple-100' : 
+                                            index % 5 === 2 ? 'bg-pink-100' : 
+                                            index % 5 === 3 ? 'bg-blue-100' : 'bg-red-100'}
+                                            ${selectedChallenge === index ? 'ring-2 ring-[#3A8EBA]' : ''}
+                                            ${isCompleted ? 'opacity-75' : ''}`}
+                                    >
+                                        <div className='flex flex-col items-center justify-center space-y-2'>
+                                            <p className="font-medium text-sm mb-1">{challenge.title}</p>
+                                            <div className="flex gap-3 justify-center">
+                                                <div className="flex items-center gap-1">
+                                                    <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                                                    <span className="text-xs font-medium">{challenge.starsReward}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <Coins className="w-4 h-4 text-gray-600" />
+                                                    <span className="text-xs font-medium">{challenge.coinsReward}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    {isCompleted && (
+                                        <div className="absolute top-0 right-0 bg-green-500 rounded-full p-1">
+                                            <Check className="w-4 h-4 text-white" />
+                                        </div>
+                                    )}
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
 
@@ -150,9 +186,12 @@ const Adventures: React.FC<AdventureProps> = ({ adventure }) => {
                     setSelectedChallenge(null);
                 }}
                 challenge={selectedChallenge !== null ? adventure.challenges[selectedChallenge] : null}
+                adventureId={adventure._id}
                 adventureTitle={adventure.title}
                 challengeNumber={selectedChallenge !== null ? selectedChallenge + 1 : 0}
                 totalChallenges={adventure.challenges.length}
+                onChallengeComplete={handleChallengeComplete}
+                isCompleted={selectedChallenge !== null ? completedChallenges.has(adventure.challenges[selectedChallenge]._id) : false}
             />
         </div>
     );

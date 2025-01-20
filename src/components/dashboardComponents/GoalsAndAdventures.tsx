@@ -49,6 +49,7 @@ interface Goal {
 }
 
 interface IChallenge {
+    _id: string;
     title: string;
     content: string;
     starsReward: number;
@@ -56,6 +57,7 @@ interface IChallenge {
 }
 
 interface Adventure {
+    _id: string;
     startDate: string;
     title: string;
     description: string;
