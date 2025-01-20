@@ -111,6 +111,15 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
         }
     };
 
+    const findTodaysAdventure = (adventuresList: Adventure[]) => {
+        const today = new Date();
+        return adventuresList.find((adventure) => {
+            const adventureDate = new Date(adventure.startDate);
+            return adventureDate.toDateString() === today.toDateString();
+        }) || null;
+    };
+
+
     const fetchAdventures = async() => {
         try {
             const response = await requestApi({
@@ -120,7 +129,8 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
 
             if (response && response.adventures){
                 setAdventures(response.adventures);
-                console.log(response.adventures);
+                const todaysAdventure = findTodaysAdventure(response.adventures);
+                setSelectedAdventure(todaysAdventure);
             }
             else{
                 toast.error("Failed to retrieve adventures", response.message);
@@ -245,7 +255,7 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
 
 
                 {activeFilter === "Goals" ? (
-                    <div className="mt-8">
+                    <div className="mt-8 mb-5">
                         {/* In Progress Goals */}
                         {goals.some(goal => !goal.isCompleted) && (
                             <div className="mt-10">

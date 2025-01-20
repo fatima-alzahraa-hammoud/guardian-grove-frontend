@@ -10,7 +10,7 @@ import { selectUserId, setCoins, setStars } from "../../redux/slices/userSlice";
 interface Task {
     _id: string;
     title: string;
-    isCompleted: boolean;  // Changed from 'completed' to 'isCompleted'
+    isCompleted: boolean;
     description: string;
     rewards: {
         stars: number;
