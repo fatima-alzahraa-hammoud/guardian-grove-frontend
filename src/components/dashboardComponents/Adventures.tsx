@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Coins, Star } from "lucide-react";
+import ChallengeDialog from '../common/ChallengeDialog';
 
 interface IChallenge {
     title: string;
@@ -24,6 +25,7 @@ interface AdventureProps {
 const Adventures: React.FC<AdventureProps> = ({ adventure }) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [selectedChallenge, setSelectedChallenge] = useState<number | null>(null);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     if (!adventure) {
         return (
@@ -54,6 +56,7 @@ const Adventures: React.FC<AdventureProps> = ({ adventure }) => {
 
     const handleChallengeClick = (index: number) => {
         setSelectedChallenge(selectedChallenge === index ? null : index);
+        setIsDialogOpen(true);
     };
 
     return (
@@ -139,6 +142,18 @@ const Adventures: React.FC<AdventureProps> = ({ adventure }) => {
                     <ChevronRight className="w-6 h-6" />
                 </button>
             </div>
+
+            <ChallengeDialog
+                isOpen={isDialogOpen}
+                onClose={() => {
+                    setIsDialogOpen(false);
+                    setSelectedChallenge(null);
+                }}
+                challenge={selectedChallenge !== null ? adventure.challenges[selectedChallenge] : null}
+                adventureTitle={adventure.title}
+                challengeNumber={selectedChallenge !== null ? selectedChallenge + 1 : 0}
+                totalChallenges={adventure.challenges.length}
+            />
         </div>
     );
 };
