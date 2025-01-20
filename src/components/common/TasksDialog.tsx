@@ -83,7 +83,7 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
                 method: requestMethods.POST,
                 body: {userId, question: aiQuestion, userAnswer: userAnswer.trim()}
             });
-            if (response && response.taskCompleted){
+            if (response && response.questionAnswered){
                 setAiResponse("Good Job! 😊");
 
                 const result = await requestApi({
