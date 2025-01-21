@@ -1,7 +1,7 @@
 import './styles/App.css';
 import Login from './pages/Login';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import Signup from './pages/Signup';
+import Signup from './pages/SignUp';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';

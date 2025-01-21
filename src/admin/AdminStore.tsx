@@ -22,10 +22,12 @@ interface StoreItem {
 
 const AdminStore : React.FC = () => {
     const [items, setItems] = useState<StoreItem[]>([]);
-    const [newItem, setNewItem] = useState<Omit<StoreItem, '_id'>>({ name: '', price: 0, type: '', image: '' })
+    const [newItem, setNewItem] = useState<Omit<StoreItem, '_id'>>({ name: '', price: 0, type: '', image: '' });
+    const [editingItem, setEditingItem] = useState<StoreItem | null>(null)
     const [searchTerm, setSearchTerm] = useState('')
     const [sortConfig, setSortConfig] = useState<{ key: keyof StoreItem | null; direction: 'asc' | 'desc' }>({ key: null, direction: 'asc' })
     const [selectedtype, setSelectedtype] = useState('all')
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
     const uniqueCategories = ['all', ...Array.from(new Set(items.map(item => item.type)))]
 
@@ -36,7 +38,12 @@ const AdminStore : React.FC = () => {
 
     useEffect(() => {
         fetchStoreItems();
-    }, [])
+    }, []);
+
+    const handleEdit = (item: StoreItem) => {
+        setEditingItem(item)
+        setIsEditDialogOpen(true)
+    }
 
     const fetchStoreItems = async () =>{
         try {
