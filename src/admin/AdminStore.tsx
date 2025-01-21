@@ -286,6 +286,59 @@ const AdminStore : React.FC = () => {
                     </div>
                 </div>
             </Card>
+
+            {/* Edit Dialog */}
+            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Edit Store Item</DialogTitle>
+                    </DialogHeader>
+                    {editingItem && (
+                        <div className="grid gap-4 py-4">
+                            <div className="flex items-center gap-4">
+                                <ImageIcon className="h-12 w-12 text-gray-400" />
+                                <Input
+                                    type='file'
+                                    placeholder="Image URL"
+                                    value={editingItem.image}
+                                    onChange={(e) => setEditingItem({ ...editingItem, image: e.target.value })}
+                                />
+                            </div>
+                            <Input
+                                placeholder="Item Name"
+                                value={editingItem.name}
+                                onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
+                            />
+                            <Input
+                                type="number"
+                                placeholder="Price"
+                                value={editingItem.price}
+                                onChange={(e) => setEditingItem({ ...editingItem, price: Number(e.target.value) })}
+                            />
+                            <Select
+                                value={editingItem.type}
+                                onValueChange={(value) => setEditingItem({ ...editingItem, type: value })}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {uniqueCategories.filter(cat => cat !== 'all').map(type => (
+                                        <SelectItem key={type} value={type}>
+                                            {type.charAt(0).toUpperCase() + type.slice(1)}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
+                    <DialogFooter>
+                        <Button className="bg-[#3A8EBA] hover:bg-[#347ea5]">
+                            Save Changes
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }
