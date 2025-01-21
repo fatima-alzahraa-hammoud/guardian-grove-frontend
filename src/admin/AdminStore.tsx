@@ -10,27 +10,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { ArrowUpDown, Search, Plus, ImageIcon, Pencil, Trash2 } from 'lucide-react'
 import { requestApi } from '../libs/requestApi'
 import { requestMethods } from '../libs/enum/requestMethods'
-import { toast } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 
 interface StoreItem {
-  id: number
+  _id: string;
   name: string
   price: number
   type: string
   image: string
 }
 
-// Mock data with image URLs
-const initialItems: StoreItem[] = [
-  { id: 1, name: 'Virtual Pet', price: 100, type: 'Pets', image: '/placeholder.svg?height=100&width=100' },
-  { id: 2, name: 'Custom Avatar', price: 200, type: 'Customization', image: '/placeholder.svg?height=100&width=100' },
-  { id: 3, name: 'Power-up', price: 50, type: 'Boosters', image: '/placeholder.svg?height=100&width=100' },
-  { id: 4, name: 'Rare Background', price: 300, type: 'Customization', image: '/placeholder.svg?height=100&width=100' },
-]
-
 const AdminStore : React.FC = () => {
     const [items, setItems] = useState<StoreItem[]>([]);
-    const [newItem, setNewItem] = useState<Omit<StoreItem, 'id'>>({ name: '', price: 0, type: '', image: '' })
+    const [newItem, setNewItem] = useState<Omit<StoreItem, '_id'>>({ name: '', price: 0, type: '', image: '' })
     const [searchTerm, setSearchTerm] = useState('')
     const [sortConfig, setSortConfig] = useState<{ key: keyof StoreItem | null; direction: 'asc' | 'desc' }>({ key: null, direction: 'asc' })
     const [selectedtype, setSelectedtype] = useState('all')
@@ -85,6 +77,27 @@ const AdminStore : React.FC = () => {
         }
     }
 
+    const handleDelete = async (itemId: string) => {
+        if (window.confirm('Are you sure you want to delete this item?')) {
+            try {
+                const response = await requestApi({
+                    route: `/store/${itemId}`,
+                    method: requestMethods.DELETE,
+                });
+                
+                if (response) {
+                    setItems(items.filter(item => item._id !== itemId));
+                    toast.success('Item deleted successfully');
+                } else {
+                    toast.error("Failed to delete item", response.message);
+                }
+            } catch (error) {
+                console.log("Something wrong happened", error);
+                toast.error("Error deleting item");
+            }
+        }
+    }
+
     const filteredAndSortedItems = items
         .filter(item => {
         const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -109,6 +122,7 @@ const AdminStore : React.FC = () => {
 
     return (
         <div className="p-8 ml-10 mt-10 space-y-8 font-poppins">
+            <ToastContainer className="text-xs"/>
 
             <h2 className="font-poppins text-lg font-semibold">Store Management</h2>
 
@@ -226,7 +240,7 @@ const AdminStore : React.FC = () => {
                                 </TableHeader>
                                 <TableBody>
                                 {filteredAndSortedItems.map((item) => (
-                                    <TableRow key={item.id} className="hover:bg-gray-50">
+                                    <TableRow key={item._id} className="hover:bg-gray-50">
                                         <TableCell>
                                             <img
                                                 src={item.image || "/placeholder.svg"}
@@ -250,6 +264,7 @@ const AdminStore : React.FC = () => {
                                                 </Button>
                                                 <Button
                                                     variant="outline"
+                                                    onClick={() => handleDelete(item._id)}
                                                     size="icon"
                                                     className="h-8 w-8 text-red-500 hover:text-red-600"
                                                 >
