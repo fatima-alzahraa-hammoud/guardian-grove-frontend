@@ -7,7 +7,7 @@ import { Input } from "../components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "../components/ui/dialog"
 import { Card } from "../components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
-import { ArrowUpDown, Search, Plus, ImageIcon } from 'lucide-react'
+import { ArrowUpDown, Search, Plus, ImageIcon, Pencil, Trash2 } from 'lucide-react'
 import { requestApi } from '../libs/requestApi'
 import { requestMethods } from '../libs/enum/requestMethods'
 import { toast } from 'react-toastify'
@@ -225,8 +225,8 @@ const AdminStore : React.FC = () => {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {filteredAndSortedItems.map((item) => (
-                                        <TableRow key={item.id} className="hover:bg-gray-50">
+                                {filteredAndSortedItems.map((item) => (
+                                    <TableRow key={item.id} className="hover:bg-gray-50">
                                         <TableCell>
                                             <img
                                                 src={item.image || "/placeholder.svg"}
@@ -239,8 +239,26 @@ const AdminStore : React.FC = () => {
                                         <TableCell className="font-medium">{item.name}</TableCell>
                                         <TableCell>${item.price}</TableCell>
                                         <TableCell>{item.type}</TableCell>
-                                        </TableRow>
-                                    ))}
+                                        <TableCell>
+                                            <div className="flex gap-2">
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    className="h-8 w-8"
+                                                >
+                                                    <Pencil className="h-4 w-4" />
+                                                </Button>
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-red-500 hover:text-red-600"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
                             </TableBody>
                         </Table>
                     </div>
