@@ -109,6 +109,10 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
                     sender: "bot",
                     message: response.plan,
                 };
+
+                if (activeChatId) {
+                    dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: planMessage.message }));
+                }
     
                 // If there's an active chat, add the plan message to the chat
                 const updateResponse = await requestApi({
@@ -120,7 +124,6 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
                 dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
                 if (updateResponse?.chat) {
                     if (activeChatId) {
-                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: planMessage.message }));
                         if (activeChatTitle !== updateResponse.chat.title) {
                             dispatch(updateChatTitle({ chatId: activeChatId, title: updateResponse.chat.title }));
                         }
@@ -153,7 +156,10 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
                     sender: "bot",
                     message: response.learningZone,
                 };
-    
+                if (activeChatId) {
+                    dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: learningZoneMessage.message }));
+                }
+
                 // If there's an active chat, add the plan message to the chat
                 const updateResponse = await requestApi({
                     route: `/chats/handle`,
@@ -164,7 +170,6 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
                 dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
                 if (updateResponse?.chat) {
                     if (activeChatId) {
-                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: learningZoneMessage.message }));
                         if (activeChatTitle !== updateResponse.chat.title) {
                             dispatch(updateChatTitle({ chatId: activeChatId, title: updateResponse.chat.title }));
                         }
@@ -197,6 +202,10 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
                     sender: "bot",
                     message: response.dailySummary,
                 };
+
+                if (activeChatId) {
+                    dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: dailySummaryMessage.message }));
+                }
     
                 // If there's an active chat, add the plan message to the chat
                 const updateResponse = await requestApi({
@@ -208,7 +217,6 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
                 dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
                 if (updateResponse?.chat) {
                     if (activeChatId) {
-                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: dailySummaryMessage.message }));
                         if (activeChatTitle !== updateResponse.chat.title) {
                             dispatch(updateChatTitle({ chatId: activeChatId, title: updateResponse.chat.title }));
                         }
@@ -241,7 +249,11 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
                     sender: "bot",
                     message: response.story,
                 };
-    
+
+                if (activeChatId) {
+                    dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: storyMessage.message }));
+                }
+
                 // If there's an active chat, add the plan message to the chat
                 const updateResponse = await requestApi({
                     route: `/chats/handle`,
@@ -252,7 +264,6 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
                 dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
                 if (updateResponse?.chat) {
                     if (activeChatId) {
-                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: storyMessage.message }));
                         if (activeChatTitle !== updateResponse.chat.title) {
                             dispatch(updateChatTitle({ chatId: activeChatId, title: updateResponse.chat.title }));
                         }
@@ -285,6 +296,10 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
                     sender: "bot",
                     message: response.viewTasks,
                 };
+
+                if (activeChatId) {
+                    dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: viewTasksMessage.message }));
+                }
     
                 // If there's an active chat, add the plan message to the chat
                 const updateResponse = await requestApi({
@@ -296,7 +311,6 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
                 dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
                 if (updateResponse?.chat) {
                     if (activeChatId) {
-                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: viewTasksMessage.message }));
                         if (activeChatTitle !== updateResponse.chat.title) {
                             dispatch(updateChatTitle({ chatId: activeChatId, title: updateResponse.chat.title }));
                         }
