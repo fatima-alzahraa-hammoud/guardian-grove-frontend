@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
@@ -8,69 +8,93 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Card } from "../components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
 import { ArrowUpDown, Search, Plus, ImageIcon } from 'lucide-react'
+import { requestApi } from '../libs/requestApi'
+import { requestMethods } from '../libs/enum/requestMethods'
+import { toast } from 'react-toastify'
 
 interface StoreItem {
   id: number
   name: string
   price: number
-  category: string
+  type: string
   image: string
 }
 
 // Mock data with image URLs
 const initialItems: StoreItem[] = [
-  { id: 1, name: 'Virtual Pet', price: 100, category: 'Pets', image: '/placeholder.svg?height=100&width=100' },
-  { id: 2, name: 'Custom Avatar', price: 200, category: 'Customization', image: '/placeholder.svg?height=100&width=100' },
-  { id: 3, name: 'Power-up', price: 50, category: 'Boosters', image: '/placeholder.svg?height=100&width=100' },
-  { id: 4, name: 'Rare Background', price: 300, category: 'Customization', image: '/placeholder.svg?height=100&width=100' },
+  { id: 1, name: 'Virtual Pet', price: 100, type: 'Pets', image: '/placeholder.svg?height=100&width=100' },
+  { id: 2, name: 'Custom Avatar', price: 200, type: 'Customization', image: '/placeholder.svg?height=100&width=100' },
+  { id: 3, name: 'Power-up', price: 50, type: 'Boosters', image: '/placeholder.svg?height=100&width=100' },
+  { id: 4, name: 'Rare Background', price: 300, type: 'Customization', image: '/placeholder.svg?height=100&width=100' },
 ]
 
 const AdminStore : React.FC = () => {
-  const [items, setItems] = useState<StoreItem[]>(initialItems)
-  const [newItem, setNewItem] = useState<Omit<StoreItem, 'id'>>({ name: '', price: 0, category: '', image: '' })
-  const [searchTerm, setSearchTerm] = useState('')
-  const [sortConfig, setSortConfig] = useState<{ key: keyof StoreItem | null; direction: 'asc' | 'desc' }>({ key: null, direction: 'asc' })
-  const [selectedCategory, setSelectedCategory] = useState('all')
+    const [items, setItems] = useState<StoreItem[]>([]);
+    const [newItem, setNewItem] = useState<Omit<StoreItem, 'id'>>({ name: '', price: 0, type: '', image: '' })
+    const [searchTerm, setSearchTerm] = useState('')
+    const [sortConfig, setSortConfig] = useState<{ key: keyof StoreItem | null; direction: 'asc' | 'desc' }>({ key: null, direction: 'asc' })
+    const [selectedtype, setSelectedtype] = useState('all')
 
-  const uniqueCategories = ['all', ...Array.from(new Set(items.map(item => item.category)))]
+    const uniqueCategories = ['all', ...Array.from(new Set(items.map(item => item.type)))]
 
-  const handleSort = (key: keyof StoreItem) => {
-    const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc'
-    setSortConfig({ key, direction })
-  }
-
-  const handleAddItem = () => {
-    if (newItem.name && newItem.price && newItem.category) {
-      setItems([...items, { 
-        id: items.length + 1, 
-        ...newItem,
-        image: newItem.image || '/placeholder.svg?height=100&width=100'
-      }])
-      setNewItem({ name: '', price: 0, category: '', image: '' })
+    const handleSort = (key: keyof StoreItem) => {
+        const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc'
+        setSortConfig({ key, direction })
     }
-  }
 
-  const filteredAndSortedItems = items
-    .filter(item => {
-      const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          item.category.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory
-      return matchesSearch && matchesCategory
-    })
-    .sort((a, b) => {
-      if (!sortConfig.key) return 0
-      
-      const aValue = a[sortConfig.key]
-      const bValue = b[sortConfig.key]
-      
-      if (typeof aValue === 'number' && typeof bValue === 'number') {
-        return sortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue
-      }
-      
-      return sortConfig.direction === 'asc' 
-        ? String(aValue).localeCompare(String(bValue))
-        : String(bValue).localeCompare(String(aValue))
-    })
+    useEffect(() => {
+        fetchStoreItems();
+    }, [])
+
+    const fetchStoreItems = async () =>{
+        try {
+            const response = await requestApi({
+                route: "/store/",
+                method: requestMethods.GET
+            });
+            if(response && response.items){
+                setItems(response.items);
+            }
+            else{
+                toast.error("Failed to get store items", response.message);
+            }
+        } catch (error) {
+            console.log("Somthing wrong happend", error)
+        }
+    }
+
+    const handleAddItem = () => {
+        if (newItem.name && newItem.price && newItem.type) {
+        setItems([...items, { 
+            id: items.length + 1, 
+            ...newItem,
+            image: newItem.image || '/placeholder.svg?height=100&width=100'
+        }])
+        setNewItem({ name: '', price: 0, type: '', image: '' })
+        }
+    }
+
+    const filteredAndSortedItems = items
+        .filter(item => {
+        const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            item.type.toLowerCase().includes(searchTerm.toLowerCase())
+        const matchestype = selectedtype === 'all' || item.type === selectedtype
+        return matchesSearch && matchestype
+        })
+        .sort((a, b) => {
+        if (!sortConfig.key) return 0
+        
+        const aValue = a[sortConfig.key]
+        const bValue = b[sortConfig.key]
+        
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+            return sortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue
+        }
+        
+        return sortConfig.direction === 'asc' 
+            ? String(aValue).localeCompare(String(bValue))
+            : String(bValue).localeCompare(String(aValue))
+        })
 
     return (
         <div className="p-8 ml-10 mt-10 space-y-8 font-poppins">
@@ -113,16 +137,16 @@ const AdminStore : React.FC = () => {
                                             onChange={(e) => setNewItem({ ...newItem, price: Number(e.target.value) })}
                                         />
                                         <Select
-                                            value={newItem.category}
-                                            onValueChange={(value) => setNewItem({ ...newItem, category: value })}
+                                            value={newItem.type}
+                                            onValueChange={(value) => setNewItem({ ...newItem, type: value })}
                                         >
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select category" />
+                                            <SelectValue placeholder="Select type" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {uniqueCategories.filter(cat => cat !== 'all').map(category => (
-                                                <SelectItem key={category} value={category}>
-                                                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                                            {uniqueCategories.filter(cat => cat !== 'all').map(type => (
+                                                <SelectItem key={type} value={type}>
+                                                    {type.charAt(0).toUpperCase() + type.slice(1)}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
@@ -148,16 +172,16 @@ const AdminStore : React.FC = () => {
                                 />
                             </div>
                             <Select
-                                value={selectedCategory}
-                                onValueChange={setSelectedCategory}
+                                value={selectedtype}
+                                onValueChange={setSelectedtype}
                             >
                                 <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Category" />
+                                    <SelectValue placeholder="type" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {uniqueCategories.map(category => (
-                                        <SelectItem key={category} value={category}>
-                                            {category.charAt(0).toUpperCase() + category.slice(1)}
+                                    {uniqueCategories.map(type => (
+                                        <SelectItem key={type} value={type}>
+                                            {type.charAt(0).toUpperCase() + type.slice(1)}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
@@ -181,9 +205,9 @@ const AdminStore : React.FC = () => {
                                                 <ArrowUpDown className="ml-2 h-4 w-4" />
                                             </div>
                                         </TableHead>
-                                        <TableHead onClick={() => handleSort('category')} className="cursor-pointer hover:bg-gray-50">
+                                        <TableHead onClick={() => handleSort('type')} className="cursor-pointer hover:bg-gray-50">
                                             <div className="flex items-center">
-                                                Category
+                                                type
                                                 <ArrowUpDown className="ml-2 h-4 w-4" />
                                             </div>
                                         </TableHead>
@@ -203,7 +227,7 @@ const AdminStore : React.FC = () => {
                                         </TableCell>
                                         <TableCell className="font-medium">{item.name}</TableCell>
                                         <TableCell>${item.price}</TableCell>
-                                        <TableCell>{item.category}</TableCell>
+                                        <TableCell>{item.type}</TableCell>
                                         </TableRow>
                                     ))}
                             </TableBody>
