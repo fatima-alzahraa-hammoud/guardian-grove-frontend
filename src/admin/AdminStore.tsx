@@ -63,14 +63,25 @@ const AdminStore : React.FC = () => {
         }
     }
 
-    const handleAddItem = () => {
-        if (newItem.name && newItem.price && newItem.type) {
-        setItems([...items, { 
-            id: items.length + 1, 
-            ...newItem,
-            image: newItem.image || '/placeholder.svg?height=100&width=100'
-        }])
-        setNewItem({ name: '', price: 0, type: '', image: '' })
+    const AddStoreItem = async () => {
+        try {
+            if (newItem.name && newItem.price && newItem.type && newItem.image) {
+                const data = { name: newItem.name, price: newItem.price, type: newItem.type, image: newItem.image };
+
+                const response = await requestApi({
+                    route: "/store/",
+                    method: requestMethods.POST,
+                    body: data
+                });
+                if(response && response.StoreItem){
+                    setItems((prev) => [...prev, response.StoreItem]);
+                }
+                else{
+                    toast.error("Failed to create store item", response.message);
+                }
+            }
+        } catch (error) {
+            console.log("Somthing wrong happend", error)
         }
     }
 
@@ -153,7 +164,7 @@ const AdminStore : React.FC = () => {
                                     </Select>
                                     </div>
                                     <DialogFooter>
-                                        <Button onClick={handleAddItem} className="bg-[#3A8EBA] hover:bg-[#347ea5]">
+                                        <Button onClick={AddStoreItem} className="bg-[#3A8EBA] hover:bg-[#347ea5]">
                                             Add Item
                                         </Button>
                                     </DialogFooter>
