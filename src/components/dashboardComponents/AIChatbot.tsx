@@ -24,7 +24,7 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
     let activeChatId = useSelector(selectActiveChatId);
     const activeChatTitle = useSelector(selectActiveChatTitle);
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-    const [isCall, setIsCall] = useState(true);
+    const [isCall, setIsCall] = useState(false);
 
 
     const isBotResponding = useSelector(selectIsResponding);
@@ -40,6 +40,12 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
     
     const handleDialogOpen = () => {
         setDialogOpen(true);
+        setIsCall(true);
+    };
+
+    const handleDialogClose = () => {
+        setDialogOpen(false);
+        setIsCall(false);
     };
           
     // Auto-scroll to bottom when new messages arrive
@@ -78,7 +84,7 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                 }
             }
         
-            const data = { sender: "user", message: transcript.trim(), chatId: activeChatId };
+            const data = { sender: "user", message: transcript.trim(), chatId: activeChatId, isCall: isCall };
             if (transcript.trim()) {
                 dispatch(setBotResponding({ chatId: activeChatId, isResponding: true }));
                 const response = await requestApi({
@@ -141,7 +147,7 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                 }
             }
 
-            const data = {sender:"user", message: input.trim(), chatId: activeChatId};
+            const data = {sender:"user", message: input.trim(), chatId: activeChatId, isCall: isCall};
             if (input.trim()) {
                 dispatch(setBotResponding({ chatId: activeChatId, isResponding: true }));
                 const response = await requestApi({
@@ -266,7 +272,7 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
 
                         </div>
                     </form>
-                    <VoiceDialog open={isDialogOpen} onOpenChange={setDialogOpen} onSendMessage={handleVoiceInput}/>
+                    <VoiceDialog open={isDialogOpen} onOpenChange={setDialogOpen} onClose={handleDialogClose} onSendMessage={handleVoiceInput}/>
 
                 </div>
             </div>

@@ -14,7 +14,6 @@ import { requestApi } from '../../libs/requestApi';
 import { requestMethods } from '../../libs/enum/requestMethods';
 
 const SettingsDialog = () => {
-    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [showPasswordDialog, setShowPasswordDialog] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [passwordForm, setPasswordForm] = useState({

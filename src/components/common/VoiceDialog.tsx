@@ -8,10 +8,11 @@ import send from "/assets/images/send.png";
 interface VoiceDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    onClose: () => void;
     onSendMessage: (message: string) => Promise<void>;
 }
 
-const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange, onSendMessage}) => {
+const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange, onSendMessage, onClose}) => {
 
     const [isListening, setIsListening] = useState(false)
     const [transcript, setTranscript] = useState("")
@@ -42,6 +43,8 @@ const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange, onSendMes
         return
         }
 
+        setTranscript("Preparing microphone...");
+
         recognitionRef.current = new (window as any).webkitSpeechRecognition()
         recognitionRef.current.continuous = true
         recognitionRef.current.interimResults = true
@@ -60,6 +63,9 @@ const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange, onSendMes
 
         recognitionRef.current.onerror = (event: any) => {
             console.error("Speech recognition error:", event.error)
+            if (event.error === 'not-allowed') {
+                setTranscript("Microphone access denied. Please allow microphone access.");
+            }
             stopListening()
         }
 
@@ -78,6 +84,7 @@ const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange, onSendMes
         if (!open) {
             setIsListening(false);
             setTranscript(""); 
+            onClose();
         }
     };
 
