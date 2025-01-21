@@ -1,7 +1,7 @@
 import axios, { Method } from "axios";
 import { toast } from "react-toastify";
 
-axios.defaults.baseURL = "http://127.0.0.1:8080";
+axios.defaults.baseURL = "http://127.0.0.1:8000";
 
 interface RequestApiParams {
     route: string;
