@@ -12,9 +12,15 @@ const ProtectedAdminRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const role = useSelector(selectRole);
 
+
+  if (isAuthenticated === undefined || role === undefined) {
+    return <div>Loading...</div>;
+  }
+
   if (!isAuthenticated || role !== "admin") {
-    toast.error("Access denied. Please log in.");
-    return <Navigate to="/" replace />;
+    setTimeout(() => {
+      return <Navigate to="/" replace />;
+    }, 500);
   }
 
   return <>{children}</>;
