@@ -105,6 +105,48 @@ const AdminStore : React.FC = () => {
         }
     }
 
+    const handleUpdate = async () => {
+        if (!editingItem) return;
+        
+        try {
+            const response = await requestApi({
+                route: `/store/`,
+                method: requestMethods.PUT,
+                body: {itemId: editingItem._id, editingItem}
+            });
+            
+            if (response && response.item) {
+                setItems(items.map(item => 
+                    item._id === editingItem._id ? editingItem : item
+                ));
+                setIsEditDialogOpen(false);
+                setEditingItem(null);
+                toast.success('Item updated successfully');
+            } else {
+                toast.error("Failed to update item", response.message);
+            }
+        } catch (error) {
+            console.log("Something wrong happened", error);
+            toast.error("Error updating item");
+        }
+    }
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, isEditing: boolean) => {
+        const file = e.target.files?.[0]
+        if (file) {
+            const reader = new FileReader()
+            reader.onloadend = () => {
+                const base64String = reader.result as string
+                if (isEditing && editingItem) {
+                    setEditingItem({ ...editingItem, image: base64String })
+                } else {
+                    setNewItem({ ...newItem, image: base64String })
+                }
+            }
+            reader.readAsDataURL(file)
+        }
+    }
+
     const filteredAndSortedItems = items
         .filter(item => {
         const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -265,6 +307,7 @@ const AdminStore : React.FC = () => {
                                                 <Button
                                                     variant="outline"
                                                     size="icon"
+                                                    onClick={() => handleEdit(item)}
                                                     className="h-8 w-8"
                                                 >
                                                     <Pencil className="h-4 w-4" />
@@ -298,12 +341,18 @@ const AdminStore : React.FC = () => {
                             <div className="flex items-center gap-4">
                                 <ImageIcon className="h-12 w-12 text-gray-400" />
                                 <Input
-                                    type='file'
-                                    placeholder="Image URL"
-                                    value={editingItem.image}
-                                    onChange={(e) => setEditingItem({ ...editingItem, image: e.target.value })}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => handleImageChange(e, true)}
                                 />
                             </div>
+                            {editingItem.image && (
+                                <img
+                                    src={editingItem.image}
+                                    alt="Preview"
+                                    className="w-32 h-32 object-cover rounded-md"
+                                />
+                            )}
                             <Input
                                 placeholder="Item Name"
                                 value={editingItem.name}
@@ -333,7 +382,7 @@ const AdminStore : React.FC = () => {
                         </div>
                     )}
                     <DialogFooter>
-                        <Button className="bg-[#3A8EBA] hover:bg-[#347ea5]">
+                        <Button onClick={handleUpdate} className="bg-[#3A8EBA] hover:bg-[#347ea5]">
                             Save Changes
                         </Button>
                     </DialogFooter>
