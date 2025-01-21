@@ -294,10 +294,10 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                 </form>
 
                 <DialogFooter>
-                    <Button onClick={handleCancel} variant="outline">
+                    <Button onClick={handleCancel} className='rounded-full border-[1px] bg-[#ffffff] text-black w-20 mr-3'>
                         {cancelText}
                     </Button>
-                    <Button onClick={handleConfirm}>
+                    <Button onClick={handleConfirm} className='bg-[#3A8EBA] rounded-full hover:bg-[#347ea5] w-20'>
                         {confirmText}
                     </Button>
                 </DialogFooter>

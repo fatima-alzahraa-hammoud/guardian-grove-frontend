@@ -214,7 +214,7 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                                 <div className="flex justify-start">
                                     <div className=" bg-white text-black p-3 rounded-2xl">
                                         <div className="flex items-center justify-center w-full">
-                                            <img src="/assets/images/preloader.gif" alt="loading..." className="w-16" />
+                                            <img src="/assets/images/preloader.gif" alt="loading..." className="w-12" />
                                         </div>
                                     </div>
                                 </div>

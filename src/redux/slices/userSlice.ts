@@ -46,7 +46,7 @@ const userSlice = createSlice({
             state.purchasedItems = action.payload;
         },
         setCoins(state, action: PayloadAction<number>) {
-            state.coins += action.payload;
+            state.coins = action.payload;
         },
         setStars(state, action: PayloadAction<number>) {
             state.stars += action.payload;

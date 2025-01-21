@@ -19,7 +19,7 @@ interface StoreItemType {
 
 const Store: React.FC = () => {
 
-    const coins = useSelector(selectCoins);
+    let coins = useSelector(selectCoins);
     const dispatch = useDispatch();
     let purchasedItems = useSelector(selectPurchasedItems); ;
     const [storeItems, setStoreItems] = useState<StoreItemType[]>([]);
@@ -82,6 +82,7 @@ const Store: React.FC = () => {
                 dispatch(setPurchasedItems([...purchasedItems, response.item._id]));
                 // Update the user's coin balance
                 dispatch(setCoins(coins - price));
+                coins = coins-price;
             }
             else{
                 toast.error(response.error);
