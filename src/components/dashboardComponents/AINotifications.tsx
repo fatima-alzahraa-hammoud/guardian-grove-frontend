@@ -165,7 +165,7 @@ const AINotifications: React.FC<AINotificationsProps> = ({ collapsed }) => {
                                         {notificationsList.map((notification, idx) => (
                                         <CarouselItem key={idx} className="basis-[300px]">
                                             <div className="h-full">
-                                            <div className="h-[200px]"> {/* Fixed height container */}
+                                            <div className="h-[230px]"> {/* Fixed height container */}
                                                 <NotificationCard notification={notification} />
                                             </div>
                                             </div>

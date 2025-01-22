@@ -29,7 +29,7 @@ const NotificationCard : React.FC<NotificationProp> = ({notification}) => {
                     <h3 className="font-bold text-base">{notification.title}</h3>
                     <p className="text-xs text-gray-500">{notification.category}</p>
                 </div>
-                <p className="text-sm mt-3 line-clamp-4">{notification.message}</p>
+                <p className="text-sm pt-8 line-clamp-4">{notification.message}</p>
             </div>
             <p className="text-xs text-gray-600 mt-auto">
                 {new Date(notification.timestamp).toLocaleString()}
