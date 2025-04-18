@@ -19,6 +19,7 @@ import "../styles/global.css";
 import { setToken } from "../redux/slices/authSlice";
 import { setUser } from "../redux/slices/userSlice";
 import { setFamily } from "../redux/slices/familySlice";
+import ForgotPasswordDialog from "../components/common/ForgetPasswordDialog";
 
 
 const Login : React.FC = () => {
@@ -235,7 +236,7 @@ const Login : React.FC = () => {
                             </div>
                         </div>
                         <div className="text-right mr-10">
-                            <a onClick={() => navigate('/forgot-password')} className="underline text-[10px] text-[#000000] hover:text-[#326E9F] cursor-pointer" >
+                            <a onClick={() => setIsForgotPasswordOpen(true)} className="underline text-[10px] text-[#000000] hover:text-[#326E9F] cursor-pointer" >
                                 Forgot your password?
                             </a>
                         </div>
@@ -259,6 +260,11 @@ const Login : React.FC = () => {
             <div ref={imgRef} className="lg:w-1/2 flex-1 relative overflow-hidden bg-gradient-to-b from-purple-50 to-blue-50" >
                 <img src={img} alt="" className="object-cover w-full h-full" />
             </div>
+
+            <ForgotPasswordDialog
+                open={isForgotPasswordOpen} 
+                onOpenChange={setIsForgotPasswordOpen} 
+            />
         </div>
     );
 };
