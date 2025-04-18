@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import logo from '/assets/logo/GuardianGrove_logo_Text.png';
 import img from '/assets/images/family-login.png';
 import { Button } from "../components/ui/button";
@@ -20,8 +20,10 @@ import { setToken } from "../redux/slices/authSlice";
 import { setUser } from "../redux/slices/userSlice";
 import { setFamily } from "../redux/slices/familySlice";
 
+
 const Login : React.FC = () => {
     const dispatch = useDispatch();
+    const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
     const { 
         register, 

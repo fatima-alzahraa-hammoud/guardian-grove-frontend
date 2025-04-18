@@ -102,7 +102,7 @@ const FirstSignUpForm : React.FC<FirstSignUpFormProps> = ({onNext}) => {
                 </div>
             </div>
 
-            {/* Login Form */}
+            {/* Sign Up Form */}
             <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="space-y-3 w-full">
                 <div className="mx-10 relative">
                     <Label htmlFor="name" className="block text-xs font-medium text-gray-700 text-left mb-1">
