@@ -63,7 +63,7 @@ const userSlice = createSlice({
     },
 });
 
-export const { setUser, clearUser, setPurchasedItems, setCoins, setEmail, setStars } = userSlice.actions;
+export const { setUser, clearUser, setPurchasedItems, setCoins, setEmail, setStars, setIsTempPassword } = userSlice.actions;
 
 export const selectStars = (state: { user: UserState }) => state.user.stars;
 export const selectAvatar = (state: { user: UserState }) => state.user.avatar;

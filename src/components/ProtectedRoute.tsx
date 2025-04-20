@@ -15,12 +15,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
 
   if (!isAuthenticated) {
-    toast.error("Access denied. Please log in.");
     return <Navigate to="/" replace />;
   }
 
   else if (isTempPassword && location.pathname !== "/changePassword") {
-    toast.error("Please change your temporary password before proceeding.");
     return <Navigate to="/changePassword" replace />;
   }
 

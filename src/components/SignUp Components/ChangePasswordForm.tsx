@@ -15,6 +15,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import logo from '/assets/logo/GuardianGrove_logo_Text.png';
 import { gsap } from 'gsap';
 import img from '/assets/images/family-login.png';
+import { useDispatch } from 'react-redux';
+import { setIsTempPassword } from '../../redux/slices/userSlice';
 
 // Schema for password change validation
 const changePasswordSchema = z.object({
@@ -33,6 +35,7 @@ const ChangePasswordPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const formRef = useRef<HTMLFormElement>(null);
     const logoRef = useRef<HTMLDivElement>(null);
+    const dispatch = useDispatch();
 
     const { 
         register, 
@@ -82,6 +85,7 @@ const ChangePasswordPage: React.FC = () => {
 
             if (response && response.password) {
                 toast.success(response.message);
+                dispatch(setIsTempPassword(false)); 
                 navigate('/dashboard'); 
             } else {
                 toast.error(response.message || "Failed to update password");
