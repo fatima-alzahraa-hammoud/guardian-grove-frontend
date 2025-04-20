@@ -16,6 +16,7 @@ interface UserState {
     memberSince: string;
     purchasedItems: string[];
     dailyMessage: string ;
+    isTempPassword: boolean;
 }
 
 const initialState: UserState = {
@@ -33,6 +34,7 @@ const initialState: UserState = {
     memberSince: format(new Date(), "yyyy-MM-dd"),
     purchasedItems: [],
     dailyMessage: "You are shining! 💫",
+    isTempPassword: false,
 }
 
 const userSlice = createSlice({
@@ -74,5 +76,6 @@ export const selectRole = (state: { user: UserState }) => state.user.role;
 export const selectGender = (state: { user: UserState }) => state.user.gender;
 export const selectFamilyId = (state: { user: UserState }) => state.user.familyId;
 export const selectDialyMessage = (state: { user: UserState }) => state.user.dailyMessage;
+export const selectIsTempPassword = (state: { user: UserState }) => state.user.isTempPassword;
 
 export default userSlice.reducer;
