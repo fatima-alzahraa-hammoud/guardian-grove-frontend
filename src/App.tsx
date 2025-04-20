@@ -19,6 +19,7 @@ import AdminSidebar from './admin/AdminSidebar';
 import { SidebarProvider } from './components/ui/sidebar';
 import Admin from './pages/Admin';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';
+import ChangePasswordPage from './components/SignUp Components/ChangePasswordForm';
 
 interface DecodedToken {
   userId: string;
@@ -103,6 +104,7 @@ function App() {
           <Route path='/addMembersQuestion' element={ <ProtectedRoute> <AddMembersBackground ChildComponent={AddMembersQuestion} /> </ProtectedRoute> } />
           <Route path='/addMembers' element={ <ProtectedRoute> <AddMembersBackground ChildComponent={AddMembersForm} /> </ProtectedRoute> } />
           <Route path='/admin/*' element={<SidebarProvider><ProtectedAdminRoute><Admin /></ProtectedAdminRoute></SidebarProvider>}/>
+          <Route path='/changePassword' element={ <ProtectedRoute> <ChangePasswordPage /> </ProtectedRoute> } />
         </Routes>
       </div>
     </>

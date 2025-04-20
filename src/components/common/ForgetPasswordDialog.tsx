@@ -41,11 +41,11 @@ const ForgotPasswordDialog: React.FC<ForgotPasswordDialogProps> = ({ open, onOpe
         setIsLoading(true);
         try {
             const response = await requestApi({
-                route: "/auth/forgot-password",
+                route: "/auth/forget-password",
                 method: requestMethods.POST,
                 body: {
-                name: data.name,
-                email: data.email
+                    name: data.name,
+                    email: data.email
                 }
             });
 

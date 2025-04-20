@@ -49,7 +49,11 @@ const Login : React.FC = () => {
                 dispatch(setUser(response.user));
                 if (response.user.familyId)
                     fetchFamilyDetails(response.user.familyId);
-                if (response.user.role !== "admin")
+
+                if (response.requiresPasswordChange === true) {
+                    navigate('/changePassword');
+                }
+                else if (response.user.role !== "admin")
                     navigate("/dashboard");
                 else
                     navigate("/admin")
