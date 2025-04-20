@@ -40,7 +40,7 @@ const SettingsDialog = () => {
 
     const handlePasswordUpdate = async () => {
         try {
-        // Basic validation
+            // Basic validation
             if (!passwordForm.oldPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
                 toast.error("Please fill in all password fields");
                 return;

@@ -55,18 +55,36 @@ const ChangePasswordPage: React.FC = () => {
     const onSubmit = async (data: TChangePassword) => {
         setIsLoading(true);
         try {
+            if (!data.currentPassword || !data.newPassword || !data.confirmPassword) {
+                toast.error("Please fill in all password fields");
+                return;
+            }
+    
+            if (data.newPassword !== data.confirmPassword) {
+                toast.error("New passwords don't match!");
+                return;
+            }
+    
+            if (data.newPassword.length < 6) {
+                toast.error("New password must be at least 6 characters long");
+                return;
+            }
+
             const response = await requestApi({
-                route: '/auth/change-password',
-                method: requestMethods.POST,
+                route: '/users/updatePassword',
+                method: requestMethods.PUT,
                 body: {
-                    currentPassword: data.currentPassword,
-                    newPassword: data.newPassword
+                    oldPassword: data.currentPassword,
+                    newPassword: data.newPassword,
+                    confirmPassword: data.confirmPassword
                 }
             });
 
-            if (response?.message) {
+            if (response && response.password) {
                 toast.success(response.message);
                 navigate('/dashboard'); 
+            } else {
+                toast.error(response.message || "Failed to update password");
             }
         } catch (error) {
             toast.error( 'Error changing password');
