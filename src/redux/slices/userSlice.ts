@@ -56,6 +56,9 @@ const userSlice = createSlice({
         setEmail (state, action: PayloadAction<string>){
             state.email = action.payload
         },
+        setIsTempPassword (state, action: PayloadAction<boolean>){
+            state.isTempPassword = action.payload
+        },
         clearUser: () => initialState,
     },
 });
