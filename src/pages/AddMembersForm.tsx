@@ -85,10 +85,20 @@ const AddMembersForm : React.FC = () => {
     const onSubmit = async (data: TAddMember) => {
         console.log(data);
         try {
+            // Minimal data for submission
+            const submitData = {
+                gender: data.gender || "female",
+                role: data.role || tab.toLowerCase(),
+                name: data.name || "",
+                birthday: data.birthday,
+                interests: data.interests || [],
+                avatar: data.avatar || "",
+            };
+            
             const result = await requestApi({
                 route: "/users/",
                 method: requestMethods.POST,
-                body: JSON.stringify(data),
+                body: JSON.stringify(submitData),
             });
             if (result) {
                 console.log(result.user);
@@ -116,18 +126,18 @@ const AddMembersForm : React.FC = () => {
     }, [tab, setValue]);
 
     useEffect(() => {
-            if (errors.name) {
-                toast.error(errors.name.message);
-            }
-            if (errors.birthday) {
-                toast.error(errors.birthday.message);
-            }
-            if (errors.avatar) {
-                toast.error(errors.avatar.message);
-            }
-            if (errors.interests) {
-                toast.error(errors.interests.message);
-            }
+        if (errors.name) {
+            toast.error(errors.name.message);
+        }
+        if (errors.birthday) {
+            toast.error(errors.birthday.message);
+        }
+        if (errors.avatar) {
+            toast.error(errors.avatar.message);
+        }
+        if (errors.interests) {
+            toast.error(errors.interests.message);
+        }
     }, [errors]);
     
     return(
@@ -314,20 +324,8 @@ const AddMembersForm : React.FC = () => {
                             <span>Add Another {tab}</span>
                         </Button>
                         <Button className="flex-1 bg-[#3A8EBA] hover:bg-[#347ea5] rounded-full" 
-                                onClick={handleSubmit(
-                                    async (data) => {
-                                        const success = await onSubmit(data);
-                                        if (success) {
-                                            resetData();
-                                            navigate("/dashboard");
-                                        }
-                                    },
-                                    (errors) => {
-                                        console.log('Validation errors:', errors);
-                                    }
-                                )}
+                                onClick={() => navigate("/dashboard")}
                                 type="button"
-    
                         >
                             Save and Continue
                         </Button>
