@@ -55,6 +55,15 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({ selectedAvatar, onAvata
     }
   };
 
+  const handleAvatarClick = (src: string) => {
+    // Clear uploaded avatar if selecting a pre-defined one
+    if (uploadedAvatar && src !== uploadedAvatar) {
+      URL.revokeObjectURL(uploadedAvatar); // Clean up memory
+      setUploadedAvatar(null);
+    }
+    onAvatarClick(src);
+  };
+
   return (
     <Carousel className="w-full max-w-sm">
       <CarouselContent className="-ml-1">
@@ -87,7 +96,7 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({ selectedAvatar, onAvata
               <AvatarImage
                 alt="avatar"
                 src={avatar.src}
-                onClick={() => onAvatarClick(avatar.src)}
+                onClick={() => handleAvatarClick(avatar.src)}
               />
             </Avatar>
           </CarouselItem>
