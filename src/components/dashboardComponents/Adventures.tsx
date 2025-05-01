@@ -38,7 +38,17 @@ const Adventures: React.FC<AdventureProps> = ({ adventure, userProgress }) => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [completedChallenges, setCompletedChallenges] = useState<Set<string>>(new Set());
 
-
+    useEffect(() => {
+        if (userProgress?.challenges) {
+            const completed = new Set(
+                userProgress.challenges
+                    .filter(challenge => challenge.isCompleted)
+                    .map(challenge => challenge.challengeId)
+            );
+            setCompletedChallenges(completed);
+        }
+    }, [userProgress]);
+    
     if (!adventure) {
         return (
             <div className="mt-8 text-center text-gray-600">
@@ -51,16 +61,6 @@ const Adventures: React.FC<AdventureProps> = ({ adventure, userProgress }) => {
         setCompletedChallenges(prev => new Set([...prev, challengeId]));
     };
 
-    useEffect(() => {
-        if (userProgress?.challenges) {
-            const completed = new Set(
-                userProgress.challenges
-                    .filter(challenge => challenge.isCompleted)
-                    .map(challenge => challenge.challengeId)
-            );
-            setCompletedChallenges(completed);
-        }
-    }, [userProgress]);
 
     const formattedDate = new Intl.DateTimeFormat('en-US', {
         weekday: 'long',
