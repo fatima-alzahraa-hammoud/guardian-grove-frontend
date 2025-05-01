@@ -108,9 +108,9 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <ToastContainer className="text-xs"/>
-            <DialogContent className='flex flex-col items-center justify-center font-poppins max-h-screen'>
+            <DialogContent className='flex flex-col items-center justify-center font-poppins h-[80vh] overflow-y-scroll'>
                 <DialogHeader>
-                    <DialogTitle className='mt-2'>{title}</DialogTitle>
+                    <DialogTitle className='mt-36'>{title}</DialogTitle>
                 </DialogHeader>
 
                 {/* Avatar Selection */}
