@@ -17,18 +17,8 @@ import { gsap } from 'gsap';
 import img from '/assets/images/family-login.png';
 import { useDispatch } from 'react-redux';
 import { setIsTempPassword } from '../../redux/slices/userSlice';
+import { changePasswordSchema, TChangePassword } from '../../libs/types/changePasswordTypes';
 
-// Schema for password change validation
-const changePasswordSchema = z.object({
-    currentPassword: z.string().min(1, 'Current password is required'),
-    newPassword: z.string().min(8, 'Password must be at least 8 characters'),
-    confirmPassword: z.string(),
-}).refine(data => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-});
-
-type TChangePassword = z.infer<typeof changePasswordSchema>;
 
 const ChangePasswordPage: React.FC = () => {
     const navigate = useNavigate();
