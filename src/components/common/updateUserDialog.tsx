@@ -43,7 +43,8 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
         setValue,
         watch,
         formState: { errors },
-        reset
+        reset,
+        clearErrors,
     } = useForm<TUpdate>({
         resolver: zodResolver(updateSchema),
     });
@@ -63,6 +64,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                 familyAvatar: "/assets/images/stars.png",
             };
             reset(initialValues);
+            clearErrors();
         }
     }, [isOpen, name, email, gender, birthday, avatar, familyName, reset]);
 
@@ -81,7 +83,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
             familyName: familyName,
             familyAvatar: "/assets/images/stars.png"
         });
-
+        clearErrors();
         onClose();
     };
 
@@ -98,14 +100,9 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
         
         // Call onConfirm with valid data
         onConfirm(formData);
+        toast.success("Profile updated successfully!");
         onClose();
 
-    }, (error) => {
-        for (const [field, err] of Object.entries(error)) {
-            // Check for specific error message if available
-            const message = err?.message || `${field} is invalid`;
-            toast.error(message);
-        }
     });
 
     return (
@@ -126,6 +123,10 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                             role={role || ''}
                         />
                     </div>
+
+                    {errors.avatar && (
+                        <p className="text-xs text-red-500 mt-1 text-center">{errors.avatar.message}</p>
+                    )}
                 </div>
 
                 {/* Name */}
@@ -149,6 +150,9 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                 </svg>
                             </div>
                         </div>
+                        {errors.name && (
+                            <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
+                        )}
                     </div>    
 
                     {/* Birthday Picker */}
@@ -195,6 +199,9 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                 />
                             </PopoverContent>
                         </Popover>
+                        {errors.birthday && (
+                            <p className="text-xs text-red-500 mt-1">{errors.birthday.message}</p>
+                        )}
                     </div>
 
                     {/* Gender */}
@@ -222,10 +229,13 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                 </SelectItem>
                             </SelectContent>
                         </Select>
+                        {errors.gender && (
+                            <p className="text-xs text-red-500 mt-1">{errors.gender.message}</p>
+                        )}
                     </div>
 
                     {/* email */}
-                    {role === 'parent' ? (
+                    {role === 'parent' && (
                         <div className='space-y-5'>
                             <div className="mx-3 relative">
                                 <Label htmlFor="email" className="block text-xs font-medium text-gray-700 text-left mb-1">
@@ -247,6 +257,10 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                         </svg>
                                     </div>
                                 </div>
+
+                                {errors.email && (
+                                    <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
+                                )}
                             </div>
 
                             <div className="mx-3 relative">
@@ -269,6 +283,10 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                         </svg>
                                     </div>
                                 </div>
+
+                                {errors.familyName && (
+                                    <p className="text-xs text-red-500 mt-1">{errors.familyName.message}</p>
+                                )}
                             </div>
 
                             <div className="mx-3 relative flex justify-center items-center">
@@ -282,15 +300,14 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                             role='family'
                                         />
                                     </div>
+
+                                    {errors.familyAvatar && (
+                                        <p className="text-xs text-red-500 mt-1 text-center">{errors.familyAvatar.message}</p>
+                                    )}
                                 </div>    
                             </div>
-                        </div>
-                            
-                        ) : (
-                            <></>
-                        )
-                    }
-
+                        </div>    
+                    )}
                 </form>
 
                 <DialogFooter>
