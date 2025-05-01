@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Check, ChevronLeft, ChevronRight, Coins, Star } from "lucide-react";
 import ChallengeDialog from '../common/ChallengeDialog';
+import { ToastContainer } from 'react-toastify';
 
 interface IChallengeProgress {
     challengeId: string;
@@ -88,6 +89,7 @@ const Adventures: React.FC<AdventureProps> = ({ adventure, userProgress }) => {
 
     return (
         <div className="-mt-32">
+            <ToastContainer className="text-xs" />
             <div className="mb-4">
                 <div className='-mt-20 mb-10'>
                     <p className="text-base font-poppins font-semibold mb-6">{formattedDate}</p>
