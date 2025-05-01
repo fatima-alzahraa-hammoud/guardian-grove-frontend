@@ -1,7 +1,6 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { Navigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { selectRole } from '../redux/slices/userSlice';
 
 interface ProtectedRouteProps {
