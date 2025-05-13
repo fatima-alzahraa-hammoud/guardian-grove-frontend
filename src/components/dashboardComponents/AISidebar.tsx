@@ -366,7 +366,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => 
             collapsible="icon"
             className={`h-[calc(100vh-4rem)] transition-all duration-300 ease-in-out border-r bg-[#B2D1F1] flex flex-col justify-between fixed top-16 left-0`}
         >        
-        <ToastContainer className="text-xs"/>    
+            <ToastContainer className="text-xs"/>    
             {/* Sidebar header */}
             <SidebarHeader className="h-20 px-4 flex flex-col justify-center bg-[#B2D1F1] border-[#B2D1F1]">
                 <div className="flex items-center justify-between w-full">

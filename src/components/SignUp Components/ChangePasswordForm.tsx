@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
 import { requestApi } from '../../libs/requestApi';
@@ -10,7 +9,7 @@ import { requestMethods } from '../../libs/enum/requestMethods';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Loader2 } from 'lucide-react';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import logo from '/assets/logo/GuardianGrove_logo_Text.png';
 import { gsap } from 'gsap';
@@ -89,6 +88,7 @@ const ChangePasswordPage: React.FC = () => {
 
     return (
         <div className="h-screen flex flex-col lg:flex-row p-0 m-0 font-poppins">
+            <ToastContainer className="text-xs"/>
             <div ref={logoRef} className="absolute top-4 left-4">
                 <img src={logo} alt="Guardian Grove Logo" width={100} height={100} />
             </div>
