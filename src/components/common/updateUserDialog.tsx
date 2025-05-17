@@ -28,7 +28,7 @@ interface DialogProps {
     familyName: string;
 }
 
-const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, title, confirmText = "Confirm", cancelText = "Cancel", familyName }) => {
+const UpdateUserDialog: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, title, confirmText = "Confirm", cancelText = "Cancel", familyName }) => {
 
     const name = useSelector(selectName);
     const email = useSelector(selectEmail);
@@ -307,4 +307,4 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
     );
 };
 
-export default DialogComponent;
+export default UpdateUserDialog;

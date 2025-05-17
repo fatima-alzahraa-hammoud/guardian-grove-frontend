@@ -11,7 +11,7 @@ import { requestMethods } from "../../libs/enum/requestMethods";
 import ProgressBar from "../common/ProgressBar";
 import "../../styles/card.css";
 import "../../styles/global.css";
-import DialogComponent from "../common/updateUserDialog";
+import UpdateUserDialog from "../common/UpdateUserDialog";
 import { TUpdate } from "../../libs/types/updateTypes";
 import { useNavigate } from "react-router-dom";
 import { selectFamilyMembers, selectFamilyName, selectFamilyStars, updateFamilyName } from "../../redux/slices/familySlice";
@@ -225,7 +225,7 @@ const MyProfile : React.FC = () => {
                         <p><span className="font-bold pr-3">Member since: </span>{formattedMemberSince}</p>
                         <p className="pb-1 pr-3"><span className="font-bold pr-1">Family email: </span>{email}</p>
                         <button onClick={handleDialogOpen} className="pl-3 pr-3 pt-2 pb-2 bg-white rounded-full text-black border-[1px] border-[#FDE4CF] focus:outline-none">Update Your Personal Details</button>
-                        <DialogComponent
+                        <UpdateUserDialog
                             isOpen={isDialogOpen}
                             onClose={handleDialogClose}
                             onConfirm={handleDialogConfirm}
