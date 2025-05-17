@@ -107,7 +107,6 @@ const UpdateUserDialog: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, t
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <ToastContainer className="text-xs"/>
             <DialogContent className='flex flex-col items-center justify-center font-poppins h-[80vh] overflow-y-scroll'>
                 <DialogHeader>
                     <DialogTitle className='mt-36'>{title}</DialogTitle>

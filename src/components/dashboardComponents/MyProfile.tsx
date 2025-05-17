@@ -15,7 +15,7 @@ import UpdateUserDialog from "../common/updateUserDialog";
 import { TUpdate } from "../../libs/types/updateTypes";
 import { useNavigate } from "react-router-dom";
 import { selectFamilyMembers, selectFamilyName, selectFamilyStars, updateFamilyName } from "../../redux/slices/familySlice";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const MyProfile : React.FC = () => {
 
@@ -176,7 +176,7 @@ const MyProfile : React.FC = () => {
 
     return(
         <div className="mx-auto px-4 max-w-5xl pt-20 h-screen flex flex-col font-poppins flex-grow">
-            
+            <ToastContainer className="text-xs"/>
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <div>
