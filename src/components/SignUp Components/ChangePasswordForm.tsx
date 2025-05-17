@@ -78,7 +78,7 @@ const ChangePasswordPage: React.FC = () => {
                 dispatch(setIsTempPassword(false)); 
                 navigate('/dashboard'); 
             } else {
-                toast.error(response.message || "Failed to update password");
+                toast.error(response.message);
             }
         } catch (error) {
             toast.error( 'Error changing password');
