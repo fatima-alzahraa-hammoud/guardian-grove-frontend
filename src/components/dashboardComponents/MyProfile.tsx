@@ -42,6 +42,7 @@ const MyProfile : React.FC = () => {
     const [goals, setGoals] = useState<{completedGoals: number, totalGoals: number}>();
     const [tasks, setTasks] = useState<{completedTasks: number, totalTasks: number}>();
     const [isDialogOpen, setDialogOpen] = useState(false);
+    const [updated, setUpdated] = useState(false);
 
     const handleDialogOpen = () => {
         setDialogOpen(true);
@@ -53,7 +54,6 @@ const MyProfile : React.FC = () => {
 
     const handleDialogConfirm = async(data: TUpdate) => {
         setDialogOpen(false);  
-        const [updated, setUpdated] = useState(false);
 
         if (data){
             try {
