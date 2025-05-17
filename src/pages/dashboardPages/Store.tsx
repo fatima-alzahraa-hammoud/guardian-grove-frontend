@@ -79,10 +79,23 @@ const Store: React.FC = () => {
                 body: {itemId}
             });
             if(response){
+                const purchasedItem = storeItems.find(item => item._id === itemId);
+
                 dispatch(setPurchasedItems([...purchasedItems, response.item._id]));
                 // Update the user's coin balance
                 dispatch(setCoins(coins - price));
                 coins = coins-price;
+
+                // Show success toast with item name
+                toast.success(`${purchasedItem?.name || 'Item'} purchased successfully!`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             }
             else{
                 toast.error(response.error);
