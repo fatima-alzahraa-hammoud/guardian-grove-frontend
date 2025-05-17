@@ -11,10 +11,11 @@ import { requestMethods } from "../../libs/enum/requestMethods";
 import ProgressBar from "../common/ProgressBar";
 import "../../styles/card.css";
 import "../../styles/global.css";
-import UpdateUserDialog from "../common/UpdateUserDialog";
+import UpdateUserDialog from "../common/updateUserDialog";
 import { TUpdate } from "../../libs/types/updateTypes";
 import { useNavigate } from "react-router-dom";
 import { selectFamilyMembers, selectFamilyName, selectFamilyStars, updateFamilyName } from "../../redux/slices/familySlice";
+import { toast } from "react-toastify";
 
 const MyProfile : React.FC = () => {
 
@@ -51,39 +52,46 @@ const MyProfile : React.FC = () => {
     };
 
     const handleDialogConfirm = async(data: TUpdate) => {
-        setDialogOpen(false);   
+        setDialogOpen(false);  
+        const [updated, setUpdated] = useState(false);
 
         if (data){
             try {
-                const response = await requestApi({
+                const userResponse = await requestApi({
                     route: "/users/",
                     method: requestMethods.PUT,
                     body: data
                 });
 
-                if (response){
-                    dispatch(setUser(response.user));
+                if (userResponse){
+                    dispatch(setUser(userResponse.user));
+                    setUpdated(true);
                 }
             } catch (error) {
                 console.log("something wents wrong in updaing user", error);
             }
 
-            //update family details
+            //update family detazils
             if (data.email || data.familyAvatar || data.familyName){
                 try {
-                    const response = await requestApi({
+                    const familyResponse = await requestApi({
                         route: "/family/",
                         method: requestMethods.PUT,
                         body: data
                     });
         
-                    if (response){
-                        dispatch(setEmail(response.family.email));
-                        dispatch(updateFamilyName(response.family.familyName));
-                    }
+                    if (familyResponse){
+                        dispatch(setEmail(familyResponse.family.email));
+                        dispatch(updateFamilyName(familyResponse.family.familyName));
+                        setUpdated(true);
+                    }  
                 } catch (error) {
                     console.log("something wents wrong in getting family details", error);
                 }
+            }
+
+            if (updated){
+                toast.success("Profile updated successfully!");
             }
         }
     };

@@ -101,7 +101,6 @@ const UpdateUserDialog: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, t
         
         // Call onConfirm with valid data
         onConfirm(formData);
-        toast.success("Profile updated successfully!");
         onClose();
 
     });
