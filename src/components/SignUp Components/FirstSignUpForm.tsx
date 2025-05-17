@@ -7,8 +7,8 @@ import "../../styles/global.css";
 import { gsap } from "gsap";
 import { firstStepSchema, TFirstStep } from "../../libs/types/signupTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "react-toastify";
 import { Label } from "../ui/label";
+import FormErrorMessage from "../common/FormErrorMessage";
 
 interface FirstSignUpFormProps {
     onNext: (data: TFirstStep) => void;
@@ -45,21 +45,6 @@ const FirstSignUpForm : React.FC<FirstSignUpFormProps> = ({onNext}) => {
             gsap.fromTo(titleRef.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 1, delay: 0.4, ease: "power2.out" });
         }
     }, []);
-
-    useEffect(() => {
-        if (errors.name) {
-            toast.error(errors.name.message);
-        }
-        if (errors.email) {
-            toast.error(errors.email.message);
-        }
-        if (errors.password) {
-            toast.error(errors.password.message);
-        }
-        if (errors.confirmPassword) {
-            toast.error(errors.confirmPassword.message);
-        }
-    }, [errors]);
 
     return(
         <div ref={titleRef} className="w-full max-w-md space-y-5">
@@ -123,6 +108,7 @@ const FirstSignUpForm : React.FC<FirstSignUpFormProps> = ({onNext}) => {
                             </svg>
                         </div>
                     </div>
+                    {errors.name && <FormErrorMessage message={errors.name.message as string} />}
                 </div>
 
                 <div className="mx-10 relative">
@@ -144,6 +130,7 @@ const FirstSignUpForm : React.FC<FirstSignUpFormProps> = ({onNext}) => {
                             </svg>
                         </div>
                     </div>
+                    {errors.email && <FormErrorMessage message={errors.email.message as string} />}
                 </div>
 
                 <div className="mx-10 relative">
@@ -166,6 +153,7 @@ const FirstSignUpForm : React.FC<FirstSignUpFormProps> = ({onNext}) => {
                             </svg>
                         </div>
                     </div>
+                    {errors.password && <FormErrorMessage message={errors.password.message as string} />}
                 </div>
 
                 <div className="mx-10 relative">
@@ -188,6 +176,7 @@ const FirstSignUpForm : React.FC<FirstSignUpFormProps> = ({onNext}) => {
                             </svg>
                         </div>
                     </div>
+                    {errors.confirmPassword && <FormErrorMessage message={errors.confirmPassword.message as string} />}
                 </div>
 
                 <div className="text-right mr-10">
