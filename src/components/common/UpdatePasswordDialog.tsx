@@ -12,6 +12,7 @@ import { ChevronDown, ChevronUp, KeyRound } from "lucide-react";
 import { toast } from 'react-toastify';
 import { requestApi } from '../../libs/requestApi';
 import { requestMethods } from '../../libs/enum/requestMethods';
+import FormErrorMessage from './FormErrorMessage';
 
 const SettingsDialog = () => {
     const [showPasswordDialog, setShowPasswordDialog] = useState(false);
@@ -167,9 +168,7 @@ const SettingsDialog = () => {
                                     onChange={handlePasswordChange}
                                     className="w-full"
                                 />
-                                {errors.oldPassword && (
-                                    <p className="text-xs text-red-500 mt-1">{errors.oldPassword}</p>
-                                )}
+                                {errors.oldPassword && <FormErrorMessage message={errors.oldPassword as string} />}
                             </div>
 
                             <div>
@@ -181,9 +180,7 @@ const SettingsDialog = () => {
                                     onChange={handlePasswordChange}
                                     className="w-full"
                                 />
-                                {errors.newPassword && (
-                                    <p className="text-xs text-red-500 mt-1">{errors.newPassword}</p>
-                                )}
+                                {errors.newPassword && <FormErrorMessage message={errors.newPassword as string} />}
                             </div>
 
                             <div>
@@ -195,9 +192,7 @@ const SettingsDialog = () => {
                                     onChange={handlePasswordChange}
                                     className="w-full"
                                 />
-                                {errors.confirmPassword && (
-                                    <p className="text-xs text-red-500 mt-1">{errors.confirmPassword}</p>
-                                )}
+                                {errors.confirmPassword && <FormErrorMessage message={errors.confirmPassword as string} />}
                             </div>
 
                             {errors.general && (
