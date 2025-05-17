@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from '../ui/select';
 import { useSelector } from 'react-redux';
 import { selectAvatar, selectBirthday, selectEmail, selectGender, selectName, selectRole } from '../../redux/slices/userSlice';
 import { toast, ToastContainer } from 'react-toastify';
+import FormErrorMessage from './FormErrorMessage';
 
 interface DialogProps {
     isOpen: boolean;
@@ -123,10 +124,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                             role={role || ''}
                         />
                     </div>
-
-                    {errors.avatar && (
-                        <p className="text-xs text-red-500 mt-1 text-center">{errors.avatar.message}</p>
-                    )}
+                    {errors.avatar && <FormErrorMessage message={errors.avatar.message as string} />}
                 </div>
 
                 {/* Name */}
@@ -150,9 +148,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                 </svg>
                             </div>
                         </div>
-                        {errors.name && (
-                            <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
-                        )}
+                        {errors.name && <FormErrorMessage message={errors.name.message as string} />}
                     </div>    
 
                     {/* Birthday Picker */}
@@ -199,9 +195,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                 />
                             </PopoverContent>
                         </Popover>
-                        {errors.birthday && (
-                            <p className="text-xs text-red-500 mt-1">{errors.birthday.message}</p>
-                        )}
+                        {errors.birthday && <FormErrorMessage message={errors.birthday.message as string} />}
                     </div>
 
                     {/* Gender */}
@@ -229,9 +223,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                 </SelectItem>
                             </SelectContent>
                         </Select>
-                        {errors.gender && (
-                            <p className="text-xs text-red-500 mt-1">{errors.gender.message}</p>
-                        )}
+                        {errors.gender && <FormErrorMessage message={errors.gender.message as string} />}
                     </div>
 
                     {/* email */}
@@ -257,10 +249,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                         </svg>
                                     </div>
                                 </div>
-
-                                {errors.email && (
-                                    <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
-                                )}
+                                {errors.email && <FormErrorMessage message={errors.email.message as string} />}
                             </div>
 
                             <div className="mx-3 relative">
@@ -283,10 +272,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                         </svg>
                                     </div>
                                 </div>
-
-                                {errors.familyName && (
-                                    <p className="text-xs text-red-500 mt-1">{errors.familyName.message}</p>
-                                )}
+                                {errors.familyName && <FormErrorMessage message={errors.familyName.message as string} />}
                             </div>
 
                             <div className="mx-3 relative flex justify-center items-center">
@@ -300,10 +286,7 @@ const DialogComponent: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, ti
                                             role='family'
                                         />
                                     </div>
-
-                                    {errors.familyAvatar && (
-                                        <p className="text-xs text-red-500 mt-1 text-center">{errors.familyAvatar.message}</p>
-                                    )}
+                                    {errors.familyAvatar && <FormErrorMessage message={errors.familyAvatar.message as string} />}
                                 </div>    
                             </div>
                         </div>    
