@@ -59,7 +59,7 @@ const Login : React.FC = () => {
                 else
                     navigate("/admin")
             } else {
-                toast.error(response.message || 'Login failed!');
+                toast.error(response.message);
             }
 
             // Reset the form
