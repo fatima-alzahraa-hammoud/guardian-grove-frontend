@@ -20,6 +20,7 @@ import { setToken } from "../redux/slices/authSlice";
 import { setUser } from "../redux/slices/userSlice";
 import { setFamily } from "../redux/slices/familySlice";
 import ForgotPasswordDialog from "../components/common/ForgetPasswordDialog";
+import FormErrorMessage from "../components/common/FormErrorMessage";
 
 
 const Login : React.FC = () => {
@@ -115,18 +116,6 @@ const Login : React.FC = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (errors.name) {
-            toast.error(errors.name.message);
-        }
-        if (errors.email) {
-            toast.error(errors.email.message);
-        }
-        if (errors.password) {
-            toast.error(errors.password.message);
-        }
-    }, [errors]);
-
     return (
         <div className="h-screen flex flex-col lg:flex-row p-0 m-0 font-poppins">
             <ToastContainer className='text-xs'/>
@@ -195,6 +184,7 @@ const Login : React.FC = () => {
                                     </svg>
                                 </div>
                             </div>
+                            {errors.name && <FormErrorMessage message={errors.name.message as string}/>}
                         </div>
 
                         <div className="mx-10 relative">
@@ -216,6 +206,7 @@ const Login : React.FC = () => {
                                     </svg>
                                 </div>
                             </div>
+                            {errors.email && <FormErrorMessage message={errors.email.message as string}/>}
                         </div>
 
                         <div className="mx-10 relative">
@@ -237,6 +228,7 @@ const Login : React.FC = () => {
                                         <path d="M7 10V7a5 5 0 0 1 10 0v3"/>
                                     </svg>
                                 </div>
+                                {errors.password && <FormErrorMessage message={errors.password.message as string}/>}
                             </div>
                         </div>
                         <div className="text-right mr-10">
