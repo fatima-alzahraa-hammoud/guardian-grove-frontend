@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Loader2 } from "lucide-react";
+import FormErrorMessage from "./FormErrorMessage";
 
 const forgotPasswordSchema = z.object({
     name: z.string().min(3, "Name is required"),
@@ -80,9 +81,7 @@ const ForgotPasswordDialog: React.FC<ForgotPasswordDialogProps> = ({ open, onOpe
                             type="text"
                             placeholder="Your Username"
                         />
-                        {errors.name && (
-                            <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
-                        )}
+                        {errors.name && <FormErrorMessage message={errors.name.message as string} />}
                     </div>
 
                     <div>
@@ -95,9 +94,8 @@ const ForgotPasswordDialog: React.FC<ForgotPasswordDialogProps> = ({ open, onOpe
                             type="email"
                             placeholder="your@email.com"
                         />
-                        {errors.email && (
-                            <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
-                        )}
+                        {errors.email && <FormErrorMessage message={errors.email.message as string} />}
+
                     </div>
 
                     <p className="text-sm text-gray-600">
