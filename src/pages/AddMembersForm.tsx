@@ -19,6 +19,7 @@ import { requestApi } from "../libs/requestApi";
 import { requestMethods } from "../libs/enum/requestMethods";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import FormErrorMessage from "../components/common/FormErrorMessage";
 
 const DropdownIndicator = (props: any) => {
     return (
@@ -157,10 +158,7 @@ const AddMembersForm : React.FC = () => {
                                 role="parent"
                             />
                         </div>
-
-                        {errors.avatar && (
-                            <p className="text-xs text-red-500 mt-1 text-left -mx-[30px]">{errors.avatar.message}</p>
-                        )}
+                        {errors.avatar && <FormErrorMessage message={errors.avatar.message as string}/>}
                     </div>
 
                     <div className="w-full max-w-md">
@@ -182,10 +180,7 @@ const AddMembersForm : React.FC = () => {
                                 </svg>
                             </div>
                         </div>
-
-                        {errors.name && (
-                            <p className="text-xs text-red-500 mt-1 text-left">{errors.name.message}</p>
-                        )}
+                        {errors.name && <FormErrorMessage message={errors.name.message as string}/>}
                     </div>
 
                     {/* Birthday Picker */}
@@ -232,10 +227,7 @@ const AddMembersForm : React.FC = () => {
                                 />
                             </PopoverContent>
                         </Popover>
-
-                        {errors.birthday && (
-                            <p className="text-xs text-red-500 mt-1 text-left">{errors.birthday.message}</p>
-                        )}
+                        {errors.birthday && <FormErrorMessage message={errors.birthday.message as string}/>}
                     </div>
 
                     {/* Select gender */}
@@ -265,10 +257,7 @@ const AddMembersForm : React.FC = () => {
                             <span>Male</span>
                         </Button>
                     </div>
-
-                    {errors.gender && (
-                        <p className="text-xs text-red-500 mt-1 text-left">{errors.gender.message}</p>
-                    )}
+                    {errors.gender && <FormErrorMessage message={errors.gender.message as string}/>}
 
                     <div className="w-full max-w-md">
                         <label className="block text-xs font-medium text-gray-700 text-left mb-2">{tab}'s Interests</label>
@@ -300,10 +289,7 @@ const AddMembersForm : React.FC = () => {
                                 menuShouldScrollIntoView={false}
                             />
                         </div>
-
-                        {errors.interests && (
-                            <p className="text-xs text-red-500 mt-1 text-left">{errors.interests.message}</p>
-                        )}
+                        {errors.interests && <FormErrorMessage message={errors.interests.message as string}/>}
                     </div>
 
                     {/* Action Buttons */}
