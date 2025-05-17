@@ -17,6 +17,7 @@ import img from '/assets/images/family-login.png';
 import { useDispatch } from 'react-redux';
 import { setIsTempPassword } from '../../redux/slices/userSlice';
 import { changePasswordSchema, TChangePassword } from '../../libs/types/changePasswordTypes';
+import FormErrorMessage from '../common/FormErrorMessage';
 
 
 const ChangePasswordPage: React.FC = () => {
@@ -129,9 +130,7 @@ const ChangePasswordPage: React.FC = () => {
                                     </svg>
                                 </div>
                             </div>
-                            {errors.currentPassword && (
-                                <p className="text-xs text-red-500 mt-1">{errors.currentPassword.message}</p>
-                            )}
+                            {errors.currentPassword && <FormErrorMessage message={errors.currentPassword.message as string} />}
                         </div>
 
                         <div className="mx-10 relative">
@@ -153,9 +152,7 @@ const ChangePasswordPage: React.FC = () => {
                                     </svg>
                                 </div>
                             </div>
-                            {errors.newPassword && (
-                                <p className="text-xs text-red-500 mt-1">{errors.newPassword.message}</p>
-                            )}
+                            {errors.newPassword && <FormErrorMessage message={errors.newPassword.message as string} />}
                         </div>
 
                         <div className="mx-10 relative">
@@ -177,9 +174,7 @@ const ChangePasswordPage: React.FC = () => {
                                     </svg>
                                 </div>
                             </div>
-                            {errors.confirmPassword && (
-                                <p className="text-xs text-red-500 mt-1">{errors.confirmPassword.message}</p>
-                            )}
+                            {errors.confirmPassword && <FormErrorMessage message={errors.confirmPassword.message as string} />}
                         </div>
 
                         <Button
