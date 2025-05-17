@@ -95,3 +95,19 @@
 .tabs-list-container::-webkit-scrollbar {
   display: none; /* Hide scrollbar for Chrome, Safari, and Edge */
 }
+
+.group:hover .border-dashed {
+    animation: borderDash 20s linear infinite;
+}
+
+@keyframes borderDash {
+    to {
+        stroke-dashoffset: -1000;
+    }
+}
+
+.group:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+    transition: all 0.4s ease-out;
+}
