@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import StatCard from './StatCard';
-import { Coins, UserCheck, UserPlus, UsersIcon, UserX } from 'lucide-react';
+import { UserCheck, UserPlus, UsersIcon, UserX } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table"
 import { Input } from "../components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
