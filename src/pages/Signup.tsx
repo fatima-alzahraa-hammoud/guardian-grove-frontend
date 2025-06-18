@@ -49,7 +49,7 @@ const Signup : React.FC = () => {
                 toast.error(response.error || 'SignUp failed!');
             }
         } catch (error : any ) {
-            const errorMessage = error.response?.data?.error || 'An unexpected error occurred';
+            toast.error(error.response?.data?.error || 'An unexpected error occurred');
         }
     }
 
