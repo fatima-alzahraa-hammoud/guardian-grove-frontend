@@ -36,7 +36,7 @@ const initialFamilies: Family[] = [
 ];
 
 const Families: React.FC = () => {
-    const [families, setFamilies] = useState<Family[]>(initialFamilies);
+    const [families] = useState<Family[]>(initialFamilies);
     const [selectedFamily, setSelectedFamily] = useState<Family | null>(null);
     const [message, setMessage] = useState<string>("");
     const [search, setSearch] = useState<string>("");
