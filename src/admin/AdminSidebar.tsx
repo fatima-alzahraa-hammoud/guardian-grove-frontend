@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, Users, GroupIcon as Family, BarChart, ShoppingBag, Award, Shield } from 'lucide-react'
+import { Home, Users, GroupIcon as Family, ShoppingBag, Award } from 'lucide-react'
 import { 
     Sidebar, 
     SidebarHeader, 
