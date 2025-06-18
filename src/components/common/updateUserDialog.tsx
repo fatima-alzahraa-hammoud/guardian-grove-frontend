@@ -15,7 +15,6 @@ import { format } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '../ui/select';
 import { useSelector } from 'react-redux';
 import { selectAvatar, selectBirthday, selectEmail, selectGender, selectName, selectRole } from '../../redux/slices/userSlice';
-import { toast, ToastContainer } from 'react-toastify';
 import FormErrorMessage from './FormErrorMessage';
 
 interface DialogProps {
