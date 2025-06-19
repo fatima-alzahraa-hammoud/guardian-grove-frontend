@@ -24,7 +24,6 @@ const childColorPalette = [
     "bg-cyan-400",
 ];
 
-  
 const FamilyTree : React.FC<FamilyTreeProps> = ({collapsed}) => {
 
     const familyMembers = useSelector(selectFamilyMembers);
@@ -32,22 +31,23 @@ const FamilyTree : React.FC<FamilyTreeProps> = ({collapsed}) => {
     const parents = familyMembers.filter(member => member.role === "parent");
     const children = familyMembers.filter(member => member.role === "child");
 
-
     return(
-        <div className={`pt-24 min-h-screen flex flex-col items-center mx-auto px-4 `}>
-            <div className={`w-full flex-grow font-poppins mx-auto px-4 max-w-5xl`} >
+        <div className={`pt-24 min-h-screen flex flex-col items-center mx-auto transition-all duration-300 ${collapsed ? 'px-4' : 'px-8'}`}>
+            <div className={`w-full flex-grow font-poppins mx-auto px-4 transition-all duration-300 ${collapsed ? 'max-w-6xl' : 'max-w-5xl'}`} >
                 
                 {/* Header */}
                 <div className="text-left">
-                    <h2 className="text-xl font-bold font-comic">Family Tree</h2>
-                    <p className="text-gray-600 mt-2 text-base">
+                    <h2 className={`font-bold font-comic transition-all duration-300 ${collapsed ? 'text-2xl' : 'text-xl'}`}>
+                        Family Tree
+                    </h2>
+                    <p className={`text-gray-600 mt-2 transition-all duration-300 ${collapsed ? 'text-lg' : 'text-base'}`}>
                         Click on the family member to view their progress
                     </p>
                 </div>
 
                 {/* Parents Row */}
-                <div className="mt-10 mb-14">
-                    <div className="flex justify-center space-x-20 mb-12">
+                <div className={`mt-10 transition-all duration-300 ${collapsed ? 'mb-16' : 'mb-14'}`}>
+                    <div className={`flex justify-center mb-12 transition-all duration-300 ${collapsed ? 'space-x-24' : 'space-x-20'}`}>
                         {parents.map((parent, index) => (
                             <FamilyMemberCard
                                 key={parent.name}
@@ -60,7 +60,7 @@ const FamilyTree : React.FC<FamilyTreeProps> = ({collapsed}) => {
 
                 {/* Children Row */}
                 <div>
-                    <div className="flex flex-wrap justify-center gap-x-10 gap-y-10">
+                    <div className={`flex flex-wrap justify-center transition-all duration-300 ${collapsed ? 'gap-x-12 gap-y-12' : 'gap-x-10 gap-y-10'}`}>
                         {children.map((child, index) => (
                             <FamilyMemberCard
                                 key={child.name}
