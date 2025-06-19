@@ -21,6 +21,7 @@ import { setUser } from "../redux/slices/userSlice";
 import { setFamily } from "../redux/slices/familySlice";
 import ForgotPasswordDialog from "../components/common/ForgetPasswordDialog";
 import FormErrorMessage from "../components/common/FormErrorMessage";
+import { ApiError } from "../libs/types/ApiError";
 
 
 const Login : React.FC = () => {
@@ -64,8 +65,9 @@ const Login : React.FC = () => {
 
             // Reset the form
             reset();
-        } catch (error) {
-            toast.error('An error occurred during login.');
+        } catch (error: unknown) {
+            const apiError = error as ApiError;
+            toast.error(apiError.response?.data?.error || apiError.message || 'An error occurred during login.');
         }
     }
 
