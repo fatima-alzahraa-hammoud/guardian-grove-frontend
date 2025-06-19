@@ -24,14 +24,25 @@ import "../../styles/global.css";
 import { gsap } from "gsap";
 import 'react-day-picker/dist/style.css';
 import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
-import Selects, {components} from 'react-select';
+import Selects, {components, DropdownIndicatorProps} from 'react-select';
 import AvatarSelector from "../AvatarSelector";
 import { secondStepSchems, TSecondStep } from "../../libs/types/signupTypes";
 import { customStyles, interestOptions } from "../../libs/constants";
 import { Input } from "@mui/material";
 import { toast } from "react-toastify";
 
-const DropdownIndicator = (props: any) => {
+interface FormErrors {
+    [key: string]: {
+        message?: string;
+    };
+}
+
+interface SelectOption {
+    value: string;
+    label: string;
+}
+
+const DropdownIndicator = (props: DropdownIndicatorProps) => {
     return (
         <components.DropdownIndicator {...props}>
             <svg
@@ -77,11 +88,11 @@ const SecondSignUpForm: React.FC<SecondSignUpFormProps> = ({onSubmit}) => {
         onSubmit(data);
     };
 
-    const onError = (errors: any) => {
+    const onError = (errors: FormErrors) => {
         console.log("Form errors:", errors);
         if (errors) {
             Object.keys(errors).forEach((key) => {
-                toast.error(errors[key]?.message || "Invalid input");  // Show error toast
+                toast.error(errors[key]?.message || "Invalid input");
             });
         }
     };
@@ -271,16 +282,18 @@ const SecondSignUpForm: React.FC<SecondSignUpFormProps> = ({onSubmit}) => {
                                             className="custom-select text-[10px]"
                                             classNamePrefix="react-select"
                                             onChange={(selectedOptions) => {
-                                                const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
+                                                const selectedValues = Array.isArray(selectedOptions)
+                                                    ? selectedOptions.map((option) => (option as SelectOption).value)
+                                                    : [];
                                                 field.onChange(selectedValues);
                                             }}
                                             styles={{
                                                 ...customStyles,
-                                                option: (provided: any, state: any) => ({
-                                                    ...provided,
+                                                option: (base, state) => ({
+                                                    ...base,
                                                     fontSize: '12px',
-                                                    backgroundColor: state.isFocused ? '#3A8EBA' : provided.backgroundColor,
-                                                    color: state.isFocused ? 'white' : provided.color,
+                                                    backgroundColor: state.isFocused ? '#3A8EBA' : base.backgroundColor,
+                                                    color: state.isFocused ? 'white' : base.color,
                                                 }),
                                             }}
                                             components={{ DropdownIndicator }}
