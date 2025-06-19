@@ -52,12 +52,12 @@ const ChangePasswordPage: React.FC = () => {
                 toast.error("Please fill in all password fields");
                 return;
             }
-    
+
             if (data.newPassword !== data.confirmPassword) {
                 toast.error("New passwords don't match!");
                 return;
             }
-    
+
             if (data.newPassword.length < 6) {
                 toast.error("New password must be at least 6 characters long");
                 return;
@@ -80,8 +80,12 @@ const ChangePasswordPage: React.FC = () => {
             } else {
                 toast.error(response.message);
             }
-        } catch (error) {
-            toast.error( 'Error changing password');
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                toast.error(`Error changing password: ${error.message}`);
+            } else {
+                toast.error('An unexpected error occurred while changing password');
+            }
         } finally {
             setIsLoading(false);
         }
