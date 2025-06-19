@@ -13,6 +13,7 @@ const AIFriend : React.FC = () => {
     const dispatch = useDispatch();
 
     const [collapsed] = useState<boolean>(false);
+    const [isBotResponding, setIsBotResponding] = useState<boolean>(false);
     
     useEffect(() => {
         loadChats();
@@ -50,13 +51,17 @@ const AIFriend : React.FC = () => {
     return(
         <div>
             <SidebarProvider>
-                <AISidebar collapsed={collapsed} />
+                <AISidebar 
+                    collapsed={collapsed} 
+                    setIsBotResponding={setIsBotResponding}
+                />
 
                 {/* AI Chatbot Area */}
                 <div className="flex justify-center w-full">
-                    <div className="pt-28 w-full transition-all duration-300">
-                        <AIChatbot collapsed={collapsed}/>
-                    </div>
+                    <AIChatbot 
+                        collapsed={collapsed}
+                        isBotResponding={isBotResponding}
+                    />
                 </div>
             </SidebarProvider>
         </div>
