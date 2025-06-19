@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import AISidebar from "../../components/dashboardComponents/AISidebar";
 import { SidebarProvider } from "../../components/ui/sidebar";
 import AIChatbot from "../../components/dashboardComponents/AIChatbot";
@@ -13,20 +13,16 @@ const AIFriend : React.FC = () => {
     const dispatch = useDispatch();
 
     const [collapsed] = useState<boolean>(false);
-    
-    useEffect(() => {
-        loadChats();
-    }, []);
 
-    const loadChats = async () =>{
+    const loadChats = useCallback(async () => {
         try {
             const response = await requestApi({
                 route: "/chats/getChats",
                 method: requestMethods.GET
             });
 
-            if (response){
-                if (response.chats){
+            if (response) {
+                if (response.chats) {
                     const fetchedChats = response.chats;
                     // Add all fetched chats to the Redux store
                     fetchedChats.forEach((chat: Chat) => {
@@ -36,16 +32,19 @@ const AIFriend : React.FC = () => {
                     if (fetchedChats.length === 1 && fetchedChats[0].title === "Welcome Chat") {
                         dispatch(setActiveChat(fetchedChats[0]._id));
                     }
-    
-                }
-                else{
+                } else {
                     console.log("failed to load data", response.message);
                 }
             }
         } catch (error) {
             console.error("Error loading chats", error);
         }
-    }
+    }, [dispatch]);
+
+        
+    useEffect(() => {
+        loadChats();
+    }, [loadChats]);
 
     return(
         <div>
