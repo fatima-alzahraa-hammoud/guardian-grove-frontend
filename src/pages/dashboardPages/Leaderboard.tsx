@@ -261,7 +261,6 @@ const Leaderboard: React.FC = () => {
                                     familyName={entry.familyName}
                                     stars={entry.stars}
                                     tasks={entry.tasks}
-                                    familyId={entry.familyId}
                                     familyAvatar={entry.familyAvatar}
                                     isFamily={isFamily}
                                     rankStyle={isFamily ? "font-bold text-lg text-[#3A8EBA]" : "font-semibold"}

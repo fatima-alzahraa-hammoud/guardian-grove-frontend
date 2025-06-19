@@ -9,14 +9,13 @@ interface LeaderboardItemProps {
     familyName: string;
     stars: number;
     tasks: number;
-    familyId: string;
     familyAvatar: string;
     isFamily: boolean;
     rankStyle: string;
     onView: () => void;
 }
 
-const LeaderboardItem: React.FC<LeaderboardItemProps> = ({ rank, familyName, stars, tasks, familyId, familyAvatar, isFamily, rankStyle, onView }) => {
+const LeaderboardItem: React.FC<LeaderboardItemProps> = ({ rank, familyName, stars, tasks, familyAvatar, isFamily, rankStyle, onView }) => {
 
     return(
         <div
