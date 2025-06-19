@@ -26,13 +26,12 @@ interface ChallengeDialogProps {
 }
 
 const ChallengeDialog : React.FC<ChallengeDialogProps> = ({isOpen, onClose, challenge, adventureTitle, totalChallenges, adventureId, challengeNumber, onChallengeComplete, isCompleted}) => {
-    if (!challenge) return null;
-
     const [userAnswer, setUserAnswer] = useState<string>("");
     const userId = useSelector(selectUserId);
     const [aiResponse, setAiResponse] = useState<string>("");
-
     const dispatch = useDispatch();
+
+    if (!challenge) return null;
 
     const handleAiSubmit = async() => {
         try {
