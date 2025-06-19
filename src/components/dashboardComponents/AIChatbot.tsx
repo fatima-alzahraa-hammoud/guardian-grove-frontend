@@ -13,10 +13,11 @@ import VoiceDialog from "../common/VoiceDialog";
 
 interface AIChatbotProps {
     collapsed: boolean;
+    isBotResponding: boolean;
   }
   
 
-const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
+const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed, isBotResponding}) => {
 
     const [input, setInput] = useState<string>("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -27,7 +28,8 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
     const [isCall, setIsCall] = useState(false);
 
 
-    const isBotResponding = useSelector(selectIsResponding);
+    const isBotRespondingRedux = useSelector(selectIsResponding);
+    const isResponding = isBotResponding || isBotRespondingRedux;
 
     const dispatch = useDispatch();
 
@@ -216,7 +218,7 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                                 </p>
                             )}
                             {/* Show preloader when bot is responding */}
-                            {isBotResponding && (
+                            {isResponding && (
                                 <div className="flex justify-start">
                                     <div className=" bg-white text-black p-3 rounded-2xl">
                                         <div className="flex items-center justify-center w-full">
