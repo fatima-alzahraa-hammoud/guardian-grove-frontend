@@ -16,15 +16,7 @@ import { useDispatch } from "react-redux";
 import { setToken } from "../redux/slices/authSlice";
 import { setUser } from "../redux/slices/userSlice";
 import { setFamily } from "../redux/slices/familySlice";
-
-interface ApiError {
-    response?: {
-        data?: {
-            error?: string;
-        };
-    };
-    message: string;
-}
+import { ApiError } from "../libs/types/ApiError";
 
 const Signup : React.FC = () => {
 
