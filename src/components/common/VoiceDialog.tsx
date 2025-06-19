@@ -12,13 +12,32 @@ interface VoiceDialogProps {
     onSendMessage: (message: string) => Promise<void>;
 }
 
+interface SpeechRecognitionEvent extends Event {
+    results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionError extends Event {
+    error: string;
+}
+
+interface WebkitSpeechRecognition extends EventTarget {
+    continuous: boolean;
+    interimResults: boolean;
+    lang: string;
+    start: () => void;
+    stop: () => void;
+    onstart: (event: Event) => void;
+    onresult: (event: SpeechRecognitionEvent) => void;
+    onerror: (event: SpeechRecognitionError) => void;
+}
+
 const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange, onSendMessage, onClose}) => {
 
     const [isListening, setIsListening] = useState(false)
     const [transcript, setTranscript] = useState("")
     const [isProcessing, setIsProcessing] = useState(false);
 
-    const recognitionRef = useRef<any>(null)
+    const recognitionRef = useRef<WebkitSpeechRecognition | null>(null);
 
 
     useEffect(() => {
@@ -45,31 +64,31 @@ const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange, onSendMes
 
         setTranscript("Preparing microphone...");
 
-        recognitionRef.current = new (window as any).webkitSpeechRecognition()
-        recognitionRef.current.continuous = true
-        recognitionRef.current.interimResults = true
-        recognitionRef.current.lang = 'en-US'
+        recognitionRef.current = new (window as any).webkitSpeechRecognition() as WebkitSpeechRecognition;
+        recognitionRef.current.continuous = true;
+        recognitionRef.current.interimResults = true;
+        recognitionRef.current.lang = 'en-US';
 
         recognitionRef.current.onstart = () => {
-            setIsListening(true)
-        }
+            setIsListening(true);
+        };
 
-        recognitionRef.current.onresult = (event: any) => {
+        recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
             const currentTranscript = Array.from(event.results)
-                .map((result: any) => result[0].transcript)
-                .join('')
-            setTranscript(currentTranscript)
-        }
+                .map(result => result[0].transcript)
+                .join('');
+            setTranscript(currentTranscript);
+        };
 
-        recognitionRef.current.onerror = (event: any) => {
-            console.error("Speech recognition error:", event.error)
+        recognitionRef.current.onerror = (event: SpeechRecognitionError) => {
+            console.error("Speech recognition error:", event.error);
             if (event.error === 'not-allowed') {
                 setTranscript("Microphone access denied. Please allow microphone access.");
             }
-            stopListening()
-        }
+            stopListening();
+        };
 
-        recognitionRef.current.start()
+        recognitionRef.current.start();
     }
 
     const stopListening = () => {
