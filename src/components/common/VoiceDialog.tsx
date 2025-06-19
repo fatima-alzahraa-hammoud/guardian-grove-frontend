@@ -31,6 +31,10 @@ interface WebkitSpeechRecognition extends EventTarget {
     onerror: (event: SpeechRecognitionError) => void;
 }
 
+interface WindowWithSpeechRecognition extends Window {
+    webkitSpeechRecognition: new () => WebkitSpeechRecognition;
+}
+
 const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange, onSendMessage, onClose}) => {
 
     const [isListening, setIsListening] = useState(false)
@@ -64,7 +68,8 @@ const VoiceDialog : React.FC<VoiceDialogProps> = ({open, onOpenChange, onSendMes
 
         setTranscript("Preparing microphone...");
 
-        recognitionRef.current = new (window as any).webkitSpeechRecognition() as WebkitSpeechRecognition;
+        const windowWithSpeech = window as WindowWithSpeechRecognition;
+        recognitionRef.current = new windowWithSpeech.webkitSpeechRecognition();
         recognitionRef.current.continuous = true;
         recognitionRef.current.interimResults = true;
         recognitionRef.current.lang = 'en-US';
