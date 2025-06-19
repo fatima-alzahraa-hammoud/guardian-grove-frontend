@@ -18,10 +18,9 @@ import QuickTipDialog from "../common/QuickTipDialog";
 
 interface SidebarProps {
   collapsed: boolean;
-  setIsBotResponding: (isResponding: boolean) => void;
 }
 
-const AISidebar : React.FC<SidebarProps> = ({collapsed, setIsBotResponding}) => {
+const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
 
     const { toggleSidebar, state } = useSidebar();
     collapsed = state === "collapsed";
