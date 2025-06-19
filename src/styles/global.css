@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    --h-screen: 100vh;
     --background: 0 0% 100%;
     --foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
@@ -56,4 +57,57 @@
   body {
     @apply font-sans antialiased bg-background text-foreground;
   }
+}
+
+@keyframes rotateBorder {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.border-rotate-wrapper:hover .border-rotate {
+  animation: rotateBorder 8s linear infinite;
+}
+
+.non-rotating-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.avatar-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.tabs-list-container {
+  overflow-x: auto; /* Enable horizontal scrolling */
+  -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+.tabs-list-container::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome, Safari, and Edge */
+}
+
+.group:hover .border-dashed {
+    animation: borderDash 20s linear infinite;
+}
+
+@keyframes borderDash {
+    to {
+        stroke-dashoffset: -1000;
+    }
+}
+
+.group:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+    transition: all 0.4s ease-out;
 }

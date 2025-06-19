@@ -2,21 +2,55 @@
 
 import React, { useEffect, useRef } from "react";
 import "../styles/global.css";
-import logo from '../assets/logo/GuardianGrove_logo_Text.png';
-import img from '../assets/images/family-signup1.png';
+import logo from '/assets/logo/GuardianGrove_logo_Text.png';
+import img from '/assets/images/family-signup1.png';
 import { gsap } from "gsap";
-import FirstSignUpForm from "../components/FirstSignUpForm";
-import { FieldValues } from "react-hook-form";
-import { ToastContainer } from "react-toastify";
-import SecondSignUpForm from "../components/SecondSignUpForm";
+import FirstSignUpForm from "../components/SignUp Components/FirstSignUpForm";
+import { toast, ToastContainer } from "react-toastify";
+import SecondSignUpForm from "../components/SignUp Components/SecondSignUpForm";
+import { TFirstStep, TSecondStep } from "../libs/types/signupTypes";
+import { requestApi } from "../libs/requestApi";
+import { requestMethods } from "../libs/enum/requestMethods";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setToken } from "../redux/slices/authSlice";
+import { setUser } from "../redux/slices/userSlice";
+import { setFamily } from "../redux/slices/familySlice";
 
 const Signup : React.FC = () => {
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [step, setStep] = React.useState(1);
+    const [firstStepData, setFirstStepData] = React.useState<TFirstStep | null>(null);
 
-    function handleNext(data: FieldValues): void {
-        console.log("Form data:", data);
+    function handleNext(data: TFirstStep): void {
+        setFirstStepData(data);
         setStep(2);
+    }
+
+    const handleSubmit = async (secondStepData: TSecondStep) => {
+        const combinedData = { ...firstStepData, ...secondStepData };
+        console.log(combinedData)
+        try {
+            const response = await requestApi({
+                route: "/auth/register",
+                method: requestMethods.POST,
+                body: combinedData
+            });
+
+            if (response && response.token) {
+                toast.success('SignUp successful!');
+                dispatch(setToken(response.token));
+                dispatch(setUser(response.user));
+                dispatch(setFamily(response.family));
+                navigate("/addMembersQuestion");
+            } else {
+                toast.error(response.error || 'SignUp failed!');
+            }
+        } catch (error : any ) {
+            toast.error(error.response?.data?.error || 'An unexpected error occurred');
+        }
     }
 
     const logoRef = useRef<HTMLDivElement>(null);
@@ -40,11 +74,11 @@ const Signup : React.FC = () => {
                 <div ref={logoRef} className="relative w-full flex justify-start right-12 bottom-12">
                     <img src={logo} alt="Guardian Grove Logo" width={100} height={100} />
                 </div>
-                <div className="absolute left-0 top-0 text-xs">
+                <div className="absolute left-0 top-0 text-xs text-left">
                     <ToastContainer position="top-left" />
                 </div>
                 {step === 1 && <FirstSignUpForm onNext={handleNext} />}
-                {step === 2 && <SecondSignUpForm />}
+                {step === 2 && <SecondSignUpForm onSubmit={handleSubmit}/>}
             </div>
         </div>
     );

@@ -1,0 +1,20 @@
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+select {
+    appearance: none; 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: none;
+}
+
+option:hover{
+    background-color: #3A8EBA;
+    color: white;
+}

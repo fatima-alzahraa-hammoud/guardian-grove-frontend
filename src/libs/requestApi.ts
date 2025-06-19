@@ -1,6 +1,7 @@
 import axios, { Method } from "axios";
+import { toast } from "react-toastify";
 
-axios.defaults.baseURL = "http://127.0.0.1:8080";
+axios.defaults.baseURL = "http://127.0.0.1:8000";
 
 interface RequestApiParams {
     route: string;
@@ -16,18 +17,23 @@ export const requestApi = async ({ route, method = "GET", body }: RequestApiPara
             data: body,
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + localStorage.getItem("token"),
+                Authorization: "Bearer " + sessionStorage.getItem("token"),
             },
         });
 
         return response.data;
-    } catch (error) {
-        console.log("======== Error =========");
-        console.log(error);
-        console.log("======== // =========");
+    } catch (error : any) {
+        if (axios.isAxiosError(error)) {
+            const errorMessage = error.response?.data?.error || error.response?.data?.message || 'An unexpected error occurred';
+
+            toast.error(errorMessage);
+        } else {
+            toast.error('An error occurred. Please try again.');
+        }
 
         return {
             devError: error,
+            response: error.response?.data,
         };
     }
 };
