@@ -17,6 +17,15 @@ import { setToken } from "../redux/slices/authSlice";
 import { setUser } from "../redux/slices/userSlice";
 import { setFamily } from "../redux/slices/familySlice";
 
+interface ApiError {
+    response?: {
+        data?: {
+            error?: string;
+        };
+    };
+    message: string;
+}
+
 const Signup : React.FC = () => {
 
     const dispatch = useDispatch();
@@ -48,8 +57,9 @@ const Signup : React.FC = () => {
             } else {
                 toast.error(response.error || 'SignUp failed!');
             }
-        } catch (error : any ) {
-            toast.error(error.response?.data?.error || 'An unexpected error occurred');
+        } catch (error: unknown) {
+            const apiError = error as ApiError;
+            toast.error(apiError.response?.data?.error || 'An unexpected error occurred');
         }
     }
 
