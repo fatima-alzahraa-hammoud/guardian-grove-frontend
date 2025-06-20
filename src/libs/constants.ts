@@ -1,5 +1,7 @@
+import { CSSObjectWithLabel } from 'react-select';
+import { SelectOption } from './types/SelectOption';
 
-export const interestOptions = [
+export const interestOptions: SelectOption[] = [
     { label: 'Sports', value: 'Sports' },
     { label: 'Music', value: 'Music' },
     { label: 'Reading', value: 'Reading' },
@@ -10,38 +12,35 @@ export const interestOptions = [
 ];
 
 export const customStyles = {
-    control: (provided: any) => ({
+    control: (provided: CSSObjectWithLabel) => ({
         ...provided,
         borderColor: '#3A8EBA',
         borderRadius: '0.375rem',
         fontSize: '0.75rem',
         minHeight: '36px',
-        
     }),
-    placeholder: (provided: any) => ({
+    placeholder: (provided: CSSObjectWithLabel) => ({
         ...provided,
         fontSize: '10px',
         color: '#6b7280',
         textAlign: 'left',
         paddingLeft: '0.25rem',
     }),
-    menu: (provided: any) => ({
+    menu: (provided: CSSObjectWithLabel) => ({
         ...provided,
         zIndex: 9999,
         width: '200px',
     }),
-
-    multiValue: (provided: any) => ({
-
+    multiValue: (provided: CSSObjectWithLabel) => ({
         ...provided,
         backgroundColor: '#d6e4f8',
         borderRadius: '0.375rem',
     }),
-    multiValueLabel: (provided: any) => ({
+    multiValueLabel: (provided: CSSObjectWithLabel) => ({
         ...provided,
         color: '#4A5568',
     }),
-    multiValueRemove: (provided: any) => ({
+    multiValueRemove: (provided: CSSObjectWithLabel) => ({
         ...provided,
         color: '#4A5568',
         '&:hover': {
@@ -49,15 +48,15 @@ export const customStyles = {
             color: 'white',
         },
     }),
-    dropdownIndicator: (provided: any) => ({
+    dropdownIndicator: (provided: CSSObjectWithLabel) => ({
         ...provided,
         color: '#6b7280',
         fontWeight: '50',
         fontFamily: 'Poppins',
         paddingRight: '0.75rem',
     }),
-    menuList: (provided: any) => ({
+    menuList: (provided: CSSObjectWithLabel) => ({
         ...provided,
         maxHeight: '150px',
     }),
-};
+} satisfies { [key: string]: (base: CSSObjectWithLabel) => CSSObjectWithLabel };
