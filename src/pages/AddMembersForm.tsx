@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import AvatarSelector from "../components/AvatarSelector";
 import { useForm } from "react-hook-form";
@@ -11,7 +11,7 @@ import { cn } from "../lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "../components/ui/calendar";
 import { format } from "date-fns";
-import Selects, {components} from 'react-select';
+import Selects, { components, DropdownIndicatorProps, GroupBase, SelectInstance } from 'react-select';
 import { customStyles, interestOptions } from "../libs/constants";
 import girlImage from "/assets/images/girl.png";
 import boyImage from "/assets/images/boy.png";
@@ -21,7 +21,13 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import FormErrorMessage from "../components/common/FormErrorMessage";
 
-const DropdownIndicator = (props: any) => {
+// Define interfaces
+interface SelectOption {
+    value: string;
+    label: string;
+}
+
+const DropdownIndicator = (props: DropdownIndicatorProps<SelectOption, true, GroupBase<SelectOption>>) => {
     return (
         <components.DropdownIndicator {...props}>
             <svg
@@ -46,19 +52,7 @@ const DropdownIndicator = (props: any) => {
 const AddMembersForm : React.FC = () => {
 
     const [tab, setTab] = useState<string>("Child");
-    const selectRef = useRef<any>(null);
-
-    const resetData = () => {
-        reset({
-            gender: "female", // Reset default values
-            role: "child",
-            name: "",
-            birthday: undefined,
-            interests: [],
-            avatar: "",
-        });
-        selectRef.current?.clearValue();
-    }
+    const selectRef = useRef<SelectInstance<SelectOption, true, GroupBase<SelectOption>>>(null);
 
     const {
         register,
@@ -74,6 +68,18 @@ const AddMembersForm : React.FC = () => {
             role: "child"
         }
     });
+
+    const resetData = useCallback(() => {
+        reset({
+            gender: "female", // Reset default values
+            role: "child",
+            name: "",
+            birthday: undefined,
+            interests: [],
+            avatar: "",
+        });
+        selectRef.current?.clearValue();
+    }, [reset]);
 
     const selectedDate = watch("birthday");
     const gender = watch("gender"); 
@@ -124,7 +130,7 @@ const AddMembersForm : React.FC = () => {
         });
         selectRef.current?.clearValue();
         setValue("role", tab.toLowerCase(), { shouldValidate: true });
-    }, [tab, setValue]);
+    }, [tab, setValue, reset]);
     
     return(
         <>
@@ -271,16 +277,18 @@ const AddMembersForm : React.FC = () => {
                                 className="custom-select text-[20px]"
                                 classNamePrefix="react-select text-[20px]"
                                 onChange={(selectedOptions) => {
-                                    const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
+                                    const selectedValues = Array.isArray(selectedOptions)
+                                        ? selectedOptions.map((option) => (option as SelectOption).value)
+                                        : [];
                                     setValue("interests", selectedValues);
                                 }}
                                 styles={{
                                     ...customStyles,
-                                    option: (provided: any, state: any) => ({
-                                        ...provided,
+                                    option: (base, state) => ({
+                                        ...base,
                                         fontSize: '12px',
-                                        backgroundColor: state.isFocused ? '#3A8EBA' : provided.backgroundColor,
-                                        color: state.isFocused ? 'white' : provided.color,
+                                        backgroundColor: state.isFocused ? '#3A8EBA' : base.backgroundColor,
+                                        color: state.isFocused ? 'white' : base.color,
                                     }),
                                 }}
                                 components={{ DropdownIndicator }}
