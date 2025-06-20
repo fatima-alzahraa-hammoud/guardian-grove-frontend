@@ -40,7 +40,7 @@ const FamilyDialog : React.FC<FamilyDialogProps> = ({open, onOpenChange, familyN
             }
         }
         fetchLastUnlockedAchievement();
-    }, []);
+    }, [familyId]);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>

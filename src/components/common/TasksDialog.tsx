@@ -41,8 +41,6 @@ interface TasksDialogProps {
 }
 
 const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) => {
-    if (!goal) return null;
-
     const userId = useSelector(selectUserId);
     const dispatch = useDispatch();
 
@@ -52,6 +50,8 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
     const [aiQuestion, setAiQuestion] = useState<string>("What did you learn from completing this task?");
     const [userAnswer, setUserAnswer] = useState<string>("");
     const [aiResponse, setAiResponse] = useState<string>("");
+
+    if (!goal) return null;
 
     const handleDoItClick = async (task: Task, goal: Goal) => {
         setSelectedTask(task);

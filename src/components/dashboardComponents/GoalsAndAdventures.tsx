@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { cn } from "../../lib/utils";
 import sortImage from "/assets/images/sort.png";
@@ -86,15 +86,7 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
         setDialogOpen(true); // Open the dialog
     };
 
-    useEffect(() => {
-        fetchgoals();
-    }, []);
-
-    useEffect(() => {
-        fetchAdventures();
-    }, []);
-
-    const fetchgoals = async () => {
+    const fetchgoals = useCallback(async () => {
         try {
             const response = await requestApi({
                 route: "/userGoals/goals",
@@ -111,18 +103,9 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
         } catch (error) {
             console.log("Something wents wrong", error);
         }
-    };
+    }, [userId]); 
 
-    const findTodaysAdventure = (adventuresList: Adventure[]) => {
-        const today = new Date();
-        return adventuresList.find((adventure) => {
-            const adventureDate = new Date(adventure.startDate);
-            return adventureDate.toDateString() === today.toDateString();
-        }) || null;
-    };
-
-
-    const fetchAdventures = async() => {
+    const fetchAdventures = useCallback(async() => {
         try {
             const response = await requestApi({
                 route: "/adventures/",
@@ -140,6 +123,23 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
         } catch (error) {
             console.log("Something wents wrong", error);
         }
+    }, []);
+
+    useEffect(() => {
+        fetchgoals();
+    }, [fetchgoals]);
+
+    useEffect(() => {
+        fetchAdventures();
+    }, [fetchAdventures]);
+
+
+    const findTodaysAdventure = (adventuresList: Adventure[]) => {
+        const today = new Date();
+        return adventuresList.find((adventure) => {
+            const adventureDate = new Date(adventure.startDate);
+            return adventureDate.toDateString() === today.toDateString();
+        }) || null;
     };
 
     const handleDateChange = (date: Value) => {

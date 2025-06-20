@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import sortImage from "/assets/images/sort.png";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
@@ -35,6 +35,49 @@ const Achievements : React.FC<AchievementsProps> = ({collapsed}) => {
     const [sortBy, setSortBy] = useState<keyof Achievement | null>(null);
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
+    const sortAchievements = useCallback((data: Achievement[], property: keyof Achievement) => {
+        if (!data.length) return;
+        
+        const sorted = [...data].sort((a, b) => {
+            const valueA = a[property];
+            const valueB = b[property];
+
+            if (typeof valueA === "string" && typeof valueB === "string") {
+                return sortOrder === "asc" ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+            }
+
+            if (typeof valueA === "number" && typeof valueB === "number") {
+                return sortOrder === "asc" ? valueA - valueB : valueB - valueA;
+            }
+
+            if (valueA instanceof Date && valueB instanceof Date) {
+                return sortOrder === "asc" ? +valueA - +valueB : +valueB - +valueA;
+            }
+
+            return 0;
+        });
+
+        setFilteredAchievements(sorted);
+    }, [sortOrder]);
+
+    const handleFilterChange = useCallback((filter: string, achievementsData: Achievement[]) => {
+        setActiveFilter(filter);
+        let filtered;
+        if (filter === "My Achievements") {
+            filtered = achievementsData.filter((ach) => ach.type === "personal" && !ach.isLocked);
+        } else if (filter === "Family Achievements") {
+            filtered = achievementsData.filter((ach) => ach.type === "family" && !ach.isLocked);
+        } else {
+            filtered = achievementsData.filter((ach) => ach.isLocked);
+        }
+
+        if (sortBy) {
+            sortAchievements(filtered, sortBy);
+        } else {
+            setFilteredAchievements(filtered);
+        }
+    }, [sortBy, sortAchievements]);
+
     useEffect(() => {
         const fetchAchievements = async () => {
             try {
@@ -60,8 +103,9 @@ const Achievements : React.FC<AchievementsProps> = ({collapsed}) => {
                 })) || [];    
 
                 console.log(locked);
-                setAchievements([...locked, ...unlocked]);
-                handleFilterChange(activeFilter);
+                const allAchievements = [...locked, ...unlocked];
+                setAchievements(allAchievements);
+                handleFilterChange(activeFilter, allAchievements);
             } catch (error) {
                 console.error("Error fetching achievements:", error);
                 toast.error("Failed to load achievements. Please try again later.");
@@ -69,49 +113,11 @@ const Achievements : React.FC<AchievementsProps> = ({collapsed}) => {
         }
 
         fetchAchievements();
-    }, []);
+    }, [activeFilter, handleFilterChange]);
 
-    const handleFilterChange = (filter: string) => {
-        setActiveFilter(filter);
-        let filtered;
-        if (filter === "My Achievements") {
-            filtered = achievements.filter((ach) => ach.type === "personal" && !ach.isLocked);
-        } else if (filter === "Family Achievements") {
-            filtered = achievements.filter((ach) => ach.type === "family" && !ach.isLocked);
-        } else {
-            filtered = achievements.filter((ach) => ach.isLocked);
-        }
-
-        // Apply sorting if selected
-        if (sortBy) {
-            sortAchievements(filtered, sortBy);
-        } else {
-            setFilteredAchievements(filtered);
-        }
-    };
-
-    const sortAchievements = (data: Achievement[], property: keyof Achievement) => {
-        const sorted = [...data].sort((a, b) => {
-            const valueA = a[property];
-            const valueB = b[property];
-
-            if (typeof valueA === "string" && typeof valueB === "string") {
-                return sortOrder === "asc" ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
-            }
-
-            if (typeof valueA === "number" && typeof valueB === "number") {
-                return sortOrder === "asc" ? valueA - valueB : valueB - valueA;
-            }
-
-            if (valueA instanceof Date && valueB instanceof Date) {
-                return sortOrder === "asc" ? +valueA - +valueB : +valueB - +valueA;
-            }
-
-            return 0;
-        });
-
-        setFilteredAchievements(sorted);
-    };
+    const handleFilterClick = useCallback((filter: string) => {
+        handleFilterChange(filter, achievements);
+    }, [achievements, handleFilterChange]);
 
     const handleSortSelect = (property: keyof Achievement) => {
         setSortBy(property);
@@ -128,7 +134,7 @@ const Achievements : React.FC<AchievementsProps> = ({collapsed}) => {
         if (sortBy) {
             sortAchievements(filteredAchievements, sortBy);
         }
-    }, [sortOrder, sortBy, filteredAchievements]);
+    }, [sortOrder, sortBy, filteredAchievements, sortAchievements]);
 
     return(
         <div className={`pt-24 min-h-screen flex justify-center`}>
@@ -176,7 +182,7 @@ const Achievements : React.FC<AchievementsProps> = ({collapsed}) => {
                     {filters.map((filter) => (
                         <Button
                             key={filter}
-                            onClick={() => handleFilterChange(filter)}
+                            onClick={() => handleFilterClick(filter)}
                             variant="secondary"
                             className={cn(
                                 "bg-[#E3F2FD] hover:bg-[#d7edfd] w-44 text-black",

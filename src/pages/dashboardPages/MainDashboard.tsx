@@ -40,7 +40,7 @@ const Main : React.FC = () => {
         return () => {
             dispatch(resetChats()); // Reset chats when component unmounts
         };
-    }, []);
+    }, [dispatch]);
 
     return(
         <div className="flex">

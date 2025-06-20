@@ -44,7 +44,6 @@ function App() {
           setUserId(decoded.userId);
           const fetchUsers = async() =>{
             try{
-
               const response = await requestApi({
                   route: "/users/user",
                   method: requestMethods.GET,
@@ -55,12 +54,13 @@ function App() {
                   dispatch(setUser(response.user));
               }
 
-            }catch(error){
+            }catch(error: unknown){
+              console.error('Error fetching user:', error);
             }
           }
           fetchUsers();
       }
-  }, []);
+  }, [dispatch, location.pathname, token, userId]);
 
   useEffect(() => {
     if (location.pathname === '/' || location.pathname === 'signup'){
@@ -89,7 +89,7 @@ function App() {
     };
 
     fetchFamilyDetails();
-  }, [userId,familyId])
+  }, [userId, familyId, dispatch, location.pathname]);
 
   return (
     <>

@@ -123,10 +123,12 @@ const SettingsDialog = () => {
                     ...(response?.message && { general: response.message })
                 });
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             setErrors({
                 ...errors,
-                general: error.message || "An error occurred while updating password"
+                general: error instanceof Error 
+                    ? error.message 
+                    : "An error occurred while updating password"
             });
         } finally {
             setIsLoading(false);

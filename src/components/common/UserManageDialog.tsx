@@ -25,10 +25,10 @@ interface UserManageDialogProps {
 }
 
 const UserManageDialog: React.FC<UserManageDialogProps> = ({ user, onStatusChange, onRoleChange }) => {
-    if (!user) return null;
 
     const [isOpen, setIsOpen] = useState(false);
 
+    if (!user) return null;
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>

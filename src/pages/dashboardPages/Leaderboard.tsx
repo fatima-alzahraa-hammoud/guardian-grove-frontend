@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "../../components/ui/button";
 import { cn } from "../../lib/utils";
 import ProgressBar from "../../components/common/ProgressBar";
@@ -99,7 +99,7 @@ const Leaderboard: React.FC = () => {
     }, [familyId]);
 
     // Fetch progress stats
-    const fetchProgressStats = async () => {
+    const fetchProgressStats = useCallback(async () => {
         try {
             const timeFrame = activeFilter.split(" ")[0].toLowerCase();
             const response = await requestApi({
@@ -115,11 +115,11 @@ const Leaderboard: React.FC = () => {
         } catch (error) {
             console.error("Error fetching progress stats:", error);
         }
-    };
+    }, [activeFilter, familyId]);
 
     useEffect(() => {
         fetchProgressStats();
-    }, [activeFilter, familyId]);
+    }, [fetchProgressStats]);
 
     // get filtered ranks
     const getFilteredRanks = () => {
@@ -156,12 +156,11 @@ const Leaderboard: React.FC = () => {
         return rankings;
     };
 
-    useEffect(() => {
-        getMotivationalMessage();
-    }, [familyRanks, activeFilter]); 
+    const leaderboardData = getFilteredRanks();
+    const period = activeFilter.split(" ")[0].toLowerCase();
+    const currentFamilyRank = familyRanks[period as keyof typeof familyRanks];
 
-    // put messages based on ranks
-    const getMotivationalMessage = () => {
+    const getMotivationalMessage = useCallback(() => {
         if (currentFamilyRank){
             let comparisonFamilyRank: LeaderboardEntry | null = null;
 
@@ -172,7 +171,7 @@ const Leaderboard: React.FC = () => {
             else {
                 if (currentFamilyRank.rank >= 10){
                     comparisonFamilyRank = leaderboardData.find(entry => entry.rank === 10) || null;
-                    setMotivationalMessage("You're doing great, but there’s always room to grow! Keep going! 🚀")
+                    setMotivationalMessage("You're doing great, but there's always room to grow! Keep going! 🚀")
                 }
                 else{
                     comparisonFamilyRank = leaderboardData.find(entry => entry.rank === currentFamilyRank.rank - 1) || null;
@@ -189,14 +188,13 @@ const Leaderboard: React.FC = () => {
                         setRankingUpMessage("You're so close to the top! Keep up the great work! 💪");
                     }
                 }
-        
             }
         }
-    }
+    }, [currentFamilyRank, leaderboardData]);
 
-    const leaderboardData = getFilteredRanks();
-    const period = activeFilter.split(" ")[0].toLowerCase();
-    const currentFamilyRank = familyRanks[period as keyof typeof familyRanks];
+    useEffect(() => {
+        getMotivationalMessage();
+    }, [getMotivationalMessage]);
 
     return (
         <div className="pt-28 min-h-screen flex justify-center">

@@ -16,7 +16,7 @@ import FormErrorMessage from "./FormErrorMessage";
 
 const forgotPasswordSchema = z.object({
     name: z.string().min(3, "Name is required"),
-    email: z.string().regex(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, { message: "Invalid email format" }),
+    email: z.string().regex(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, { message: "Invalid email format" }),
 });
 
 type TForgotPassword = z.infer<typeof forgotPasswordSchema>;
@@ -56,7 +56,8 @@ const ForgotPasswordDialog: React.FC<ForgotPasswordDialogProps> = ({ open, onOpe
             } else {
                 toast.error(response?.message || 'Failed to send temporary password');
             }
-        } catch (error) {
+        } catch (error : unknown) {
+            console.error('Error during password reset:', error);
             toast.error('An error occurred while processing your request');
         } finally {
             setIsLoading(false);

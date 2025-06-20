@@ -21,7 +21,7 @@ const Store: React.FC = () => {
 
     let coins = useSelector(selectCoins);
     const dispatch = useDispatch();
-    let purchasedItems = useSelector(selectPurchasedItems); ;
+    const purchasedItems = useSelector(selectPurchasedItems); ;
     const [storeItems, setStoreItems] = useState<StoreItemType[]>([]);
     const [activeFilter, setActiveFilter] = useState<string>("All");
 
@@ -37,12 +37,12 @@ const Store: React.FC = () => {
                 if (response){
                     dispatch(setPurchasedItems(response.purchasedItems));
                 }
-            } catch (error) {
-                console.log("error fetching purchased items");
+            } catch (error: unknown) {
+                console.log("error fetching purchased items", error);
             }
         }
         fetchPurchasedItems();
-    }, []);
+    }, [dispatch]);
 
     useEffect(() =>{
         const fetchStoreItems = async () => {
@@ -54,8 +54,8 @@ const Store: React.FC = () => {
                 if (response){
                     setStoreItems(response.items);
                 }
-            } catch (error) {
-                console.log("error fetching store items");
+            } catch (error: unknown) {
+                console.log("error fetching store items", error);
             }
         }
         fetchStoreItems();

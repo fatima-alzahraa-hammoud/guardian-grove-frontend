@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import AIFriend from "/assets/images/ai-friend.png";
 import { Card } from "../ui/card";
 import { Mic, Paperclip, Send } from "lucide-react";
@@ -32,7 +32,9 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
     const dispatch = useDispatch();
 
     const activeChat = chats.find((chat) => chat._id === activeChatId) || null;
-    const messages = activeChat ? activeChat.messages : [];
+    const messages = useMemo(() => {
+        return activeChat ? activeChat.messages : [];
+    }, [activeChat]);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 

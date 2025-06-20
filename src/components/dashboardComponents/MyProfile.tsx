@@ -307,7 +307,7 @@ const MyProfile : React.FC = () => {
             }
         }
 
-    }, [birthday]);
+    }, [birthday, memberSince]);
 
     useEffect(() => {
         const fetchLastUnlockedAchievement = async () => {
