@@ -65,13 +65,19 @@ const Navbar: React.FC= () => {
         }
         if (location.pathname === '/dashboard/store'){
             setIsStoreActive(true);
+            setNavigation(prevNav =>
+                prevNav.map(item => ({ ...item, current: false }))
+            );
+            return;
         }
-        const updatedNavigation = navigation.map(item => ({
-            ...item,
-            current: item.link === location.pathname
-        }));
-        setNavigation(updatedNavigation);
-    }, [location]);
+        
+        setNavigation(prevNav => 
+            prevNav.map(item => ({
+                ...item,
+                current: item.link === location.pathname
+            }))
+        );
+    }, [location.pathname]);
 
     return (
         <Disclosure as="nav" className={classNames(
