@@ -30,16 +30,12 @@ import { secondStepSchems, TSecondStep } from "../../libs/types/signupTypes";
 import { customStyles, interestOptions } from "../../libs/constants";
 import { Input } from "@mui/material";
 import { toast } from "react-toastify";
+import { SelectOption } from "../../libs/types/SelectOption";
 
 interface FormErrors {
     [key: string]: {
         message?: string;
     };
-}
-
-interface SelectOption {
-    value: string;
-    label: string;
 }
 
 const DropdownIndicator = (props: DropdownIndicatorProps) => {
