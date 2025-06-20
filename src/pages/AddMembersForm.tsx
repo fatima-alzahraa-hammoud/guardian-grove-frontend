@@ -20,12 +20,7 @@ import { requestMethods } from "../libs/enum/requestMethods";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import FormErrorMessage from "../components/common/FormErrorMessage";
-
-// Define interfaces
-interface SelectOption {
-    value: string;
-    label: string;
-}
+import { SelectOption } from "../libs/types/SelectOption";
 
 const DropdownIndicator = (props: DropdownIndicatorProps<SelectOption, true, GroupBase<SelectOption>>) => {
     return (
