@@ -28,6 +28,19 @@ const familyAvatars = [
   { id: 11, src: '/assets/images/avatars/family/avatar11.png' },
 ];
 
+const childAvatars = [
+  { id: 1, src: "/assets/images/avatars/child/avatar1.png" },
+  { id: 2, src: "/assets/images/avatars/child/avatar2.png" },
+  { id: 3, src: "/assets/images/avatars/child/avatar3.png" },
+  { id: 4, src: "/assets/images/avatars/child/avatar4.png" },
+  { id: 5, src: "/assets/images/avatars/child/avatar5.png" },
+  { id: 6, src: "/assets/images/avatars/child/avatar6.png" },
+  { id: 7, src: '/assets/images/avatars/child/avatar7.png' },
+  { id: 8, src: '/assets/images/avatars/child/avatar8.png' },
+  { id: 9, src: '/assets/images/avatars/child/avatar9.png' },
+  { id: 10, src: '/assets/images/avatars/child/avatar10.png' },
+  { id: 11, src: '/assets/images/avatars/child/avatar11.png' },
+];
 interface AvatarSelectorProps {
   selectedAvatar: string | null;
   onAvatarClick: (src: string) => void;
@@ -43,6 +56,8 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({ selectedAvatar, onAvata
       setAvatars(parentAvatars);
     } else if (role === "family"){
       setAvatars(familyAvatars);
+    } else if (role === "child") {
+      setAvatars(childAvatars);
     }
   }, [role]);
 
