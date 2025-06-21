@@ -39,7 +39,6 @@ const childAvatars = [
   { id: 8, src: '/assets/images/avatars/child/avatar8.png' },
   { id: 9, src: '/assets/images/avatars/child/avatar9.png' },
   { id: 10, src: '/assets/images/avatars/child/avatar10.png' },
-  { id: 11, src: '/assets/images/avatars/child/avatar11.png' },
 ];
 interface AvatarSelectorProps {
   selectedAvatar: string | null;
