@@ -11,18 +11,27 @@ const firebaseConfig = {
     measurementId: "G-197BH07BGT"
 };
 
+const vapidKey= "BDI2zBDXX50Gwlc70YnDCSVKaMxDY2QU0mgoOT4jlD-tnoBERnVjr126F1_AV-N-8kzJ6rdvuIp_k_5TAywyeDk";
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const messaging = getMessaging(app);
 
 export const generateToken = async () =>{
-    const permission = await Notification.requestPermission();
-    console.log("Notification permission:", permission);
+    try {
+        const permission = await Notification.requestPermission();
+        console.log("Notification permission:", permission);
 
-    if (permission === "granted") {
-        const token = await getToken(messaging, { 
-            vapidKey: "BDI2zBDXX50Gwlc70YnDCSVKaMxDY2QU0mgoOT4jlD-tnoBERnVjr126F1_AV-N-8kzJ6rdvuIp_k_5TAywyeDk"
-        });
-        console.log("Generated token:", token);
+        if (permission === "granted") {
+            const token = await getToken(messaging, { vapidKey });
+            console.log("Generated token:", token);
+            return token;
+        } else{
+            console.log("Notification permission denied");
+            return null;
+        }
+    } catch (error) {
+        console.error("Error generating token:", error);
+        return null;
     }
 }
