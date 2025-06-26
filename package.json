@@ -38,6 +38,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.5.1",
+    "firebase": "^11.9.1",
     "framer-motion": "^11.18.0",
     "gsap": "^3.12.5",
     "jwt-decode": "^4.0.0",
