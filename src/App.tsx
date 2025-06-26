@@ -41,9 +41,7 @@ function App() {
 
   useEffect(() => {
     const initializeFirebase = async () => {
-      try {
-        await generateToken();
-        
+      try {        
         onMessage(messaging, (payload) => {
           console.log('Message received: ', payload);
           showFirebaseNotificationToast(payload);
@@ -55,6 +53,39 @@ function App() {
 
     initializeFirebase();
   }, []);
+
+  // generate token and save to user to backend
+  useEffect(() => {
+    const saveFcmTokenToBackend = async (token: string) => {
+      if (!userId) return;
+
+      try {
+        await requestApi({
+          route: "/users/save-fcm-token",
+          method: requestMethods.POST,
+          body: { userId, fcmToken: token },
+        });
+        console.log("FCM token saved to backend");
+      } catch (error) {
+        console.error("Failed to save FCM token:", error);
+      }
+    };
+
+    const getAndSaveToken = async () => {
+      try {
+        const token = await generateToken();
+        if (token) {
+          saveFcmTokenToBackend(token);
+        }
+      } catch (error) {
+        console.error("Error getting or saving FCM token:", error);
+      }
+    };
+
+    if (userId) {
+      getAndSaveToken();
+    }
+  }, [userId]);
       
   useEffect(() =>{
       if (location.pathname === '/' || location.pathname === 'signup'){
