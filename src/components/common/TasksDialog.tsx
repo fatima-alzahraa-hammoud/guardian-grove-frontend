@@ -38,9 +38,10 @@ interface TasksDialogProps {
     goal: Goal | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    onGoalUpdate?: (updatedGoal: Goal) => void;
 }
 
-const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) => {
+const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange, onGoalUpdate}) => {
     const userId = useSelector(selectUserId);
     const dispatch = useDispatch();
 
@@ -136,14 +137,24 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
                     dispatch(setStars(result.task.rewards.stars));
                     dispatch(setCoins(result.task.rewards.coins));
                     
-                    if (selectedTask) {
-                        selectedTask.isCompleted = true;
+                    // Create a properly updated goal object without mutating the original
+                    const updatedGoal = {
+                        ...goal,
+                        tasks: goal.tasks.map(task => 
+                            task._id === selectedTask?._id 
+                                ? { ...task, isCompleted: true }
+                                : task
+                        ),
+                        nbOfTasksCompleted: result.goal.nbOfTasksCompleted,
+                        isCompleted: result.goal.isCompleted
+                    };
+
+                    // Call the parent update callback if it exists
+                    if (onGoalUpdate) {
+                        onGoalUpdate(updatedGoal);
                     }
                     
                     if (result.goal.isCompleted){
-                        if (selectedGoal) {
-                            selectedGoal.isCompleted = true;
-                        }
                         dispatch(setStars(result.goal.rewards.stars));
                         dispatch(setCoins(result.goal.rewards.coins));
                     }
@@ -174,6 +185,14 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
             setSelectedTask(null);
             setSelectedGoal(null);
             setIsSubmitting(false);
+        }
+    };
+
+    const handleAnswerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUserAnswer(e.target.value);
+        // Clear any previous response when user starts typing a new answer
+        if (aiResponse && !aiResponse.includes('Good Job')) {
+            setAiResponse("");
         }
     };
 
@@ -221,15 +240,25 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
                         {goal.tasks.map((task, index) => (
                             <div
                                 key={task._id}
-                                className="flex items-center justify-between p-4 bg-[#CDE7FE] rounded-lg"
+                                className={`flex items-center justify-between p-4 rounded-lg transition-all duration-300 ${
+                                    task.isCompleted 
+                                        ? 'bg-green-100 border-2 border-green-300' 
+                                        : 'bg-[#CDE7FE]'
+                                }`}
                             >
                                 <div className="flex items-center gap-3">
-                                    <span className="w-6 h-6 flex items-center justify-center bg-[#3A8EBA] text-white rounded-full">
-                                        {index + 1}
+                                    <span className={`w-6 h-6 flex items-center justify-center rounded-full text-white ${
+                                        task.isCompleted ? 'bg-green-500' : 'bg-[#3A8EBA]'
+                                    }`}>
+                                        {task.isCompleted ? '✓' : index + 1}
                                     </span>
                                     <p className="flex flex-col">
-                                        <span>{task.title}</span>
-                                        <span className="text-xs">{task.description}</span>
+                                        <span className={task.isCompleted ? 'line-through text-gray-500' : ''}>
+                                            {task.title}
+                                        </span>
+                                        <span className={`text-xs ${task.isCompleted ? 'line-through text-gray-400' : ''}`}>
+                                            {task.description}
+                                        </span>
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-5">
@@ -243,7 +272,11 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
                                     </div>
                                     <Button
                                         variant="outline"
-                                        className="text-xs"
+                                        className={`text-xs ${
+                                            task.isCompleted 
+                                                ? 'bg-green-500 text-white hover:bg-green-600' 
+                                                : ''
+                                        }`}
                                         disabled={task.isCompleted}
                                         onClick={() => handleDoItClick(task, goal)}
                                     >
@@ -272,7 +305,7 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
                         <input
                             type="text"
                             value={userAnswer}
-                            onChange={(e) => setUserAnswer(e.target.value)}
+                            onChange={handleAnswerChange}
                             className="border p-2 w-full rounded-lg mb-4"
                             placeholder="Your answer..."
                             disabled={isSubmitting}
