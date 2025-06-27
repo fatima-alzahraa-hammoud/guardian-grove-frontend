@@ -86,6 +86,17 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
         setDialogOpen(true); // Open the dialog
     };
 
+    // Add this function to handle goal updates
+    const handleGoalUpdate = (updatedGoal: Goal) => {
+        setGoals(prevGoals => 
+            prevGoals.map(goal => 
+                goal._id === updatedGoal._id ? updatedGoal : goal
+            )
+        );
+        // Also update the selected goal to reflect changes in the dialog
+        setSelectedGoal(updatedGoal);
+    };
+
     const fetchgoals = useCallback(async () => {
         try {
             const response = await requestApi({
@@ -303,11 +314,12 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
                             <div className="text-center text-gray-600 mt-8">No goals available</div>
                         )}
 
-                        {/* Dialog for Viewing Tasks */}
+                        {/* Dialog for Viewing Tasks - Add onGoalUpdate prop */}
                         <TasksDialog
                             goal={selectedGoal}
                             open={dialogOpen}
                             onOpenChange={setDialogOpen}
+                            onGoalUpdate={handleGoalUpdate}
                         />
                     </div>
                 ) : (
