@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Coins, Star } from "lucide-react";
@@ -24,7 +24,7 @@ interface Goal {
     type: string;
     description: string;
     nbOfTasksCompleted: number;
-    tasks: Task[];  // Now using the Task interface
+    tasks: Task[];
     dueDate: Date;
     rewards: {
         stars: number;
@@ -50,12 +50,44 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
     const [aiQuestion, setAiQuestion] = useState<string>("What did you learn from completing this task?");
     const [userAnswer, setUserAnswer] = useState<string>("");
     const [aiResponse, setAiResponse] = useState<string>("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Reset AI popup state when it closes
+    useEffect(() => {
+        if (!showAiPopup) {
+            setUserAnswer("");
+            setAiResponse("");
+            setAiQuestion("What did you learn from completing this task?");
+            setSelectedTask(null);
+            setSelectedGoal(null);
+            setIsSubmitting(false);
+        }
+    }, [showAiPopup]);
+
+    // Reset states when main dialog closes
+    useEffect(() => {
+        if (!open) {
+            setShowAiPopup(false);
+            setUserAnswer("");
+            setAiResponse("");
+            setAiQuestion("What did you learn from completing this task?");
+            setSelectedTask(null);
+            setSelectedGoal(null);
+            setIsSubmitting(false);
+        }
+    }, [open]);
 
     if (!goal) return null;
 
     const handleDoItClick = async (task: Task, goal: Goal) => {
+        // Reset previous state
+        setUserAnswer("");
+        setAiResponse("");
+        setIsSubmitting(false);
+        
         setSelectedTask(task);
         setSelectedGoal(goal);
+        
         try {
             const response = await requestApi({
                 route: "/users/generateQusetion",
@@ -64,9 +96,9 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
             });
 
             if (response && response.question){
-                setShowAiPopup(true);
                 setAiQuestion(response.question);
-            }else{
+                setShowAiPopup(true);
+            } else {
                 console.log("something went wrong", response.message);
             }
         } catch (error) {
@@ -75,14 +107,22 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
     };
 
     const handleAiSubmit = async() => {
+        if (!userAnswer.trim() || isSubmitting) return;
+        
+        setIsSubmitting(true);
+        setAiResponse(""); // Clear previous response
+        
         try {
-
-            if(!userAnswer.trim()) return false;
             const response = await requestApi({
                 route: "/users/checkAnswer",
                 method: requestMethods.POST,
-                body: {userId, question: aiQuestion, userAnswer: userAnswer.trim()}
+                body: {
+                    userId, 
+                    question: aiQuestion, 
+                    userAnswer: userAnswer.trim()
+                }
             });
+            
             if (response && response.questionAnswered){
                 setAiResponse("Good Job! 😊");
 
@@ -91,12 +131,15 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
                     method: requestMethods.POST,
                     body: {userId, goalId: selectedGoal?._id, taskId: selectedTask?._id}
                 });
+                
                 if(result && result.task && result.goal){
                     dispatch(setStars(result.task.rewards.stars));
                     dispatch(setCoins(result.task.rewards.coins));
+                    
                     if (selectedTask) {
                         selectedTask.isCompleted = true;
                     }
+                    
                     if (result.goal.isCompleted){
                         if (selectedGoal) {
                             selectedGoal.isCompleted = true;
@@ -104,13 +147,33 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
                         dispatch(setStars(result.goal.rewards.stars));
                         dispatch(setCoins(result.goal.rewards.coins));
                     }
+                    
+                    // Close AI popup after successful completion
+                    setTimeout(() => {
+                        setShowAiPopup(false);
+                    }, 2000);
                 }
-            }else{
+            } else {
                 setAiResponse("Oops! Try again.. 😮‍💨");
                 console.log("wrong answer", response.message);
             }
         } catch (error) {
             console.log("something went wrong", error);
+            setAiResponse("Something went wrong. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleAiPopupClose = (open: boolean) => {
+        setShowAiPopup(open);
+        if (!open) {
+            // Reset all AI-related state when closing
+            setUserAnswer("");
+            setAiResponse("");
+            setSelectedTask(null);
+            setSelectedGoal(null);
+            setIsSubmitting(false);
         }
     };
 
@@ -192,10 +255,11 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
                     </div>
                 </div>
             </DialogContent>
+            
             {/* AI Popup for Task Completion */}
             {showAiPopup && selectedTask && (
-                <Dialog open={showAiPopup} onOpenChange={(open) => setShowAiPopup(open)}>
-                    <DialogContent className="max-w-xs p-6 text-center">
+                <Dialog open={showAiPopup} onOpenChange={handleAiPopupClose}>
+                    <DialogContent className="max-w-md p-6 text-center">
                         <DialogHeader className="text-center">
                             <DialogTitle className="text-center">
                                 <h2 className="font-comic text-xl mb-4">AI Assistant</h2>
@@ -211,18 +275,33 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange}) =>
                             onChange={(e) => setUserAnswer(e.target.value)}
                             className="border p-2 w-full rounded-lg mb-4"
                             placeholder="Your answer..."
+                            disabled={isSubmitting}
+                            onKeyPress={(e) => {
+                                if (e.key === 'Enter' && !isSubmitting) {
+                                    handleAiSubmit();
+                                }
+                            }}
                         />
 
                         <Button
                             variant="outline"
                             className="w-full mb-4"
                             onClick={handleAiSubmit}
+                            disabled={isSubmitting || !userAnswer.trim()}
                         >
-                            Submit Answer
+                            {isSubmitting ? "Submitting..." : "Submit Answer"}
                         </Button>
 
                         {/* AI response */}
-                        {aiResponse && <p className="font-poppins text-sm">{aiResponse}</p>}
+                        {aiResponse && (
+                            <div className={`font-poppins text-sm p-3 rounded-lg ${
+                                aiResponse.includes('Good Job') 
+                                    ? 'bg-green-100 text-green-800' 
+                                    : 'bg-red-100 text-red-800'
+                            }`}>
+                                {aiResponse}
+                            </div>
+                        )}
                     </DialogContent>
                 </Dialog>
             )}
