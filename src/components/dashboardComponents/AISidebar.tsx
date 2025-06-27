@@ -456,7 +456,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                                                                 className={`group ${chat._id === activeChatId  ? "bg-white text-sky-800 hover:text-sky-800" : "text-sky-800 hover:bg-[#3A8EBA] hover:text-white"} transition-colors duration-200 font-poppins text-xs`}
                                                             >
                                                             <a
-                                                                className={`text-sky-800 font-poppins text-xs ${activeChatId === chat._id ? 'bg-white text-[#3A8EBA] hover:text-[#3A8EBA]' : ''}`}
+                                                                className={`text-sky-800 font-poppins text-xs py-2 px-2 min-h-[2.5rem] flex items-center justify-between ${activeChatId === chat._id ? 'bg-white text-[#3A8EBA] hover:text-[#3A8EBA]' : ''}`}
                                                                 onClick={(e) => {
                                                                     e.preventDefault();
                                                                     handleClickChat(chat._id);
@@ -481,10 +481,11 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                                                                     />
                                                                 ) : (
                                                                     <span
-                                                                        className="flex-1 cursor-pointer text-left"
+                                                                        className="flex-1 cursor-pointer text-left leading-tight break-words overflow-hidden whitespace-nowrap text-ellipsis pr-2"
                                                                         onDoubleClick={() =>
                                                                             handleEditStart(chat._id)
                                                                         }
+                                                                        title={chat.title} // Show full title on hover
                                                                     >
                                                                         {chat.title}
                                                                     </span>
@@ -494,7 +495,7 @@ const AISidebar : React.FC<SidebarProps> = ({collapsed}) => {
                                                                         <Button
                                                                             variant="ghost"
                                                                             size="icon"
-                                                                            className={`h-6 w-6 ml-auto ${hoveredChat === chat._id ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}
+                                                                            className={`h-6 w-6 flex-shrink-0 ${hoveredChat === chat._id ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}
                                                                             onClick={(e) => e.stopPropagation()}
                                                                         >
                                                                             <MoreHorizontal className="h-4 w-4" />
