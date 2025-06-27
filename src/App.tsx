@@ -19,6 +19,10 @@ import { SidebarProvider } from './components/ui/sidebar';
 import Admin from './pages/Admin';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 import ChangePasswordPage from './components/SignUp Components/ChangePasswordForm';
+import { generateToken, messaging } from './notifications/firebase.ts';
+import { onMessage } from 'firebase/messaging';
+import {Toaster} from 'react-hot-toast';
+import { showFirebaseNotificationToast } from './lib/CustomToast.tsx';
 
 interface DecodedToken {
   userId: string;
@@ -34,6 +38,54 @@ function App() {
   const [userId, setUserId] = useState<string | null>(null);
 
   const token = sessionStorage.getItem("token");
+
+  useEffect(() => {
+    const initializeFirebase = async () => {
+      try {        
+        onMessage(messaging, (payload) => {
+          console.log('Message received: ', payload);
+          showFirebaseNotificationToast(payload);
+        });
+      } catch (error) {
+        console.error('Firebase initialization error:', error);
+      }
+    };
+
+    initializeFirebase();
+  }, []);
+
+  // generate token and save to user to backend
+  useEffect(() => {
+    const saveFcmTokenToBackend = async (token: string) => {
+      if (!userId) return;
+
+      try {
+        await requestApi({
+          route: "/users/save-fcm-token",
+          method: requestMethods.POST,
+          body: { userId, fcmToken: token },
+        });
+        console.log("FCM token saved to backend");
+      } catch (error) {
+        console.error("Failed to save FCM token:", error);
+      }
+    };
+
+    const getAndSaveToken = async () => {
+      try {
+        const token = await generateToken();
+        if (token) {
+          saveFcmTokenToBackend(token);
+        }
+      } catch (error) {
+        console.error("Error getting or saving FCM token:", error);
+      }
+    };
+
+    if (userId) {
+      getAndSaveToken();
+    }
+  }, [userId]);
       
   useEffect(() =>{
       if (location.pathname === '/' || location.pathname === 'signup'){
@@ -95,6 +147,7 @@ function App() {
     <>
     
       <div className='App'>
+        <Toaster position='top-right'/>
         <Routes>
           <Route path='/' element={<Login />}/>
           <Route path='/signup' element={<Signup />}/>

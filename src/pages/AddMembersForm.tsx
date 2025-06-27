@@ -156,7 +156,7 @@ const AddMembersForm : React.FC = () => {
                             <AvatarSelector
                                 selectedAvatar={watch("avatar")}
                                 onAvatarClick={(src) => setValue("avatar", src, { shouldValidate: true })}
-                                role="parent"
+                                role={tab.toLocaleLowerCase()}
                             />
                         </div>
                         {errors.avatar && <FormErrorMessage message={errors.avatar.message as string}/>}
