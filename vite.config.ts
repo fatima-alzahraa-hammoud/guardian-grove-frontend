@@ -7,4 +7,11 @@ export default defineConfig({
   optimizeDeps: {
     include: ["@radix-ui/react-progress"],
   },
+  server: {
+    port: 3000,
+    host: true
+  },
+  build: {
+    outDir: 'dist'
+  }
 })
