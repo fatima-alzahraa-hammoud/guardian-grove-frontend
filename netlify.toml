@@ -2,11 +2,33 @@
     publish = "dist"
     command = "npm run build"
 
+# Don't redirect asset files
+[[redirects]]
+    from = "/assets/*"
+    to = "/assets/:splat"
+    status = 200
+
+# Don't redirect JavaScript modules and other static files
+[[redirects]]
+    from = "*.js"
+    to = "/:splat"
+    status = 200
+
+[[redirects]]
+    from = "*.css"
+    to = "/:splat"
+    status = 200
+
+[[redirects]]
+    from = "*.tsx"
+    to = "/:splat"
+    status = 200
+
+# Only redirect unmatched routes to index.html (for React Router)
 [[redirects]]
     from = "/*"
     to = "/index.html"
     status = 200
-    force = true
 
 [build.environment]
     NODE_VERSION = "18"
