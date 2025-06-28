@@ -47,7 +47,6 @@ const NoteEditor: React.FC<{
         strikethrough: false
     });
 
-    // Extended color palette matching your app theme
     const backgroundColors = [
         "#FFFFFF", "#FFF9C4", "#FFCCBC", "#FFCDD2", "#F8BBD9", "#E1BEE7",
         "#C5CAE9", "#BBDEFB", "#B2DFDB", "#C8E6C9", "#DCEDC8", "#F0F4C3",
@@ -93,7 +92,6 @@ const NoteEditor: React.FC<{
         return () => document.removeEventListener('selectionchange', handleSelectionChange);
     }, []);
 
-    // FIXED: Initialize content editor properly without dangerouslySetInnerHTML conflicts
     useEffect(() => {
         if (contentRef.current) {
             // Only set placeholder if content is empty
@@ -109,7 +107,7 @@ const NoteEditor: React.FC<{
     const handleAISubmit = () => {
         if (!aiMessage.trim()) return;
         
-        // Here you can add actual AI integration
+        // add actual AI integration
         console.log("AI request:", aiMessage);
         
         setAIMessage("");
@@ -147,7 +145,7 @@ const NoteEditor: React.FC<{
         }
     };
 
-    // FIXED: Apply lists with proper TypeScript types and enhanced functionality
+    // Apply lists with proper TypeScript types and enhanced functionality
     const applyList = (listType: string) => {
         if (contentRef.current) {
             contentRef.current.focus();
@@ -159,7 +157,7 @@ const NoteEditor: React.FC<{
             document.execCommand('insertUnorderedList', false, undefined);
         }
         
-        // FIXED: Proper TypeScript handling for list styling
+        // Proper TypeScript handling for list styling
         setTimeout(() => {
             if (contentRef.current) {
                 const lists = contentRef.current.querySelectorAll('ul, ol');
@@ -223,7 +221,7 @@ const NoteEditor: React.FC<{
 
     const fontSizes = [10, 12, 14, 16, 18, 20, 24, 28, 32];
 
-    // FIXED: Handle content input without conflicts
+    // Handle content input without conflicts
     const handleContentInput = (e: React.FormEvent<HTMLDivElement>) => {
         const content = e.currentTarget.innerHTML;
         
@@ -237,14 +235,14 @@ const NoteEditor: React.FC<{
         saveToHistory(content);
     };
 
-    // FIXED: Handle content focus
+    // Handle content focus
     const handleContentFocus = (e: React.FocusEvent<HTMLDivElement>) => {
         if (e.currentTarget.innerHTML.includes('Start writing your note...')) {
             e.currentTarget.innerHTML = '';
         }
     };
 
-    // FIXED: Handle content blur
+    // Handle content blur
     const handleContentBlur = (e: React.FocusEvent<HTMLDivElement>) => {
         const content = e.currentTarget.innerHTML.trim();
         if (!content || content === '<br>' || content === '<div><br></div>' || content === '<p><br></p>') {
@@ -711,7 +709,7 @@ const NoteEditor: React.FC<{
                 </div>
             </div>
 
-            {/* AI Assistant Sidebar - Made Smaller */}
+            {/* AI Assistant Sidebar */}
             <AnimatePresence>
                 {showAIAssistant && (
                     <motion.div
