@@ -12,9 +12,8 @@ import ProgressBar from "../common/ProgressBar";
 import "../../styles/card.css";
 import "../../styles/global.css";
 import UpdateUserDialog from "../common/UpdateUserDialog";
-import { TUpdate } from "../../libs/types/updateTypes";
 import { useNavigate } from "react-router-dom";
-import { selectFamilyMembers, selectFamilyName, selectFamilyStars, updateFamilyName } from "../../redux/slices/familySlice";
+import { selectFamilyAvatar, selectFamilyMembers, selectFamilyName, selectFamilyStars, updateFamilyAvatar, updateFamilyName } from "../../redux/slices/familySlice";
 import { toast, ToastContainer } from "react-toastify";
 import { motion } from "framer-motion";
 
@@ -133,6 +132,7 @@ const MyProfile : React.FC = () => {
     const rank = useSelector(selectRank);
     const role = useSelector(selectRole);
     const familyName = useSelector(selectFamilyName);
+    const familyAvatar = useSelector(selectFamilyAvatar);
     const totalStars = useSelector(selectFamilyStars);
     const nbOfMembers = useSelector(selectFamilyMembers).length;
     const dailyMessage = useSelector(selectDialyMessage);
@@ -145,7 +145,6 @@ const MyProfile : React.FC = () => {
     const [goals, setGoals] = useState<{completedGoals: number, totalGoals: number}>();
     const [tasks, setTasks] = useState<{completedTasks: number, totalTasks: number}>();
     const [isDialogOpen, setDialogOpen] = useState(false);
-    const [updated, setUpdated] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
 
     // Smoother animation variants with longer durations
@@ -226,45 +225,56 @@ const MyProfile : React.FC = () => {
         setDialogOpen(false);
     };
 
-    const handleDialogConfirm = async(data: TUpdate) => {
+    // Update the handleDialogConfirm function in MyProfile component
+    const handleDialogConfirm = async(data: { userFormData: FormData; familyFormData?: FormData }) => {
         setDialogOpen(false);  
+        console.log("Data to update:", data);
 
-        if (data){
-            try {
-                const userResponse = await requestApi({
-                    route: "/users/",
-                    method: requestMethods.PUT,
-                    body: data
-                });
+        if (data) {
+            let userUpdated = false;
+            let familyUpdated = false;
 
-                if (userResponse){
-                    dispatch(setUser(userResponse.user));
-                    setUpdated(true);
+            // Update user profile if there are user changes
+            if (data.userFormData && Array.from(data.userFormData.entries()).length > 0) {
+                try {
+                    const userResponse = await requestApi({
+                        route: "/users/",
+                        method: requestMethods.PUT,
+                        body: data.userFormData
+                    });
+
+                    if (userResponse) {
+                        dispatch(setUser(userResponse.user));
+                        userUpdated = true;
+                    }
+                } catch (error) {
+                    console.log("something went wrong in updating user", error);
+                    toast.error("Failed to update user profile");
                 }
-            } catch (error) {
-                console.log("something wents wrong in updaing user", error);
             }
 
-            //update family details
-            if (data.email || data.familyAvatar || data.familyName){
+            // Update family details if there are family changes
+            if (data.familyFormData && Array.from(data.familyFormData.entries()).length > 0) {
                 try {
                     const familyResponse = await requestApi({
                         route: "/family/",
                         method: requestMethods.PUT,
-                        body: data
+                        body: data.familyFormData
                     });
-        
-                    if (familyResponse){
+
+                    if (familyResponse) {
                         dispatch(setEmail(familyResponse.family.email));
                         dispatch(updateFamilyName(familyResponse.family.familyName));
-                        setUpdated(true);
+                        dispatch(updateFamilyAvatar(familyResponse.family.familyAvatar));
+                        familyUpdated = true;
                     }  
                 } catch (error) {
-                    console.log("something wents wrong in getting family details", error);
+                    console.log("something went wrong in updating family details", error);
+                    toast.error("Failed to update family details");
                 }
             }
 
-            if (updated){
+            if (userUpdated || familyUpdated) {
                 setShowConfetti(true);
                 setTimeout(() => setShowConfetti(false), 3000);
                 toast.success("Profile updated successfully!");
@@ -609,6 +619,7 @@ const MyProfile : React.FC = () => {
                             confirmText="Save"
                             cancelText="Cancel"
                             familyName={familyName || ''}
+                            familyAvatar={familyAvatar || '/assets/images/stars.png'}
                         />
                     </div>
                 </motion.div>
