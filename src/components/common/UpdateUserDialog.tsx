@@ -87,101 +87,101 @@ const UpdateUserDialog: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, t
     };
 
     const handleConfirm = handleSubmit(async (data) => {
-    const userFormData = new FormData();
-    let familyFormData: FormData | undefined;
-    let hasUserChanges = false;
-    let hasFamilyChanges = false;
+        const userFormData = new FormData();
+        let familyFormData: FormData | undefined;
+        let hasUserChanges = false;
+        let hasFamilyChanges = false;
 
-    // Handle user-related changes
-    if (data.name !== name) {
-        userFormData.append('name', data.name);
-        hasUserChanges = true;
-    }
-
-    if (data.gender !== gender) {
-        userFormData.append('gender', data.gender);
-        hasUserChanges = true;
-    }
-
-    if (birthday && data.birthday && data.birthday.getTime() !== new Date(birthday).getTime()) {
-        userFormData.append('birthday', data.birthday.toISOString());
-        hasUserChanges = true;
-    }
-
-    // Handle user avatar
-    if (data.avatar !== avatar) {
-        if (typeof data.avatar === 'string' && data.avatar.startsWith('blob:')) {
-            try {
-                const blobResponse = await fetch(data.avatar);
-                const avatarBlob = await blobResponse.blob();
-                userFormData.append('avatar', avatarBlob, 'avatar.png');
-                hasUserChanges = true;
-            } catch (error) {
-                console.error('Error converting avatar blob to file:', error);
-            }
-        } else if (data.avatar && typeof data.avatar === 'object' && (data.avatar as object) instanceof File) {
-            userFormData.append('avatar', data.avatar);
-            hasUserChanges = true;
-        } else if (typeof data.avatar === 'string') {
-            // Handle predefined avatars - send as regular text field, not file field
-            userFormData.append('avatarPath', data.avatar);
+        // Handle user-related changes
+        if (data.name !== name) {
+            userFormData.append('name', data.name);
             hasUserChanges = true;
         }
-    }
 
-    // Handle family-related changes for parents
-    if (role === "parent") {
-        // Check for any family-related changes
-        const emailChanged = data.email !== email;
-        const familyNameChanged = data.familyName !== familyName;
-        const familyAvatarChanged = data.familyAvatar !== familyAvatar;
+        if (data.gender !== gender) {
+            userFormData.append('gender', data.gender);
+            hasUserChanges = true;
+        }
 
-        if (emailChanged || familyNameChanged || familyAvatarChanged) {
-            familyFormData = new FormData();
-            
-            if (emailChanged) {
-                familyFormData.append('email', data.email);
-                hasFamilyChanges = true;
+        if (birthday && data.birthday && data.birthday.getTime() !== new Date(birthday).getTime()) {
+            userFormData.append('birthday', data.birthday.toISOString());
+            hasUserChanges = true;
+        }
+
+        // Handle user avatar
+        if (data.avatar !== avatar) {
+            if (typeof data.avatar === 'string' && data.avatar.startsWith('blob:')) {
+                try {
+                    const blobResponse = await fetch(data.avatar);
+                    const avatarBlob = await blobResponse.blob();
+                    userFormData.append('avatar', avatarBlob, 'avatar.png');
+                    hasUserChanges = true;
+                } catch (error) {
+                    console.error('Error converting avatar blob to file:', error);
+                }
+            } else if (data.avatar && typeof data.avatar === 'object' && (data.avatar as object) instanceof File) {
+                userFormData.append('avatar', data.avatar);
+                hasUserChanges = true;
+            } else if (typeof data.avatar === 'string') {
+                // Handle predefined avatars - send as regular text field, not file field
+                userFormData.append('avatarPath', data.avatar);
+                hasUserChanges = true;
             }
+        }
 
-            if (familyNameChanged) {
-                familyFormData.append('familyName', data.familyName);
-                hasFamilyChanges = true;
-            }
+        // Handle family-related changes for parents
+        if (role === "parent") {
+            // Check for any family-related changes
+            const emailChanged = data.email !== email;
+            const familyNameChanged = data.familyName !== familyName;
+            const familyAvatarChanged = data.familyAvatar !== familyAvatar;
 
-            if (familyAvatarChanged) {
-                console.log('Family avatar changed:', { old: familyAvatar, new: data.familyAvatar });
-                if (typeof data.familyAvatar === 'string' && data.familyAvatar.startsWith('blob:')) {
-                    try {
-                        const blobResponse = await fetch(data.familyAvatar);
-                        const familyAvatarBlob = await blobResponse.blob();
-                        familyFormData.append('familyAvatar', familyAvatarBlob, 'family-avatar.png');
+            if (emailChanged || familyNameChanged || familyAvatarChanged) {
+                familyFormData = new FormData();
+                
+                if (emailChanged) {
+                    familyFormData.append('email', data.email);
+                    hasFamilyChanges = true;
+                }
+
+                if (familyNameChanged) {
+                    familyFormData.append('familyName', data.familyName);
+                    hasFamilyChanges = true;
+                }
+
+                if (familyAvatarChanged) {
+                    console.log('Family avatar changed:', { old: familyAvatar, new: data.familyAvatar });
+                    if (typeof data.familyAvatar === 'string' && data.familyAvatar.startsWith('blob:')) {
+                        try {
+                            const blobResponse = await fetch(data.familyAvatar);
+                            const familyAvatarBlob = await blobResponse.blob();
+                            familyFormData.append('familyAvatar', familyAvatarBlob, 'family-avatar.png');
+                            hasFamilyChanges = true;
+                        } catch (error) {
+                            console.error('Error converting family avatar blob to file:', error);
+                        }
+                    } else if (typeof data.familyAvatar === 'object' && (data.familyAvatar as unknown) instanceof File) {
+                        familyFormData.append('familyAvatar', data.familyAvatar);
                         hasFamilyChanges = true;
-                    } catch (error) {
-                        console.error('Error converting family avatar blob to file:', error);
+                    } else if (typeof data.familyAvatar === 'string') {
+                        // Handle predefined family avatars - send as regular text field
+                        familyFormData.append('familyAvatarPath', data.familyAvatar);
+                        hasFamilyChanges = true;
                     }
-                } else if (typeof data.familyAvatar === 'object' && (data.familyAvatar as unknown) instanceof File) {
-                    familyFormData.append('familyAvatar', data.familyAvatar);
-                    hasFamilyChanges = true;
-                } else if (typeof data.familyAvatar === 'string') {
-                    // Handle predefined family avatars - send as regular text field
-                    familyFormData.append('familyAvatarPath', data.familyAvatar);
-                    hasFamilyChanges = true;
                 }
             }
         }
-    }
 
-    // Only proceed if there are changes
-    if (hasUserChanges || hasFamilyChanges) {
-        onConfirm({ 
-            userFormData: hasUserChanges ? userFormData : new FormData(), 
-            familyFormData: hasFamilyChanges ? familyFormData : undefined 
-        });
-    }
-    
-    onClose();
-});
+        // Only proceed if there are changes
+        if (hasUserChanges || hasFamilyChanges) {
+            onConfirm({ 
+                userFormData: hasUserChanges ? userFormData : new FormData(), 
+                familyFormData: hasFamilyChanges ? familyFormData : undefined 
+            });
+        }
+        
+        onClose();
+    });
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
