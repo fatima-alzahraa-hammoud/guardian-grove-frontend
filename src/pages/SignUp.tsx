@@ -5,9 +5,9 @@ import "../styles/global.css";
 import logo from '/assets/logo/GuardianGrove_logo_Text.png';
 import img from '/assets/images/family-signup1.png';
 import { gsap } from "gsap";
-import FirstSignUpForm from "../components/SignUp Components/FirstSignUpForm";
+import FirstSignUpForm from "../components/SignUpComponents/FirstSignUpForm";
 import { toast, ToastContainer } from "react-toastify";
-import SecondSignUpForm from "../components/SignUp Components/SecondSignUpForm";
+import SecondSignUpForm from "../components/SignUpComponents/SecondSignUpForm";
 import { TFirstStep, TSecondStep } from "../libs/types/signupTypes";
 import { requestApi } from "../libs/requestApi";
 import { requestMethods } from "../libs/enum/requestMethods";
@@ -34,10 +34,69 @@ const Signup : React.FC = () => {
         const combinedData = { ...firstStepData, ...secondStepData };
         console.log(combinedData)
         try {
+            // Create FormData object
+            const formData = new FormData();
+            
+            // Add all basic fields
+            formData.append('name', combinedData.name || '');
+            formData.append('email', combinedData.email || '');
+            formData.append('password', combinedData.password || '');
+            formData.append('confirmPassword', combinedData.confirmPassword || '');
+            formData.append('gender', combinedData.gender || '');
+            formData.append('role', combinedData.role || '');
+            formData.append('familyName', combinedData.familyName || '');
+            formData.append('birthday', combinedData.birthday ? combinedData.birthday.toISOString() : '');
+            formData.append('interests', JSON.stringify(combinedData.interests || []));
+            formData.append('agreeToTerms', String(combinedData.agreeToTerms || false));
+
+            // Handle avatar - same pattern as AddMembersForm
+            if (combinedData.avatar) {
+                if (combinedData.avatar.startsWith('blob:')) {
+                    try {
+                        const blobResponse = await fetch(combinedData.avatar);
+                        const avatarBlob = await blobResponse.blob();
+                        formData.append('avatar', avatarBlob, 'avatar.png');
+                    } catch (blobError) {
+                        console.error('Error converting blob to file:', blobError);
+                        toast.error('Error processing avatar image');
+                        return;
+                    }
+                } else if (typeof combinedData.avatar === 'object' && (combinedData.avatar as object) instanceof File) {
+                    formData.append('avatar', combinedData.avatar);
+                } else if (typeof combinedData.avatar === 'string') {
+                    formData.append('avatarPath', combinedData.avatar);
+                }
+            }
+
+            // Handle family avatar - same pattern as AddMembersForm
+            if (combinedData.familyAvatar) {
+                if (combinedData.familyAvatar.startsWith('blob:')) {
+                    try {
+                        const blobResponse = await fetch(combinedData.familyAvatar);
+                        const familyAvatarBlob = await blobResponse.blob();
+                        formData.append('familyAvatar', familyAvatarBlob, 'family-avatar.png');
+                    } catch (blobError) {
+                        console.error('Error converting blob to file:', blobError);
+                        toast.error('Error processing family avatar image');
+                        return;
+                    }
+                } else if (typeof combinedData.familyAvatar === 'object' && (combinedData.familyAvatar as object) instanceof File) {
+                    formData.append('familyAvatar', combinedData.familyAvatar);
+                } else if (typeof combinedData.familyAvatar === 'string') {
+                    formData.append('familyAvatarPath', combinedData.familyAvatar);
+                }
+            }
+
+            // Debug: Log FormData contents
+            console.log('FormData contents:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+
             const response = await requestApi({
                 route: "/auth/register",
                 method: requestMethods.POST,
-                body: combinedData
+                body: formData
             });
 
             if (response && response.token) {
