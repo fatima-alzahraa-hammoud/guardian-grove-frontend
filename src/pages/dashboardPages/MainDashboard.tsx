@@ -8,6 +8,7 @@ import { resetChats } from "../../redux/slices/chatSlice";
 import GoalsAndAdventures from "../../components/dashboardComponents/GoalsAndAdventures";
 import FamilyJournal from "../../components/dashboardComponents/FamilyJournal";
 import AINotifications from "../../components/dashboardComponents/AINotifications";
+import Notes from "../../components/dashboardComponents/Notes";
 
 const Main : React.FC = () => {
 
@@ -20,7 +21,7 @@ const Main : React.FC = () => {
             case 'profile':
                 return <MyProfile />;
             case 'notes':
-                return <div className="pt-20">Notes Content</div>;
+                return <Notes />;
             case 'achievements':
                 return <Achievements collapsed={collapsed}/>;
             case 'familyTree':
