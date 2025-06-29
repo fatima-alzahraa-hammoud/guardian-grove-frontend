@@ -14,7 +14,6 @@ const NoteEditor: React.FC<{
     setNote: (note: Note) => void;
     colorOptions: string[];
     textStyle: TextStyle;
-    onTextStyleChange: (style: keyof TextStyle, value: any) => void;
     onUndo: () => void;
     onRedo: () => void;
     canUndo: boolean;
@@ -78,6 +77,7 @@ const NoteEditor: React.FC<{
                 });
             }, 50);
         } catch (e) {
+            console.error("Error checking formatting:", e);
             // Silently handle errors
         }
     };
@@ -102,7 +102,7 @@ const NoteEditor: React.FC<{
                 contentRef.current.innerHTML = note.content;
             }
         }
-    }, [note.id]); // Only trigger when note ID changes (new note)
+    }, [note.id, note.content, contentRef]);
 
     const handleAISubmit = () => {
         if (!aiMessage.trim()) return;
