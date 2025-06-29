@@ -195,7 +195,7 @@ const FamilyTree : React.FC<FamilyTreeProps> = ({collapsed}) => {
                         >
                             {/* Multiple glowing rings */}
                             <motion.div
-                                className="absolute -inset-6 bg-gradient-to-r from-yellow-400 via-green-400 via-blue-400 to-purple-400 rounded-full opacity-20 blur-xl"
+                                className="absolute -inset-6 bg-gradient-to-r from-yellow-400 via-blue-400 to-purple-400 rounded-full opacity-20 blur-xl"
                                 animate={{
                                     rotate: [0, 360],
                                     scale: [1, 1.2, 1]
