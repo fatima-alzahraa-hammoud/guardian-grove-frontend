@@ -27,66 +27,6 @@ interface AchievementsProps {
   collapsed: boolean;
 }
 
-// Floating background elements with vibrant theme colors (same as AINotifications)
-const FloatingElements = () => {
-    return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {/* Animated gradient orbs using vibrant theme colors */}
-            {Array.from({ length: 4 }).map((_, i) => (
-                <motion.div
-                    key={i}
-                    className="absolute rounded-full blur-3xl"
-                    style={{
-                        width: `${100 + i * 50}px`,
-                        height: `${100 + i * 50}px`,
-                        left: `${10 + i * 25}%`,
-                        top: `${20 + i * 15}%`,
-                    }}
-                    animate={{
-                        x: [0, 50, -30, 0],
-                        y: [0, -30, 20, 0],
-                        scale: [1, 1.2, 0.8, 1],
-                    }}
-                    transition={{
-                        duration: 15 + i * 3,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: i * 2
-                    }}
-                />
-            ))}
-
-            {/* Floating particles with vibrant colors */}
-            {Array.from({ length: 8 }).map((_, i) => (
-                <motion.div
-                    key={`particle-${i}`}
-                    className="absolute w-2 h-2 rounded-full opacity-30"
-                    style={{
-                        backgroundColor: [
-                            "#3A8EBA", // Primary blue
-                            "#F09C14", // Orange
-                            "#179447", // Green
-                            "#8B5CF6"  // Purple
-                        ][i % 4],
-                        left: `${Math.random() * 100}%`,
-                        top: `${Math.random() * 100}%`,
-                    }}
-                    animate={{
-                        y: [0, -20, 0],
-                        opacity: [0.2, 0.6, 0.2],
-                    }}
-                    transition={{
-                        duration: 4 + Math.random() * 2,
-                        repeat: Infinity,
-                        delay: Math.random() * 2,
-                        ease: "easeInOut"
-                    }}
-                />
-            ))}
-        </div>
-    );
-};
-
 // Simple Enhanced Empty State
 const EmptyState = ({ activeFilter }: { activeFilter: string }) => {
     return (
@@ -303,8 +243,6 @@ const Achievements : React.FC<AchievementsProps> = ({collapsed}) => {
 
     return(
         <div className="pt-24 min-h-screen flex justify-center relative overflow-hidden">
-            {/* Floating Background Elements */}
-            <FloatingElements />
             
             <div className={`w-full flex-grow font-poppins mx-auto px-4 relative z-10 ${ collapsed ? "max-w-6xl" : "max-w-5xl" }`} >
                 
