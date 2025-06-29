@@ -134,7 +134,8 @@ const MyProfile : React.FC = () => {
     const familyName = useSelector(selectFamilyName);
     const familyAvatar = useSelector(selectFamilyAvatar);
     const totalStars = useSelector(selectFamilyStars);
-    const nbOfMembers = useSelector(selectFamilyMembers).length;
+    const familyMembers = useSelector(selectFamilyMembers);
+    const nbOfMembers = familyMembers.length;
     const dailyMessage = useSelector(selectDialyMessage);
 
     const [currentDate, setCurrentDate] = useState<string>("");
@@ -216,6 +217,19 @@ const MyProfile : React.FC = () => {
             }
         }
     };
+
+    // Get children members (excluding parents)
+    const children = familyMembers.filter(member => member.role !== 'parent');
+
+    // Color palette for kid circles
+    const kidColors = [
+        { bg: '#FFE5E5', border: '#FF6B6B', shadow: 'rgba(255, 107, 107, 0.3)' },
+        { bg: '#E5F3FF', border: '#4DABF7', shadow: 'rgba(77, 171, 247, 0.3)' },
+        { bg: '#E5FFE5', border: '#51CF66', shadow: 'rgba(81, 207, 102, 0.3)' },
+        { bg: '#FFF5E5', border: '#FFB84D', shadow: 'rgba(255, 184, 77, 0.3)' },
+        { bg: '#F3E5FF', border: '#9775FA', shadow: 'rgba(151, 117, 250, 0.3)' },
+        { bg: '#FFE5F5', border: '#FF6BB3', shadow: 'rgba(255, 107, 179, 0.3)' }
+    ];
 
     const handleDialogOpen = () => {
         setDialogOpen(true);
@@ -522,6 +536,96 @@ const MyProfile : React.FC = () => {
                 </motion.div>
             </motion.div>
 
+            {role === 'parent' && children.length > 0 && (
+                <motion.div 
+                    className="mt-8"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.8 }}
+                >
+                    <h3 className="font-comic font-extrabold mb-4 text-base">Your Little Guardians</h3>
+                    <motion.div 
+                        className="flex flex-wrap gap-6"
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                    >
+                        {children.map((child, index) => {
+                            const colorScheme = kidColors[index % kidColors.length];
+                            return (
+                                <motion.div
+                                    key={index}
+                                    className="flex flex-col items-center cursor-pointer"
+                                    variants={itemVariants}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => {
+                                        // Navigate to child's profile or handle click
+                                        console.log('Clicked on child:', child.name);
+                                    }}
+                                >
+                                    <motion.div
+                                        className="relative"
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        {/* Animated border ring */}
+                                        <motion.div
+                                            className="absolute -inset-1 rounded-full"
+                                            style={{ backgroundColor: colorScheme.border }}
+                                            animate={{
+                                                scale: [1, 1.1, 1],
+                                                opacity: [0.3, 0.6, 0.3]
+                                            }}
+                                            transition={{
+                                                duration: 2,
+                                                repeat: Infinity,
+                                                ease: "easeInOut"
+                                            }}
+                                        />
+                                        
+                                        {/* Child avatar */}
+                                        <motion.img 
+                                            className="w-16 h-16 rounded-full relative z-10 border-3 border-white"
+                                            style={{ 
+                                                backgroundColor: colorScheme.bg,
+                                                borderColor: colorScheme.border,
+                                                borderWidth: '3px'
+                                            }}
+                                            src={child.avatar || "https://via.placeholder.com/150"}
+                                            alt={`${child.name} Avatar`}
+                                            whileHover={{ rotate: [0, -5, 5, 0] }}
+                                            transition={{ duration: 0.5 }}
+                                        />
+                                        
+                                        {/* Status indicator */}
+                                        <motion.div
+                                            className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 rounded-full border-2 border-white z-20"
+                                            animate={{
+                                                scale: [1, 1.2, 1]
+                                            }}
+                                            transition={{
+                                                duration: 1.5,
+                                                repeat: Infinity,
+                                                ease: "easeInOut"
+                                            }}
+                                        />
+                                    </motion.div>
+                                    
+                                    <motion.p 
+                                        className="text-xs font-medium mt-2 text-center max-w-20 truncate hover:text-blue-600"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ delay: 0.2 }}
+                                    >
+                                        {child.name}
+                                    </motion.p>
+                                </motion.div>
+                            );
+                        })}
+                    </motion.div>
+                </motion.div>
+            )}
+
             {/* Info cards with smoother motion */}
             <motion.div 
                 className="flex space-x-6 mt-10"
@@ -644,24 +748,67 @@ const MyProfile : React.FC = () => {
                         }}
                     />
                     
-                    <motion.p
+                    {/* Family info with avatar */}
+                    <motion.div
+                        className="flex items-center justify-between"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.6 }}
                     >
-                        <span className="font-bold pr-3 text-left">Your Family:</span>
-                        {familyName} {' ( '} 
-                        <motion.span 
-                            className="text-sm"
+                        <div className="flex-1">
+                            <p className="font-bold text-left mb-2">Your Family:</p>
+                            <p className="text-sm">
+                                {familyName} {' ( '} 
+                                <motion.span 
+                                    className="text-sm"
+                                    whileHover={{ scale: 1.1 }}
+                                >
+                                    {nbOfMembers}
+                                </motion.span> 
+                                {' members)'}
+                            </p>
+                        </div>
+                        
+                        {/* Family Avatar */}
+                        <motion.div
+                            className="relative"
                             whileHover={{ scale: 1.1 }}
+                            transition={{ duration: 0.3 }}
                         >
-                            {nbOfMembers}
-                        </motion.span> 
-                        {' members)'}
-                    </motion.p>
+                            <motion.div
+                                className="absolute -inset-2 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full opacity-30"
+                                animate={{
+                                    rotate: [0, 360],
+                                    scale: [1, 1.1, 1]
+                                }}
+                                transition={{
+                                    rotate: { duration: 8, repeat: Infinity, ease: "linear" },
+                                    scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                                }}
+                            />
+                            <motion.img 
+                                src={familyAvatar || starsImage} 
+                                alt="Family Avatar" 
+                                className="w-16 h-16 rounded-full border-2 border-white relative z-10"
+                                animate={{ 
+                                    boxShadow: [
+                                        "0 0 0 rgba(255,215,0,0)",
+                                        "0 0 15px rgba(255,215,0,0.5)",
+                                        "0 0 0 rgba(255,215,0,0)"
+                                    ]
+                                }}
+                                transition={{ 
+                                    duration: 3,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                }}
+                            />
+                        </motion.div>
+                    </motion.div>
                     
+                    {/* ...existing stars and coins sections... */}
                     <motion.p 
-                        className="flex items-center"
+                        className="flex items-center mt-3"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.7 }}
@@ -720,9 +867,9 @@ const MyProfile : React.FC = () => {
                         />
                     </motion.p>
 
-                    
+                    {/* ...existing coins and rank sections... */}
                     <motion.p 
-                        className="flex items-center"
+                        className="flex items-center mt-3"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.8 }}
@@ -739,7 +886,7 @@ const MyProfile : React.FC = () => {
                     </motion.p>
                     
                     <motion.p 
-                        className="flex items-center"
+                        className="flex items-center mt-3"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.9 }}
