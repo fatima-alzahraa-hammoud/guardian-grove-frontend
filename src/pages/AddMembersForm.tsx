@@ -106,9 +106,10 @@ const AddMembersForm : React.FC = () => {
                     toast.error('Error processing avatar image');
                     return false;
                 }
-            } else if (data.avatar) {
-                // If it's already a file or other format
+            } else if (data.avatar && typeof data.avatar === 'object' && (data.avatar as object) instanceof File) {
                 formData.append('avatar', data.avatar);
+            } else if (typeof data.avatar === 'string') {
+                formData.append('avatarPath', data.avatar);
             }
 
             // Log FormData contents for debugging
@@ -122,7 +123,7 @@ const AddMembersForm : React.FC = () => {
                 method: requestMethods.POST,
                 body: formData,
             });
-            if (result) {
+            if (result && result.user) {
                 console.log(result.user);
                 // Success Toast
                 toast.success(`Create your ${tab} successful, check your email.`);
