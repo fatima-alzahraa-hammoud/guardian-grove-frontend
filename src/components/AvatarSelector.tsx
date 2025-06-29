@@ -40,6 +40,7 @@ const childAvatars = [
   { id: 9, src: '/assets/images/avatars/child/avatar9.png' },
   { id: 10, src: '/assets/images/avatars/child/avatar10.png' },
 ];
+
 interface AvatarSelectorProps {
   selectedAvatar: string | null;
   onAvatarClick: (src: string) => void;
@@ -60,6 +61,14 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({ selectedAvatar, onAvata
     }
   }, [role]);
 
+  // Check if current avatar is a custom upload (blob URL)
+  const isCurrentAvatarCustomUpload = selectedAvatar && selectedAvatar.startsWith('blob:');
+  
+  // Check if current avatar is from backend (http/https URL) and not a predefined one
+  const isCurrentAvatarFromBackend = selectedAvatar && 
+    (selectedAvatar.startsWith('http') || selectedAvatar.startsWith('https://')) && 
+    !selectedAvatar.startsWith('/assets/');
+
   const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
@@ -78,17 +87,28 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({ selectedAvatar, onAvata
     onAvatarClick(src);
   };
 
+  const handleCurrentAvatarClick = () => {
+    if (selectedAvatar) {
+      onAvatarClick(selectedAvatar);
+    }
+  };
+
   return (
     <Carousel className="w-full max-w-sm">
       <CarouselContent className="-ml-1">
+
+        {/* Upload slot - always show with + */}
         <CarouselItem className="pl-1 basis-14">
-          <label className="cursor-pointer w-10 flex-shrink-0 h-10 flex items-center justify-center rounded-full border border-gray-300">
+          <label className="cursor-pointer w-10 flex-shrink-0 h-10 flex items-center justify-center rounded-full border-2"
+                 style={{
+                   borderColor: isCurrentAvatarCustomUpload ? '#1976d2' : '#ddd'
+                 }}>
             <input type="file" className="hidden" onChange={handleAvatarUpload} />
-            {uploadedAvatar ? (
+            {isCurrentAvatarCustomUpload ? (
               <img
-                src={uploadedAvatar}
+                src={uploadedAvatar || selectedAvatar}
                 alt="Uploaded avatar"
-                className="w-full h-full object-cover border-[3px] border-[#1976d2] rounded-full"
+                className="w-full h-full object-cover rounded-full"
               />
             ) : (
               <span className="text-gray-500 text-xl text-center">
@@ -97,7 +117,27 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({ selectedAvatar, onAvata
             )}
           </label>
         </CarouselItem>
+        
+        {/* Show current avatar from backend if it exists and is not predefined */}
+        {isCurrentAvatarFromBackend && (
+          <CarouselItem className="pl-1 basis-14">
+            <div
+              className="cursor-pointer w-10 flex-shrink-0 h-10 flex items-center justify-center rounded-full border-2"
+              style={{
+                borderColor: selectedAvatar === selectedAvatar ? '#1976d2' : '#ddd'
+              }}
+              onClick={handleCurrentAvatarClick}
+            >
+              <img
+                src={selectedAvatar}
+                alt="Current avatar"
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+          </CarouselItem>
+        )}
       
+        {/* Predefined avatars */}
         {avatars.map((avatar) => (
           <CarouselItem key={avatar.id} className="pl-1 basis-14">
             <Avatar
