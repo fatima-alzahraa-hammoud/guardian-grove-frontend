@@ -88,19 +88,39 @@ const AddMembersForm : React.FC = () => {
         console.log(data);
         try {
             // Minimal data for submission
-            const submitData = {
-                gender: data.gender || "female",
-                role: data.role || tab.toLowerCase(),
-                name: data.name || "",
-                birthday: data.birthday,
-                interests: data.interests || [],
-                avatar: data.avatar || "",
-            };
+            const formData = new FormData();
+
+            formData.append('gender', data.gender || 'female');
+            formData.append('role', data.role || tab.toLowerCase());
+            formData.append('name', data.name || '');
+            formData.append('birthday', data.birthday ? data.birthday.toISOString() : '');
+            formData.append('interests', JSON.stringify(data.interests || []));
             
+            if (data.avatar && data.avatar.startsWith('blob:')) {
+                try {
+                    const blobResponse = await fetch(data.avatar);
+                    const avatarBlob = await blobResponse.blob();
+                    formData.append('avatar', avatarBlob, 'avatar.png');
+                } catch (blobError) {
+                    console.error('Error converting blob to file:', blobError);
+                    toast.error('Error processing avatar image');
+                    return false;
+                }
+            } else if (data.avatar) {
+                // If it's already a file or other format
+                formData.append('avatar', data.avatar);
+            }
+
+            // Log FormData contents for debugging
+            console.log('FormData contents:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+
             const result = await requestApi({
                 route: "/users/",
                 method: requestMethods.POST,
-                body: JSON.stringify(submitData),
+                body: formData,
             });
             if (result) {
                 console.log(result.user);
