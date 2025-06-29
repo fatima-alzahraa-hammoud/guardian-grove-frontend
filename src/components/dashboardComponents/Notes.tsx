@@ -36,7 +36,7 @@ const Notes: React.FC<NotesProps> = ({ collapsed = false }) => {
     const [editingNote, setEditingNote] = useState<Note | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedColor] = useState("#FFF9C4");
-    const [textStyle, setTextStyle] = useState<TextStyle>({
+    const [textStyle] = useState<TextStyle>({
         bold: false,
         italic: false,
         underline: false,
@@ -189,43 +189,6 @@ const Notes: React.FC<NotesProps> = ({ collapsed = false }) => {
         setNotes(notes.map(note => 
             note.id === id ? { ...note, isPinned: !note.isPinned } : note
         ));
-    };
-
-    const handleTextStyleChange = (style: keyof TextStyle, value: any) => {
-        setTextStyle(prev => ({ ...prev, [style]: value }));
-        if (contentRef.current) {
-            applyTextStyle(style, value);
-        }
-    };
-
-    const applyTextStyle = (style: keyof TextStyle, value: any) => {
-        const selection = window.getSelection();
-        if (selection && selection.rangeCount > 0) {
-            
-            switch (style) {
-                case 'bold':
-                    document.execCommand('bold');
-                    break;
-                case 'italic':
-                    document.execCommand('italic');
-                    break;
-                case 'underline':
-                    document.execCommand('underline');
-                    break;
-                case 'strikethrough':
-                    document.execCommand('strikeThrough');
-                    break;
-                case 'align':
-                    if (value === 'left') document.execCommand('justifyLeft');
-                    else if (value === 'center') document.execCommand('justifyCenter');
-                    else if (value === 'right') document.execCommand('justifyRight');
-                    break;
-                case 'listType':
-                    if (value === 'ordered') document.execCommand('insertOrderedList');
-                    else if (value === 'unordered') document.execCommand('insertUnorderedList');
-                    break;
-            }
-        }
     };
 
     const handleUndo = () => {
@@ -603,7 +566,6 @@ const Notes: React.FC<NotesProps> = ({ collapsed = false }) => {
                                             setNote={setEditingNote}
                                             colorOptions={colorOptions}
                                             textStyle={textStyle}
-                                            onTextStyleChange={handleTextStyleChange}
                                             onUndo={handleUndo}
                                             onRedo={handleRedo}
                                             canUndo={historyIndex > 0}
