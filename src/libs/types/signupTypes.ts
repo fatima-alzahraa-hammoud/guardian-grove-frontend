@@ -13,7 +13,17 @@ export const firstStepSchema = z.object({
 export type TFirstStep = z.infer<typeof firstStepSchema>;
 
 export const secondStepSchems = z.object({
-    avatar: z.string().nonempty({ message: "Avatar is required." }),
+    avatar: z.union([
+        z.string().min(1, { message: "Avatar is required." }),
+        z.instanceof(File, { message: "Avatar is required." }),
+        z.any() // For blob URLs
+    ]).refine((val) => {
+        if (typeof val === 'string') return val.length > 0;
+        if (val instanceof File) return true;
+        if (typeof val === 'string' && val.startsWith('blob:')) return true;
+        return false;
+    }, { message: "Avatar is required." }),
+    
     birthday: z.date({
         required_error: "A date of birth is required.",
     }),
@@ -24,7 +34,17 @@ export const secondStepSchems = z.object({
         message: "You must agree to the Terms and Conditions and Privacy Policy",
     }),
     familyName: z.string().min(3, { message: "Family name is required" }),
-    familyAvatar: z.string().nonempty({ message: "Family Avatar is required." }),
+    
+    familyAvatar: z.union([
+        z.string().min(1, { message: "Family Avatar is required." }),
+        z.instanceof(File, { message: "Family Avatar is required." }),
+        z.any() // For blob URLs
+    ]).refine((val) => {
+        if (typeof val === 'string') return val.length > 0;
+        if (val instanceof File) return true;
+        if (typeof val === 'string' && val.startsWith('blob:')) return true;
+        return false;
+    }, { message: "Family Avatar is required." }),
 });
 
 export type TSecondStep = z.infer<typeof secondStepSchems>;
