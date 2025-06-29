@@ -20,14 +20,15 @@ import FormErrorMessage from './FormErrorMessage';
 interface DialogProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (data: TUpdate) => void; 
+    onConfirm: (data: { userFormData: FormData; familyFormData?: FormData }) => void;
     title: string;
     confirmText?: string;
     cancelText?: string;
     familyName: string;
+    familyAvatar?: string;
 }
 
-const UpdateUserDialog: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, title, confirmText = "Confirm", cancelText = "Cancel", familyName }) => {
+const UpdateUserDialog: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, title, confirmText = "Confirm", cancelText = "Cancel", familyName, familyAvatar }) => {
 
     const name = useSelector(selectName);
     const email = useSelector(selectEmail);
@@ -35,7 +36,6 @@ const UpdateUserDialog: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, t
     const birthday = useSelector(selectBirthday);
     const avatar = useSelector(selectAvatar);
     const role = useSelector(selectRole);
-    const familyAvatar = "/assets/images/stars.png";
 
     const {
         register,
@@ -61,7 +61,7 @@ const UpdateUserDialog: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, t
                 avatar: avatar || "",
                 birthday: birthday ? new Date(birthday) : undefined,
                 familyName: familyName,
-                familyAvatar: "/assets/images/stars.png",
+                familyAvatar: familyAvatar,
             };
             reset(initialValues);
             clearErrors();
@@ -80,30 +80,108 @@ const UpdateUserDialog: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, t
             avatar: avatar || "",
             birthday: birthday ? new Date(birthday) : undefined,
             familyName: familyName,
-            familyAvatar: "/assets/images/stars.png"
+            familyAvatar: familyAvatar
         });
         clearErrors();
         onClose();
     };
 
-    const handleConfirm = handleSubmit((data) => {
-        const formData = {} as TUpdate;
+    const handleConfirm = handleSubmit(async (data) => {
+    const userFormData = new FormData();
+    let familyFormData: FormData | undefined;
+    let hasUserChanges = false;
+    let hasFamilyChanges = false;
 
-        if (data.name !== name) formData.name = data.name;
-        if (data.email !== email && role === "parent") formData.email = data.email;
-        if (data.avatar !== avatar) formData.avatar = data.avatar;
-        if (birthday && data.birthday && data.birthday.getTime() !== new Date(birthday).getTime()) {
-            formData.birthday = data.birthday;
+    // Handle user-related changes
+    if (data.name !== name) {
+        userFormData.append('name', data.name);
+        hasUserChanges = true;
+    }
+
+    if (data.gender !== gender) {
+        userFormData.append('gender', data.gender);
+        hasUserChanges = true;
+    }
+
+    if (birthday && data.birthday && data.birthday.getTime() !== new Date(birthday).getTime()) {
+        userFormData.append('birthday', data.birthday.toISOString());
+        hasUserChanges = true;
+    }
+
+    // Handle user avatar
+    if (data.avatar !== avatar) {
+        if (typeof data.avatar === 'string' && data.avatar.startsWith('blob:')) {
+            try {
+                const blobResponse = await fetch(data.avatar);
+                const avatarBlob = await blobResponse.blob();
+                userFormData.append('avatar', avatarBlob, 'avatar.png');
+                hasUserChanges = true;
+            } catch (error) {
+                console.error('Error converting avatar blob to file:', error);
+            }
+        } else if (data.avatar && typeof data.avatar === 'object' && (data.avatar as object) instanceof File) {
+            userFormData.append('avatar', data.avatar);
+            hasUserChanges = true;
+        } else if (typeof data.avatar === 'string') {
+            // Handle predefined avatars - send as regular text field, not file field
+            userFormData.append('avatarPath', data.avatar);
+            hasUserChanges = true;
         }
-        if (data.gender !== gender) formData.gender = data.gender;
-        if (data.familyName !== familyName  && role === "parent") formData.familyName = data.familyName;
-        if (data.familyAvatar !== familyAvatar  && role === "parent") formData.familyAvatar = data.familyAvatar;
-        
-        // Call onConfirm with valid data
-        onConfirm(formData);
-        onClose();
+    }
 
-    });
+    // Handle family-related changes for parents
+    if (role === "parent") {
+        // Check for any family-related changes
+        const emailChanged = data.email !== email;
+        const familyNameChanged = data.familyName !== familyName;
+        const familyAvatarChanged = data.familyAvatar !== familyAvatar;
+
+        if (emailChanged || familyNameChanged || familyAvatarChanged) {
+            familyFormData = new FormData();
+            
+            if (emailChanged) {
+                familyFormData.append('email', data.email);
+                hasFamilyChanges = true;
+            }
+
+            if (familyNameChanged) {
+                familyFormData.append('familyName', data.familyName);
+                hasFamilyChanges = true;
+            }
+
+            if (familyAvatarChanged) {
+                console.log('Family avatar changed:', { old: familyAvatar, new: data.familyAvatar });
+                if (typeof data.familyAvatar === 'string' && data.familyAvatar.startsWith('blob:')) {
+                    try {
+                        const blobResponse = await fetch(data.familyAvatar);
+                        const familyAvatarBlob = await blobResponse.blob();
+                        familyFormData.append('familyAvatar', familyAvatarBlob, 'family-avatar.png');
+                        hasFamilyChanges = true;
+                    } catch (error) {
+                        console.error('Error converting family avatar blob to file:', error);
+                    }
+                } else if (typeof data.familyAvatar === 'object' && (data.familyAvatar as unknown) instanceof File) {
+                    familyFormData.append('familyAvatar', data.familyAvatar);
+                    hasFamilyChanges = true;
+                } else if (typeof data.familyAvatar === 'string') {
+                    // Handle predefined family avatars - send as regular text field
+                    familyFormData.append('familyAvatarPath', data.familyAvatar);
+                    hasFamilyChanges = true;
+                }
+            }
+        }
+    }
+
+    // Only proceed if there are changes
+    if (hasUserChanges || hasFamilyChanges) {
+        onConfirm({ 
+            userFormData: hasUserChanges ? userFormData : new FormData(), 
+            familyFormData: hasFamilyChanges ? familyFormData : undefined 
+        });
+    }
+    
+    onClose();
+});
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
