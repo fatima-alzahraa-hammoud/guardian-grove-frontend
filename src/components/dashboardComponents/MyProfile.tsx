@@ -956,8 +956,8 @@ const MyProfile : React.FC = () => {
                                         animate={{ width: "100%" }}
                                         transition={{ duration: 1 }}
                                     >
-                                        <ProgressBar completed={tasks?.completedTasks || 0} total={tasks?.totalTasks || 0} label="Tasks" />
-                                        <ProgressBar completed={goals?.completedGoals || 0} total={goals?.totalGoals || 0} label="Goals" />
+                                        <ProgressBar completed={tasks?.completedTasks || 0} total={tasks?.totalTasks || 0} label="Tasks" className = "pt-5"/>
+                                        <ProgressBar completed={goals?.completedGoals || 0} total={goals?.totalGoals || 0} label="Goals" className = "pt-5"/>
                                     </motion.div>
                                 </motion.div>
                             ) : (
