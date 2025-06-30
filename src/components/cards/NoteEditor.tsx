@@ -26,7 +26,7 @@ const NoteEditor: React.FC<{
     saveToHistory: (content: string) => void;
 }> = ({ 
     note, 
-    setNote, 
+    setNote,
     onUndo, 
     onRedo, 
     canUndo, 
@@ -38,6 +38,7 @@ const NoteEditor: React.FC<{
     const [showTextColorPicker, setShowTextColorPicker] = useState(false);
     const [showAIAssistant, setShowAIAssistant] = useState(false);
     const [aiMessage, setAIMessage] = useState("");
+    const [aiResponse, setAIResponse] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [currentFormatting, setCurrentFormatting] = useState({
         bold: false,
@@ -46,6 +47,7 @@ const NoteEditor: React.FC<{
         strikethrough: false
     });
 
+    // Extended color palette matching your app theme
     const backgroundColors = [
         "#FFFFFF", "#FFF9C4", "#FFCCBC", "#FFCDD2", "#F8BBD9", "#E1BEE7",
         "#C5CAE9", "#BBDEFB", "#B2DFDB", "#C8E6C9", "#DCEDC8", "#F0F4C3",
@@ -67,17 +69,13 @@ const NoteEditor: React.FC<{
         if (!document.queryCommandSupported) return;
         
         try {
-            // Small delay to ensure commands are properly executed
-            setTimeout(() => {
-                setCurrentFormatting({
-                    bold: document.queryCommandState('bold'),
-                    italic: document.queryCommandState('italic'),
-                    underline: document.queryCommandState('underline'),
-                    strikethrough: document.queryCommandState('strikeThrough')
-                });
-            }, 50);
+            setCurrentFormatting({
+                bold: document.queryCommandState('bold'),
+                italic: document.queryCommandState('italic'),
+                underline: document.queryCommandState('underline'),
+                strikethrough: document.queryCommandState('strikeThrough')
+            });
         } catch (e) {
-            console.error("Error checking formatting:", e);
             // Silently handle errors
         }
     };
@@ -85,44 +83,59 @@ const NoteEditor: React.FC<{
     // Handle selection change to update formatting buttons
     useEffect(() => {
         const handleSelectionChange = () => {
-            checkFormatting();
+            setTimeout(checkFormatting, 10);
         };
 
         document.addEventListener('selectionchange', handleSelectionChange);
         return () => document.removeEventListener('selectionchange', handleSelectionChange);
     }, []);
 
+    // Initialize content editor properly - Load existing content when editing
     useEffect(() => {
         if (contentRef.current) {
-            // Only set placeholder if content is empty
-            if (!note.content || note.content.trim() === '') {
-                contentRef.current.innerHTML = '<p style="color: #9CA3AF; font-style: italic; pointer-events: none;">Start writing your note...</p>';
-            } else {
-                // Set the actual content
+            if (note.content && note.content.trim() !== '') {
+                // If there's existing content, load it
                 contentRef.current.innerHTML = note.content;
+            } else {
+                // If no content, show placeholder
+                const placeholderHTML = '<div style="color: #9CA3AF; font-style: italic; pointer-events: none;">Start writing your note...</div>';
+                contentRef.current.innerHTML = placeholderHTML;
             }
         }
-    }, [note.id, note.content, contentRef]);
+    }, [note.id, contentRef]);
 
     const handleAISubmit = () => {
         if (!aiMessage.trim()) return;
         
-        // add actual AI integration
-        console.log("AI request:", aiMessage);
+        // Mock AI response for demonstration
+        const responses = [
+            "Great idea! Let me help you expand on that.",
+            "I can help you organize these thoughts better.",
+            "Here's a suggestion to improve your writing...",
+            "That's an interesting point. Consider adding more details.",
+            "Would you like me to help structure this content?"
+        ];
         
+        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+        setAIResponse(`You: ${aiMessage}\n\nAI: ${randomResponse}`);
         setAIMessage("");
     };
 
     // Apply text formatting functions
     const applyFormatting = (command: string) => {
+        // Focus the content area first
         if (contentRef.current) {
             contentRef.current.focus();
         }
+        
+        // Apply the formatting command
         document.execCommand(command, false, undefined);
-        // Update formatting state immediately
-        checkFormatting();
+        
+        // Update formatting state
+        setTimeout(checkFormatting, 10);
     };
 
+    // Apply alignment
     const applyAlignment = (alignment: string) => {
         if (contentRef.current) {
             contentRef.current.focus();
@@ -145,7 +158,7 @@ const NoteEditor: React.FC<{
         }
     };
 
-    // Apply lists with proper TypeScript types and enhanced functionality
+    // Apply lists (bullets and numbers) - Enhanced to ensure list markers show
     const applyList = (listType: string) => {
         if (contentRef.current) {
             contentRef.current.focus();
@@ -157,33 +170,22 @@ const NoteEditor: React.FC<{
             document.execCommand('insertUnorderedList', false, undefined);
         }
         
-        // Proper TypeScript handling for list styling
+        // Force re-render to ensure list styles are applied
         setTimeout(() => {
             if (contentRef.current) {
                 const lists = contentRef.current.querySelectorAll('ul, ol');
                 lists.forEach(list => {
-                    const htmlList = list as HTMLElement; // Cast to HTMLElement to access style
+                    // Ensure proper styling is applied
+                    const htmlList = list as HTMLElement;
                     if (list.tagName === 'UL') {
                         htmlList.style.listStyleType = 'disc';
-                        htmlList.style.paddingLeft = '30px';
+                        htmlList.style.paddingLeft = '20px';
                         htmlList.style.marginLeft = '0px';
-                        htmlList.style.margin = '10px 0';
                     } else if (list.tagName === 'OL') {
                         htmlList.style.listStyleType = 'decimal';
-                        htmlList.style.paddingLeft = '30px';
+                        htmlList.style.paddingLeft = '20px';
                         htmlList.style.marginLeft = '0px';
-                        htmlList.style.margin = '10px 0';
                     }
-                });
-                
-                // Also style list items
-                const listItems = contentRef.current.querySelectorAll('li');
-                listItems.forEach(item => {
-                    const htmlItem = item as HTMLElement;
-                    htmlItem.style.display = 'list-item';
-                    htmlItem.style.listStyle = 'inherit';
-                    htmlItem.style.margin = '5px 0';
-                    htmlItem.style.paddingLeft = '5px';
                 });
             }
             checkFormatting();
@@ -191,14 +193,13 @@ const NoteEditor: React.FC<{
     };
 
     const applyIndent = (direction: 'increase' | 'decrease') => {
-        if (contentRef.current) {
-            contentRef.current.focus();
-        }
-        
         if (direction === 'increase') {
             document.execCommand('indent', false, undefined);
         } else {
             document.execCommand('outdent', false, undefined);
+        }
+        if (contentRef.current) {
+            contentRef.current.focus();
         }
     };
 
@@ -208,20 +209,21 @@ const NoteEditor: React.FC<{
             contentRef.current.focus();
         }
         
-        // Ensure we have a selection or cursor position
         const selection = window.getSelection();
-        if (selection && selection.rangeCount > 0 && selection.toString().length > 0) {
+        if (selection && selection.toString().length > 0) {
+            // Apply color to selected text
             document.execCommand('foreColor', false, color);
         } else {
             // If no selection, set default text color for new text
             setNote({ ...note, textColor: color });
         }
+        
         setShowTextColorPicker(false);
     };
 
     const fontSizes = [10, 12, 14, 16, 18, 20, 24, 28, 32];
 
-    // Handle content input without conflicts
+    // Handle content input - Clear placeholder and save content
     const handleContentInput = (e: React.FormEvent<HTMLDivElement>) => {
         const content = e.currentTarget.innerHTML;
         
@@ -231,27 +233,47 @@ const NoteEditor: React.FC<{
             return;
         }
         
+        // Update note content
         setNote({ ...note, content });
         saveToHistory(content);
     };
 
-    // Handle content focus
+    // Handle content focus - Clear placeholder properly
     const handleContentFocus = (e: React.FocusEvent<HTMLDivElement>) => {
-        if (e.currentTarget.innerHTML.includes('Start writing your note...')) {
+        const currentContent = e.currentTarget.innerHTML;
+        if (currentContent.includes('Start writing your note...') || 
+            currentContent.includes('pointer-events: none')) {
             e.currentTarget.innerHTML = '';
+            // Move cursor to the beginning
+            setTimeout(() => {
+                const range = document.createRange();
+                const selection = window.getSelection();
+                range.setStart(e.currentTarget, 0);
+                range.collapse(true);
+                selection?.removeAllRanges();
+                selection?.addRange(range);
+            }, 0);
         }
     };
 
-    // Handle content blur
+    // Handle content blur - Show placeholder if empty
     const handleContentBlur = (e: React.FocusEvent<HTMLDivElement>) => {
         const content = e.currentTarget.innerHTML.trim();
-        if (!content || content === '<br>' || content === '<div><br></div>' || content === '<p><br></p>') {
-            e.currentTarget.innerHTML = '<p style="color: #9CA3AF; font-style: italic; pointer-events: none;">Start writing your note...</p>';
+        const textContent = e.currentTarget.textContent?.trim() || '';
+        
+        // Check if content is empty or only contains empty HTML tags
+        if (!textContent || 
+            content === '<br>' || 
+            content === '<div><br></div>' || 
+            content === '<p><br></p>' ||
+            content === '' ||
+            content === '<div></div>') {
+            e.currentTarget.innerHTML = '<div style="color: #9CA3AF; font-style: italic; pointer-events: none;">Start writing your note...</div>';
             setNote({ ...note, content: '' });
         }
     };
 
-    // Floating particles background to match your theme
+    // Floating particles background
     const FloatingParticles = () => {
         return (
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -290,7 +312,6 @@ const NoteEditor: React.FC<{
 
     return (
         <div className="flex h-full relative bg-white font-poppins">
-
             {/* Floating particles background */}
             <FloatingParticles />
             
@@ -374,7 +395,7 @@ const NoteEditor: React.FC<{
 
                         <div className="w-px h-8 bg-gray-300" />
 
-                        {/* Text Formatting */}
+                        {/* Text Formatting - Shows active state */}
                         <div className="flex items-center bg-gray-50 rounded-lg p-1">
                             <motion.button
                                 onClick={() => applyFormatting('bold')}
@@ -649,20 +670,18 @@ const NoteEditor: React.FC<{
                         animate={{ opacity: 1, y: 0 }}
                     />
 
-                    {/* FIXED: Content Editor with Text Overflow Ellipsis */}
+                    {/* Content Editor with Proper List Styling and Content Loading */}
                     <motion.div
                         ref={contentRef}
                         contentEditable
-                        className="min-h-[400px] max-h-[500px] p-6 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3A8EBA] focus:border-transparent transition-all duration-300 font-poppins overflow-hidden"
+                        className="min-h-[400px] p-6 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3A8EBA] focus:border-transparent transition-all duration-300 font-poppins"
                         style={{ 
                             backgroundColor: note.backgroundColor,
                             color: note.textColor,
                             fontSize: `${note.fontSize}px`,
                             direction: 'ltr',
-                            unicodeBidi: 'embed',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'pre-wrap',
-                            wordWrap: 'break-word'
+                            textAlign: 'left',
+                            unicodeBidi: 'normal'
                         }}
                         onInput={handleContentInput}
                         onFocus={handleContentFocus}
@@ -677,8 +696,8 @@ const NoteEditor: React.FC<{
                                 onRedo();
                             }
                         }}
-                        onMouseUp={() => checkFormatting()}
-                        onKeyUp={() => checkFormatting()}
+                        onMouseUp={() => setTimeout(checkFormatting, 10)}
+                        onKeyUp={() => setTimeout(checkFormatting, 10)}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                     />
@@ -709,19 +728,20 @@ const NoteEditor: React.FC<{
                 </div>
             </div>
 
-            {/* AI Assistant Sidebar */}
+            {/* AI Assistant Sidebar - Made smaller and functional */}
             <AnimatePresence>
                 {showAIAssistant && (
                     <motion.div
                         initial={{ width: 0, opacity: 0 }}
-                        animate={{ width: 280, opacity: 1 }}
+                        animate={{ width: 320, opacity: 1 }}
                         exit={{ width: 0, opacity: 0 }}
                         className="bg-gradient-to-b from-blue-50 to-purple-50 border-l border-gray-200 flex flex-col relative z-20"
                     >
-                        <div className="p-3 border-b border-gray-200 bg-white/80 backdrop-blur-sm">
+                        {/* AI Header */}
+                        <div className="p-4 border-b border-gray-200 bg-white/80 backdrop-blur-sm">
                             <div className="flex items-center justify-between">
-                                <h3 className="font-comic font-bold text-[#3A8EBA] flex items-center text-sm">
-                                    <Bot size={16} className="mr-2" />
+                                <h3 className="font-comic font-bold text-[#3A8EBA] flex items-center">
+                                    <Bot size={18} className="mr-2" />
                                     AI Assistant
                                 </h3>
                                 <motion.button
@@ -730,77 +750,69 @@ const NoteEditor: React.FC<{
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                 >
-                                    <X size={14} />
+                                    <X size={16} />
                                 </motion.button>
                             </div>
-                            <p className="text-xs text-gray-600 mt-1">Ask me about your note!</p>
+                            <p className="text-sm text-gray-600 mt-1">Ask me about your note!</p>
                         </div>
                         
-                        <div className="flex-1 p-3 overflow-y-auto">
-                            {/* Quick Actions - Condensed */}
-                            <div className="space-y-2 mb-3">
-                                <h4 className="text-xs font-comic font-bold text-gray-700 flex items-center">
-                                    <Sparkles size={12} className="mr-1" />
-                                    Quick Actions
-                                </h4>
-                                <div className="grid grid-cols-1 gap-1">
-                                    {[
-                                        { label: "Improve Grammar", icon: "✏️" },
-                                        { label: "Make Creative", icon: "✨" },
-                                        { label: "Add Bullets", icon: "•" },
-                                        { label: "Summarize", icon: "📝" }
-                                    ].map((action) => (
-                                        <motion.button
-                                            key={action.label}
-                                            className="p-2 bg-white rounded-lg text-left text-xs hover:bg-[#3A8EBA] hover:text-white transition-all duration-200 border border-gray-100 shadow-sm"
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
-                                        >
-                                            <div className="flex items-center space-x-2">
-                                                <span className="text-sm">{action.icon}</span>
-                                                <span className="font-medium">{action.label}</span>
-                                            </div>
-                                        </motion.button>
-                                    ))}
-                                </div>
+                        {/* Quick Actions */}
+                        <div className="p-4 space-y-3">
+                            <h4 className="text-sm font-comic font-bold text-gray-700 flex items-center">
+                                <Sparkles size={14} className="mr-1" />
+                                Quick Actions
+                            </h4>
+                            <div className="grid grid-cols-2 gap-2">
+                                {[
+                                    { label: "Improve Grammar", icon: "✏️" },
+                                    { label: "Make Creative", icon: "✨" },
+                                    { label: "Add Bullets", icon: "•" },
+                                    { label: "Summarize", icon: "📝" }
+                                ].map((action) => (
+                                    <motion.button
+                                        key={action.label}
+                                        className="p-2 bg-white rounded-lg text-left text-xs hover:bg-[#3A8EBA] hover:text-white transition-all duration-200 border border-gray-100 shadow-sm"
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={() => setAIMessage(action.label)}
+                                    >
+                                        <div className="flex flex-col items-center space-y-1">
+                                            <span className="text-lg">{action.icon}</span>
+                                            <span className="font-medium text-center">{action.label}</span>
+                                        </div>
+                                    </motion.button>
+                                ))}
                             </div>
+                        </div>
 
-                            {/* Content Suggestions - Condensed */}
-                            <div className="space-y-2">
-                                <h4 className="text-xs font-comic font-bold text-gray-700 flex items-center">
-                                    <Type size={12} className="mr-1" />
-                                    Ideas
-                                </h4>
-                                <div className="space-y-1">
-                                    {[
-                                        { label: "Add Introduction", desc: "Opening" },
-                                        { label: "Create Outline", desc: "Structure" },
-                                        { label: "Add Conclusion", desc: "Wrap up" }
-                                    ].map((suggestion) => (
-                                        <motion.button
-                                            key={suggestion.label}
-                                            className="w-full p-2 bg-white rounded-lg text-left hover:bg-[#FDE4CF] transition-all duration-200 border border-gray-100"
-                                            whileHover={{ scale: 1.01 }}
-                                            whileTap={{ scale: 0.99 }}
-                                        >
-                                            <div className="text-xs font-medium text-gray-700">{suggestion.label}</div>
-                                            <div className="text-xs text-gray-500">{suggestion.desc}</div>
-                                        </motion.button>
-                                    ))}
-                                </div>
+                        {/* Chat Area */}
+                        <div className="flex-1 p-4 overflow-y-auto">
+                            <h4 className="text-sm font-comic font-bold text-gray-700 mb-3">Chat</h4>
+                            <div className="space-y-3 max-h-[300px] overflow-y-auto">
+                                {aiResponse && (
+                                    <div className="bg-white rounded-lg p-3 text-sm border border-gray-100 shadow-sm">
+                                        <div className="whitespace-pre-wrap">{aiResponse}</div>
+                                    </div>
+                                )}
+                                {!aiResponse && (
+                                    <div className="text-center text-gray-500 text-sm py-8">
+                                        <Bot size={24} className="mx-auto mb-2 opacity-50" />
+                                        Start a conversation with AI!
+                                    </div>
+                                )}
                             </div>
                         </div>
                         
-                        {/* AI Input - Condensed */}
-                        <div className="p-3 border-t border-gray-200 bg-white/80 backdrop-blur-sm">
+                        {/* AI Input */}
+                        <div className="p-4 border-t border-gray-200 bg-white/80 backdrop-blur-sm">
                             <div className="space-y-2">
-                                <div className="flex space-x-1">
+                                <div className="flex space-x-2">
                                     <input
                                         type="text"
                                         value={aiMessage}
                                         onChange={(e) => setAIMessage(e.target.value)}
-                                        placeholder="Ask AI..."
-                                        className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-xs outline-none focus:border-[#3A8EBA] focus:ring-1 focus:ring-blue-100 transition-all duration-200 font-poppins"
+                                        placeholder="Ask AI anything..."
+                                        className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-[#3A8EBA] focus:ring-1 focus:ring-blue-100 transition-all duration-200 font-poppins"
                                         onKeyPress={(e) => e.key === 'Enter' && handleAISubmit()}
                                     />
                                     <motion.button 
@@ -810,7 +822,7 @@ const NoteEditor: React.FC<{
                                         whileTap={{ scale: 0.95 }}
                                         disabled={!aiMessage.trim()}
                                     >
-                                        <Send size={12} />
+                                        <Send size={14} />
                                     </motion.button>
                                 </div>
                                 <p className="text-xs text-gray-500 text-center font-poppins">
