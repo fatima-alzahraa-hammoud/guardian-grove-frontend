@@ -13,6 +13,36 @@ const NoteCard: React.FC<{
     // Generate random rotation for sticky note effect
     const rotation = (index % 4 - 1.5) * 2; // Random rotation between -3 and 3 degrees
 
+    // Helper function to preserve HTML formatting but limit content length
+    const getTruncatedContent = (content: string, maxLines: number = 7) => {
+        if (!content) return '';
+        
+        // Create a temporary div to parse the HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
+        
+        // Get text content to check length
+        const textContent = tempDiv.textContent || tempDiv.innerText || '';
+        
+        // If content is short, return as is
+        if (textContent.length <= 150) {
+            return content;
+        }
+        
+        // For longer content, we'll truncate by counting lines
+        const lines = content.split(/<\/?(div|p|br)[^>]*>/gi).filter(line => 
+            line.trim() && !line.match(/^<[^>]*>$/)
+        );
+        
+        if (lines.length <= maxLines) {
+            return content;
+        }
+        
+        // Take first few lines and add ellipsis
+        const truncatedLines = lines.slice(0, maxLines).join('<br>');
+        return truncatedLines + '<br>...';
+    };
+
     return (
         <motion.div
             className="relative group cursor-pointer w-[200px]"
@@ -30,7 +60,7 @@ const NoteCard: React.FC<{
             }}
         >
             <div 
-                className="relative p-4 pb-8 rounded-sm h-[200px] w-full flex flex-col shadow-lg"
+                className="relative p-4 rounded-sm h-[200px] w-full flex flex-col shadow-lg"
                 style={{ 
                     backgroundColor: note.backgroundColor || '#fef68a',
                     background: `linear-gradient(135deg, ${note.backgroundColor || '#fef68a'} 0%, ${note.backgroundColor || '#fef68a'}dd 100%)`,
@@ -70,48 +100,43 @@ const NoteCard: React.FC<{
                     }}
                 />
 
-                {/* Note content */}
-                <div className="flex-grow relative z-10 min-h-0 flex flex-col">
+                {/* Note content with proper overflow handling and spacing */}
+                <div className="flex-grow relative z-10 overflow-hidden flex flex-col min-h-0">
                     {note.title && (
                         <h3 
-                            className="font-bold text-base mb-3 text-gray-800 leading-tight flex-shrink-0"
+                            className="font-bold text-base mb-2 text-gray-800 leading-tight overflow-hidden note-title"
                             style={{
                                 fontFamily: '"Comic Sans MS", "Comic Sans", cursive, system-ui',
                                 textShadow: '0 1px 1px rgba(255,255,255,0.5)',
-                                maxHeight: '40px',
-                                overflow: 'hidden',
                                 display: '-webkit-box',
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: 'vertical'
+                                WebkitLineClamp: 2, // Limit title to 2 lines
+                                WebkitBoxOrient: 'vertical',
+                                textOverflow: 'ellipsis',
+                                wordBreak: 'break-word'
                             }}
                         >
-                            {note.title}
+                            {note.title.length > 30 ? note.title.substring(0, 30) + '...' : note.title}
                         </h3>
                     )}
                     
                     {note.content && (
                         <div 
-                            className="text-sm text-gray-700 leading-relaxed"
+                            className="text-sm text-gray-700 leading-relaxed flex-grow overflow-hidden note-content"
                             style={{ 
                                 color: note.textColor || '#374151',
-                                fontSize: `${note.fontSize || 12}px`, // Reduced from 14px to 12px
+                                fontSize: `${Math.min(note.fontSize || 14, 12)}px`, // Cap font size at 12px for cards
                                 fontFamily: '"Comic Sans MS", "Comic Sans", cursive, system-ui',
                                 textShadow: '0 1px 1px rgba(255,255,255,0.3)',
-                                wordBreak: 'break-word',
-                                display: '-webkit-box',
-                                WebkitLineClamp: 4, // Reduced from 6 to 4 lines
-                                WebkitBoxOrient: 'vertical',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                maxHeight: '100px', // Added explicit max height
-                                lineHeight: '1.4' // Added consistent line height
+                                wordBreak: 'break-word'
                             }}
-                            dangerouslySetInnerHTML={{ __html: note.content }}
+                            dangerouslySetInnerHTML={{ 
+                                __html: getTruncatedContent(note.content, 7) 
+                            }}
                         />
                     )}
                 </div>
 
-                {/* Note actions - appear on hover with INCREASED SIZE */}
+                {/* Note actions with better spacing */}
                 <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200 z-20">
                     <motion.button
                         onClick={(e) => {
@@ -120,15 +145,14 @@ const NoteCard: React.FC<{
                             onPin(note.id);
                         }}
                         className="p-2 text-gray-600 hover:text-gray-800 transition-colors duration-200 relative"
-                        whileHover={{ scale: 1.3 }} // Increased from 1.1 to 1.3
+                        whileHover={{ scale: 1.3 }}
                         whileTap={{ scale: 0.9 }}
                         title={note.isPinned ? "Unpin note" : "Pin note"}
                     >
-                        {/* Larger hover circle background with increased scale */}
                         <motion.div
                             className="absolute inset-0 bg-white rounded-full shadow-lg border border-gray-200"
                             initial={{ opacity: 0, scale: 0.6 }}
-                            whileHover={{ opacity: 1, scale: 1.5 }} // Increased from 1.2 to 1.5
+                            whileHover={{ opacity: 1, scale: 1.5 }}
                             transition={{ duration: 0.2 }}
                         />
                         <svg className="w-4 h-4 relative z-10" fill="currentColor" viewBox="0 0 20 20">
@@ -142,15 +166,14 @@ const NoteCard: React.FC<{
                             onDelete(note.id);
                         }}
                         className="p-2 text-red-500 hover:text-red-700 transition-colors duration-200 relative"
-                        whileHover={{ scale: 1.3 }} // Increased from 1.1 to 1.3
+                        whileHover={{ scale: 1.3 }}
                         whileTap={{ scale: 0.9 }}
                         title="Delete note"
                     >
-                        {/* Larger hover circle background with increased scale */}
                         <motion.div
                             className="absolute inset-0 bg-red-50 rounded-full shadow-lg border border-red-200"
                             initial={{ opacity: 0, scale: 0.6 }}
-                            whileHover={{ opacity: 1, scale: 1.5 }} // Increased from 1.2 to 1.5
+                            whileHover={{ opacity: 1, scale: 1.5 }}
                             transition={{ duration: 0.2 }}
                         />
                         <svg className="w-4 h-4 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,9 +182,9 @@ const NoteCard: React.FC<{
                     </motion.button>
                 </div>
 
-                {/* Date stamp in corner */}
+                {/* Date stamp in corner - positioned to not overlap with buttons */}
                 <div 
-                    className="absolute bottom-1 left-1 text-xs text-gray-500 opacity-60"
+                    className="absolute bottom-1 left-1 text-xs text-gray-500 opacity-60 max-w-[120px] truncate"
                     style={{
                         fontFamily: '"Comic Sans MS", "Comic Sans", cursive, system-ui',
                         fontSize: '10px'
@@ -170,6 +193,68 @@ const NoteCard: React.FC<{
                     {note.updatedAt.toLocaleDateString()}
                 </div>
             </div>
+
+            {/* Add CSS for proper content display with formatting preserved */}
+            <style>{`
+                .note-content {
+                    max-height: 80px;
+                    line-height: 1.3;
+                    overflow: hidden;
+                    position: relative;
+                }
+                
+                .note-content ul {
+                    list-style-type: disc;
+                    padding-left: 15px;
+                    margin: 2px 0;
+                }
+                
+                .note-content ol {
+                    list-style-type: decimal;
+                    padding-left: 15px;
+                    margin: 2px 0;
+                }
+                
+                .note-content li {
+                    margin: 1px 0;
+                    line-height: 1.2;
+                }
+                
+                .note-content p, .note-content div {
+                    margin: 2px 0;
+                    line-height: 1.2;
+                }
+                
+                .note-content br {
+                    line-height: 1.2;
+                }
+                
+                .note-content strong, .note-content b {
+                    font-weight: bold;
+                }
+                
+                .note-content em, .note-content i {
+                    font-style: italic;
+                }
+                
+                .note-content u {
+                    text-decoration: underline;
+                }
+                
+                .note-content s, .note-content strike {
+                    text-decoration: line-through;
+                }
+                
+                .note-title {
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-height: 40px;
+                    line-height: 1.2;
+                }
+            `}</style>
         </motion.div>
     );
 };
