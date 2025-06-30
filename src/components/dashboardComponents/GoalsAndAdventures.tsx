@@ -16,54 +16,12 @@ import "react-calendar/dist/Calendar.css";
 import "../../styles/calendar.css";
 import { Value } from "react-calendar/dist/esm/shared/types.js";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
+import AddGoalDialog from "../common/AddGoalDialog";
+import { Goal } from "../../libs/types/Goal";
+import { Adventure } from "../../libs/types/Adventure";
 
 interface GoalsAndAdventuresProps {
     collapsed: boolean;
-}
-
-interface Task {
-    _id: string;
-    title: string;
-    isCompleted: boolean; 
-    description: string;
-    rewards: {
-        stars: number;
-        coins: number;
-    };
-}
-
-interface Goal {
-    _id: string;
-    title: string;
-    type: string;
-    description: string;
-    nbOfTasksCompleted: number;
-    tasks: Task[];  // Now using the Task interface
-    dueDate: Date;
-    rewards: {
-        stars: number;
-        coins: number;
-        achievementName?: string;
-    };
-    isCompleted: boolean;
-}
-
-interface IChallenge {
-    _id: string;
-    title: string;
-    content: string;
-    starsReward: number;
-    coinsReward: number;
-}
-
-interface Adventure {
-    _id: string;
-    startDate: string;
-    title: string;
-    description: string;
-    challenges: IChallenge[];
-    starsReward: number;
-    coinsReward: number;
 }
 
 const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => {
@@ -80,6 +38,13 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
 
     const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [addGoalDialogOpen, setAddGoalDialogOpen] = useState(false);
+
+    // Add this function to handle new goal creation
+    const handleGoalCreated = (newGoal: Goal) => {
+        setGoals(prevGoals => [...prevGoals, newGoal]);
+    };
+
 
     const handleViewTasks = (goal: Goal) => {
         setSelectedGoal(goal); // Set the selected goal
@@ -236,7 +201,10 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
                                         <img src={sortImage} alt="Sort" className="w-4 h-4 mr-1" />
                                         <span className="text-sm font-semibold text-white">Sort</span>
                                     </Button>
-                                    <Button className="flex items-center bg-[#179447] px-3 py-2 rounded-full hover:bg-[#158C43] transition">
+                                    <Button 
+                                        onClick={() => setAddGoalDialogOpen(true)}
+                                        className="flex items-center bg-[#179447] px-3 py-2 rounded-full hover:bg-[#158C43] transition"
+                                    >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-plus text-white">
                                             <path d="M5 12h14"/><path d="M12 5v14"/>
                                         </svg>                            
@@ -326,6 +294,12 @@ const GoalsAndAdventures : React.FC<GoalsAndAdventuresProps> = ({collapsed}) => 
                     <Adventures adventure={selectedAdventure}/>
                 )}
             </div>
+
+            <AddGoalDialog
+                open={addGoalDialogOpen}
+                onOpenChange={setAddGoalDialogOpen}
+                onGoalCreated={handleGoalCreated}
+            />
         </div>
     );
 };
