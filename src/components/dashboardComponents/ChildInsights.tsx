@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, MapPin, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from "react-toastify";
+import AIMessage from "/assets/images/message.png";
+import ProgressBar from '../common/ProgressBar';
 
 // Reusing the same components from MyProfile
 interface SparkleProps {
@@ -80,44 +82,12 @@ const FloatingBubbles = ({ count = 6, colors = ["#3A8EBA15", "#FDE4CF15", "#FF80
     );
 };
 
-// AI Message Icon Component - simplified to match MyProfile style
-const AIMessageIcon: React.FC = () => {
-    return (
-        <motion.svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-            className="w-5 h-5 md:w-6 md:h-6"
-            animate={{ 
-                rotateZ: [0, -10, 10, -10, 10, 0],
-                scale: [1, 1.1, 1]
-            }}
-            transition={{ 
-                duration: 1.5,
-                delay: 1,
-                repeat: Infinity,
-                repeatDelay: 5
-            }}
-        >
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            <path d="M10 7.5h4"/>
-            <path d="M10 12h4"/>
-        </motion.svg>
-    );
-};
-
 // Animated Star Component - consistent with MyProfile
 const AnimatedStar: React.FC = () => {
     return (
         <div className="relative flex items-center">
             <motion.span 
-                className="text-xl md:text-2xl mr-2 md:mr-3"
+                className="text-sm md:text-lg mr-2 md:mr-3"
                 animate={{ 
                     rotate: [0, 10, -10, 10, 0],
                     scale: [1, 1.2, 1]
@@ -144,7 +114,7 @@ const AnimatedStar: React.FC = () => {
 const AnimatedCoin: React.FC = () => {
     return (
         <motion.span 
-            className="text-xl md:text-2xl mr-2 md:mr-3"
+            className="text-sm md:text-lg mr-2 md:mr-3"
             animate={{ 
                 scale: [1, 1.1, 1],
                 rotate: [0, 5, -5, 0]
@@ -307,32 +277,6 @@ const ChildInsights = () => {
     }
   };
 
-  interface ProgressBarProps {
-    completed: number;
-    total: number;
-    label: string;
-  }
-
-  const ProgressBar: React.FC<ProgressBarProps> = ({ completed, total, label }) => {
-    const percentage = (completed / total) * 100;
-    return (
-      <div className="mb-4">
-        <div className="flex justify-between text-xs md:text-sm mb-1">
-          <span className="font-medium">{label}</span>
-          <span>{completed}/{total}</span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <motion.div 
-            className="h-2 rounded-full bg-green-500"
-            initial={{ width: 0 }}
-            animate={{ width: `${percentage}%` }}
-            transition={{ duration: 1, delay: 0.5 }}
-          />
-        </div>
-      </div>
-    );
-  };
-
   const nextHighlight = () => {
     setCurrentHighlight((prev) => (prev + 1) % mockChildData.routineHighlights.length);
   };
@@ -461,17 +405,17 @@ const ChildInsights = () => {
 
       {/* Main Info Cards - Responsive layout */}
       <motion.div 
-        className="flex flex-col lg:flex-row gap-4 lg:gap-6 mt-6 lg:mt-10"
+        className="flex space-x-6 mt-10"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         <motion.div 
-          className="flex bg-[#3A8EBA] p-4 lg:p-6 rounded-lg w-full lg:w-3/5 relative overflow-hidden"
+          className="flex bg-[#3A8EBA] p-6 rounded-lg w-3/5 relative overflow-hidden"
           variants={itemVariants}
           whileHover={{ boxShadow: "0 8px 20px rgba(58, 142, 186, 0.2)" }}
         >
-          <div className="flex flex-col items-center z-10 min-w-0">
+          <div className="flex flex-col pl-1 items-center z-10">
             {/* Image */}
             <div className="relative">
               <motion.div
@@ -486,7 +430,7 @@ const ChildInsights = () => {
                 }}
               />
               <motion.img 
-                className="w-16 h-16 md:w-20 md:h-20 bg-purple-100 rounded-full"
+                className="w-20 h-20 bg-purple-100 rounded-full"
                 src={mockChildData.avatar || "https://via.placeholder.com/150"}
                 alt="Child Avatar"
                 whileHover={{ scale: 1.1, rotate: 5 }}
@@ -494,7 +438,7 @@ const ChildInsights = () => {
               />       
             </div>
             <motion.p 
-              className="pt-3 text-xs md:text-sm text-white"
+              className="pt-3 text-sm text-white"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
@@ -503,10 +447,10 @@ const ChildInsights = () => {
             </motion.p>
           </div>
           
-          {/* Details */}
-          <div className="text-white text-xs md:text-sm space-y-2 md:space-y-3 pl-6 lg:pl-12 pt-1 z-10 min-w-0 flex-1">
+          {/* Details - Exact MyProfile styling */}
+          <div className="text-white text-xs space-y-3 pl-12 pt-1 z-10">
             <motion.p 
-              className="font-bold break-words"
+              className="font-bold"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
@@ -518,17 +462,17 @@ const ChildInsights = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7 }}
             >
-              <span className="font-bold pr-2 md:pr-3">Age:</span>{mockChildData.age} years
+              <span className="font-bold pr-3">Age:</span>{mockChildData.age}
             </motion.p>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
             >
-              <span className="font-bold pr-2 md:pr-3">Member since: </span>{mockChildData.memberSince}
+              <span className="font-bold pr-3">Member since: </span>{mockChildData.memberSince}
             </motion.p>
             <motion.p 
-              className="pb-1 pr-2 md:pr-3 break-words"
+              className="pb-1 pr-3"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.9 }}
@@ -536,7 +480,7 @@ const ChildInsights = () => {
               <span className="font-bold pr-1">family email: </span>{mockChildData.familyEmail}
             </motion.p>
             <motion.button 
-              className="px-3 py-2 bg-white rounded-full text-black border-[1px] border-[#FDE4CF] focus:outline-none text-xs md:text-sm"
+              className="pl-3 pr-3 pt-2 pb-2 bg-white rounded-full text-black border-[1px] border-[#FDE4CF] focus:outline-none"
               whileHover={{ scale: 1.03, backgroundColor: "#FDE4CF" }}
               whileTap={{ scale: 0.97 }}
               initial={{ opacity: 0 }}
@@ -549,11 +493,11 @@ const ChildInsights = () => {
         </motion.div>
 
         <motion.div 
-          className="bg-[#FDE4CF] p-4 lg:p-6 w-full lg:w-2/5 rounded-lg text-xs md:text-sm flex flex-col justify-between relative overflow-hidden"
+          className="bg-[#FDE4CF] p-6 w-2/5 rounded-lg text-xs flex flex-col justify-between relative overflow-hidden"
           variants={itemVariants}
           whileHover={{ boxShadow: "0 8px 20px rgba(253, 228, 207, 0.4)" }}
         >
-          {/* Animated gradient background */}
+          {/* Animated gradient background - matching MyProfile */}
           <motion.div 
             className="absolute inset-0 opacity-15 bg-gradient-to-br from-yellow-200 to-red-100" 
             animate={{ 
@@ -575,24 +519,24 @@ const ChildInsights = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
           >
-            <span className="font-bold pr-3 md:pr-5">Personal Rank:</span>
+            <span className="font-bold pr-3">Personal Rank:</span>
             <motion.span 
-              className="text-sm md:text-base"
+              className="text-sm"
               whileHover={{ scale: 1.1 }}
             >
               {mockChildData.personalRank}
             </motion.span>
           </motion.p>
           <motion.p 
-            className="flex items-center mt-3"
+            className="flex items-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7 }}
           >
-            <span className="font-bold pr-3 md:pr-5">Total Stars:</span>
+            <span className="font-bold pr-5">Total Stars:</span>
             <AnimatedStar />
             <motion.span 
-              className="text-sm md:text-base"
+              className="text-sm"
               initial={{ scale: 1 }}
               whileHover={{ scale: 1.2 }}
             >
@@ -600,15 +544,15 @@ const ChildInsights = () => {
             </motion.span>
           </motion.p>
           <motion.p 
-            className="flex items-center mt-3"
+            className="flex items-center"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
           >
-            <span className="font-bold pr-4 md:pr-8">Total Coins: </span>
+            <span className="font-bold pr-5">Total Coins: </span>
             <AnimatedCoin />
             <motion.span 
-              className="text-sm md:text-base"
+              className="text-sm"
               initial={{ scale: 1 }}
               whileHover={{ scale: 1.2 }}
             >
@@ -627,7 +571,21 @@ const ChildInsights = () => {
       >
         <div className="flex gap-2 mb-2 items-center">
           <h3 className="font-comic font-extrabold text-base">About Fatima:</h3>
-          <AIMessageIcon />
+          <motion.img 
+            src={AIMessage} 
+            alt="AI message" 
+            className="w-6 h-6"
+            animate={{ 
+                rotateZ: [0, -10, 10, -10, 10, 0],
+                scale: [1, 1.1, 1]
+            }}
+            transition={{ 
+                duration: 1.5,
+                delay: 1,
+                repeat: Infinity,
+                repeatDelay: 5
+            }}
+        />
         </div>
         <motion.div 
           className="w-full text-xs md:text-sm font-poppins mt-3 bg-blue-50 p-4 rounded-lg relative overflow-hidden"
@@ -747,50 +705,52 @@ const ChildInsights = () => {
       >
         {/* Safety Card */}
         <motion.div 
-          className="bg-white rounded-lg border p-4 lg:p-6 w-full lg:w-1/2"
+          className="bg-white rounded-lg border p-4 lg:p-6 w-full lg:w-1/2 flex flex-col justify-center"
           variants={itemVariants}
           whileHover={{ boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)" }}
         >
           <h3 className="font-comic font-extrabold mb-4 text-base">Safety and Well-being:</h3>
-          <div className="space-y-4">
-            <div className="p-4 bg-blue-50 rounded-lg">
-              <div className="flex items-start gap-3">
-                <MapPin className="text-blue-600 mt-1 flex-shrink-0" size={16} />
-                <div className="min-w-0">
-                  <p className="font-semibold text-xs md:text-sm break-words">Current Location: {mockChildData.currentLocation}</p>
-                  <p className="text-xs md:text-sm text-gray-600 mt-1">
-                    <span className="font-medium">Location monitored:</span> {mockChildData.locationUpdate}
-                  </p>
+          <div className="flex flex-col justify-center flex-grow">
+            <div className="space-y-4">
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <MapPin className="text-blue-600 mt-1 flex-shrink-0" size={16} />
+                  <div className="min-w-0">
+                    <p className="font-semibold text-xs md:text-sm break-words">Current Location: {mockChildData.currentLocation}</p>
+                    <p className="text-xs md:text-sm text-gray-600 mt-1">
+                      <span className="font-medium">Location monitored:</span> {mockChildData.locationUpdate}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="p-4 bg-red-50 rounded-lg">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="text-red-600 mt-1 flex-shrink-0" size={16} />
-                <div className="min-w-0">
-                  <p className="text-xs md:text-sm">
-                    <span className="font-medium">Sounds monitored:</span> {mockChildData.soundsMonitored}
-                  </p>
+              
+              <div className="p-4 bg-red-50 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="text-red-600 mt-1 flex-shrink-0" size={16} />
+                  <div className="min-w-0">
+                    <p className="text-xs md:text-sm">
+                      <span className="font-medium">Sounds monitored:</span> {mockChildData.soundsMonitored}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-2">
-              <motion.button 
-                className="flex-1 px-4 py-2 border border-blue-600 text-blue-600 rounded-full text-xs md:text-sm hover:bg-blue-50"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Check Alerts
-              </motion.button>
-              <motion.button 
-                className="flex-1 px-4 py-2 border border-blue-600 text-blue-600 rounded-full text-xs md:text-sm hover:bg-blue-50"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Track Location
-              </motion.button>
+              
+              <div className="flex flex-col sm:flex-row gap-2">
+                <motion.button 
+                  className="flex-1 px-4 py-2 border border-blue-600 text-blue-600 rounded-full text-xs md:text-sm hover:bg-blue-50"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Check Alerts
+                </motion.button>
+                <motion.button 
+                  className="flex-1 px-4 py-2 border border-blue-600 text-blue-600 rounded-full text-xs md:text-sm hover:bg-blue-50"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Track Location
+                </motion.button>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -801,23 +761,100 @@ const ChildInsights = () => {
           variants={itemVariants}
           whileHover={{ boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)" }}
         >
-          <h3 className="font-comic font-extrabold mb-4 text-base">Progress details</h3>
-          <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-6">
+            <h3 className="font-comic font-extrabold text-base">Progress Details</h3>
+            <motion.div
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+            >
+              📊
+            </motion.div>
+          </div>
+          
+          <div className="space-y-6">
             <ProgressBar 
               completed={mockChildData.progressData.goals.completed} 
               total={mockChildData.progressData.goals.total} 
-              label="Goals" 
+              label="Daily Goals" 
+              showPercentage={true}
+              size="md"
             />
+            
             <ProgressBar 
               completed={mockChildData.progressData.tasks.completed} 
               total={mockChildData.progressData.tasks.total} 
-              label="Tasks" 
+              label="Weekly Tasks" 
+              showPercentage={true}
+              size="md"
             />
+            
             <ProgressBar 
               completed={mockChildData.progressData.achievements.completed} 
               total={mockChildData.progressData.achievements.total} 
-              label="Achievements" 
+              label="Total Achievements" 
+              showPercentage={true}
+              size="md"
             />
+          </div>
+
+          {/* Overall progress summary */}
+          <motion.div 
+            className="mt-6 p-4 bg-blue-50 rounded-lg"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.5, duration: 0.6 }}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-blue-800">Overall Progress</span>
+              <motion.span 
+                className="text-sm font-bold text-blue-600"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 2, duration: 0.5 }}
+              >
+                {Math.round(
+                  ((mockChildData.progressData.goals.completed + 
+                    mockChildData.progressData.tasks.completed + 
+                    mockChildData.progressData.achievements.completed) / 
+                  (mockChildData.progressData.goals.total + 
+                    mockChildData.progressData.tasks.total + 
+                    mockChildData.progressData.achievements.total)) * 100
+                )}%
+              </motion.span>
+            </div>
+            
+            <ProgressBar
+              completed={
+                mockChildData.progressData.goals.completed + 
+                mockChildData.progressData.tasks.completed + 
+                mockChildData.progressData.achievements.completed
+              }
+              total={
+                mockChildData.progressData.goals.total + 
+                mockChildData.progressData.tasks.total + 
+                mockChildData.progressData.achievements.total
+              }
+              size="sm"
+              className="mt-2"
+            />
+          </motion.div>
+
+          {/* Action buttons */}
+          <div className="flex flex-col sm:flex-row gap-2 mt-6">
+            <motion.button 
+              className="flex-1 px-4 py-2 bg-[#3A8EBA] text-white rounded-full text-sm hover:bg-blue-700 transition-colors"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              View Detailed Report
+            </motion.button>
+            <motion.button 
+              className="flex-1 px-4 py-2 border border-[#3A8EBA] text-[#3A8EBA] rounded-full text-sm hover:bg-blue-50 transition-colors"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Set New Goals
+            </motion.button>
           </div>
         </motion.div>
       </motion.div>
