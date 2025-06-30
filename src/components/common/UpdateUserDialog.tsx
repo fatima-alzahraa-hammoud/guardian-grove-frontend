@@ -66,7 +66,7 @@ const UpdateUserDialog: React.FC<DialogProps> = ({ isOpen, onClose, onConfirm, t
             reset(initialValues);
             clearErrors();
         }
-    }, [isOpen, name, email, gender, birthday, avatar, familyName, reset, clearErrors]);
+    }, [isOpen, name, email, gender, birthday, avatar, familyName, familyAvatar, reset, clearErrors]);
 
     const onDateSelect = (date: Date | undefined) => {
         setValue("birthday", date || new Date("1900-01-01"), { shouldValidate: true });
