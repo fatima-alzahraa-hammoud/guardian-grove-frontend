@@ -125,12 +125,12 @@ const EmptyState = ({ activeFilter }: { activeFilter: string }) => {
                 transition={{ delay: 0.9, duration: 0.6 }}
             >
                 <motion.img
-                    src="/assets/images/motivation.png"
+                    src="/assets/images/happyShopping.png"
                     alt="Shopping Illustration"
-                    className="w-36 h-36 mb-8 mx-auto"
+                    className="w-56 h-56 mx-auto"
                     animate={{
-                        y: [0, -8, 0],
-                        rotate: [0, 1, -1, 0]
+                        y: [0, -10, 0],
+                        rotate: [0, 2, -2, 0]
                     }}
                     transition={{
                         duration: 4,
