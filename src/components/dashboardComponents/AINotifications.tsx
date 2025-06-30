@@ -92,77 +92,7 @@ const EmptyState = ({ activeFilter }: { activeFilter: string }) => {
         >
 
             <div className="relative z-10">
-                <motion.div
-                    className="mb-8"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3, duration: 0.6 }}
-                >
-                    <motion.div
-                        className="relative mx-auto w-24 h-24 mb-6"
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        {/* Animated notification bell with vibrant colors */}
-                        <motion.div
-                            className="w-full h-full bg-gradient-to-br from-[#E3F2FD] to-[#F3E8FF] rounded-full flex items-center justify-center shadow-lg border-2 border-[#3A8EBA]/20"
-                            animate={{
-                                boxShadow: [
-                                    "0 4px 20px rgba(58, 142, 186, 0.2)",
-                                    "0 8px 30px rgba(139, 92, 246, 0.3)",
-                                    "0 4px 20px rgba(58, 142, 186, 0.2)"
-                                ]
-                            }}
-                            transition={{ duration: 3, repeat: Infinity }}
-                        >
-                            <motion.svg
-                                className="w-14 h-14 text-[#3A8EBA]"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                                animate={{
-                                    rotate: [-5, 5, -5],
-                                    scale: [1, 1.1, 1]
-                                }}
-                                transition={{
-                                    duration: 2,
-                                    repeat: Infinity,
-                                    ease: "easeInOut"
-                                }}
-                            >
-                                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-                            </motion.svg>
-                        </motion.div>
-
-                        {/* Orbiting dots with vibrant theme colors */}
-                        {Array.from({ length: 3 }).map((_, i) => (
-                            <motion.div
-                                key={i}
-                                className="absolute w-3 h-3 rounded-full"
-                                style={{
-                                    background: [
-                                        "linear-gradient(to r, #3A8EBA, #F09C14)",
-                                        "linear-gradient(to r, #F09C14, #8B5CF6)",
-                                        "linear-gradient(to r, #8B5CF6, #179447)"
-                                    ][i],
-                                    top: "50%",
-                                    left: "50%",
-                                    transformOrigin: "0 0"
-                                }}
-                                animate={{
-                                    rotate: [0, 360],
-                                    scale: [0.5, 1, 0.5]
-                                }}
-                                transition={{
-                                    duration: 3,
-                                    repeat: Infinity,
-                                    delay: i * 0.5,
-                                    ease: "linear"
-                                }}
-                            />
-                        ))}
-                    </motion.div>
-                </motion.div>
-
+                
                 <motion.h3 
                     className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#3A8EBA] via-[#8B5CF6] to-[#179447] mb-4 font-comic"
                     initial={{ opacity: 0, y: 10 }}
@@ -366,84 +296,48 @@ const AINotifications: React.FC<AINotificationsProps> = ({ collapsed }) => {
                 >
                     {/* Decorative elements with vibrant theme colors */}
                     
-                    <motion.div
-                        className="relative"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3, duration: 0.6 }}
+                    <motion.div 
+                        className="text-left mb-10"
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
                     >
-                        <h2 className="text-3xl font-bold font-comic bg-gradient-to-r from-[#3A8EBA] via-[#8B5CF6] to-[#179447] bg-clip-text text-transparent mb-2">
-                            Stay Informed with Smart AI Insights
+                        <h2 className="text-2xl font-bold font-comic text-gray-800 mb-2">
+                            AI Notifications
                         </h2>
-                        <motion.div
-                            className="h-1 w-32 bg-gradient-to-r from-[#3A8EBA] via-[#8B5CF6] to-[#179447] rounded-full mb-4"
-                            initial={{ width: 0 }}
-                            animate={{ width: 128 }}
-                            transition={{ delay: 0.8, duration: 0.8 }}
-                        />
+                        <div className="h-1 w-24 bg-[#3A8EBA] rounded-full mb-4" />
+                        <p className="text-gray-600 text-base">
+                            Stay up to date with smart tips, alerts, and suggestions from your AI companion.
+                        </p>
                     </motion.div>
                     
-                    <motion.p 
-                        className="text-gray-600 mt-4 text-base w-[75%] leading-relaxed"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5, duration: 0.6 }}
-                    >
-                        Your AI companion provides personalized tips and timely alerts to
-                        help you and your family stay safe, motivated, and connected.
-                    </motion.p>
                 </motion.div>
 
                 {/* Enhanced Filters Section with theme colors */}
-                <motion.div 
-                    className="flex flex-wrap gap-4 mt-12"
+                    <motion.div 
+                    className="flex flex-wrap gap-3 mb-12"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6, duration: 0.8 }}
+                    transition={{ delay: 0.2, duration: 0.6 }}
                 >
                     {filters.map((filter, index) => (
                         <motion.div
                             key={filter}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.7 + index * 0.1, duration: 0.5 }}
+                            transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
                         >
                             <Button
                                 onClick={() => setActiveFilter(filter)}
                                 variant="secondary"
                                 className={cn(
-                                    "relative overflow-hidden bg-gradient-to-r from-[#E3F2FD] to-[#F8FAFC] hover:from-[#d7edfd] hover:to-[#F1F5F9] border-2 border-[#3A8EBA]/20 text-gray-700 font-medium transition-all duration-300 px-6 py-3 rounded-full shadow-lg hover:shadow-xl group",
+                                    "bg-[#E3F2FD] hover:bg-[#d7edfd] text-gray-700 font-medium transition-all duration-300 px-6 py-3 rounded-full border border-[#3A8EBA]/20",
                                     activeFilter === filter &&
-                                        "bg-gradient-to-r from-[#3A8EBA] to-[#8B5CF6] text-white border-[#3A8EBA] shadow-xl hover:from-[#347ea5] hover:to-[#7C3AED]"
+                                        "bg-[#3A8EBA] text-white hover:bg-[#347ea5] border-[#3A8EBA]"
                                 )}
                             >
-                                {/* Animated background for active state */}
-                                {activeFilter === filter && (
-                                    <motion.div
-                                        className="absolute inset-0 bg-gradient-to-r from-[#3A8EBA] to-[#8B5CF6]"
-                                        initial={{ scale: 0, opacity: 0 }}
-                                        animate={{ scale: 1, opacity: 1 }}
-                                        transition={{ duration: 0.3 }}
-                                    />
-                                )}
-                                
-                                {/* Button content */}
-                                <motion.div
-                                    className="relative z-10 flex items-center"
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                >
-                                    {filterIcons[filter]}
-                                    <span>{filter}</span>
-                                </motion.div>
-
-                                {/* Hover effect with vibrant colors */}
-                                <motion.div
-                                    className="absolute inset-0 bg-gradient-to-r from-[#E3F2FD] to-[#F3E8FF] opacity-0 group-hover:opacity-50"
-                                    initial={{ scale: 0 }}
-                                    whileHover={{ scale: 1 }}
-                                    transition={{ duration: 0.3 }}
-                                />
+                                {filterIcons[filter]}
+                                {filter}
                             </Button>
                         </motion.div>
                     ))}
