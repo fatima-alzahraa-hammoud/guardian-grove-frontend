@@ -79,11 +79,35 @@ const EnhancedCalendar = ({
     ];
 
     const handleYearChange = (year: string) => {
-        setDisplayYear(parseInt(year));
+        const newYear = parseInt(year);
+        setDisplayYear(newYear);
+        
+        // If there's a selected date, update it with the new year
+        if (selected) {
+            const newDate = new Date(selected);
+            newDate.setFullYear(newYear);
+            onSelect(newDate);
+        } else {
+            // If no date is selected, create a new date with the first day of the current display month
+            const newDate = new Date(newYear, displayMonth, 1);
+            onSelect(newDate);
+        }
     };
 
     const handleMonthChange = (month: string) => {
-        setDisplayMonth(parseInt(month));
+        const newMonth = parseInt(month);
+        setDisplayMonth(newMonth);
+        
+        // If there's a selected date, update it with the new month
+        if (selected) {
+            const newDate = new Date(selected);
+            newDate.setMonth(newMonth);
+            onSelect(newDate);
+        } else {
+            // If no date is selected, create a new date with the first day of the new month
+            const newDate = new Date(displayYear, newMonth, 1);
+            onSelect(newDate);
+        }
     };
 
     const navigateMonth = (direction: 'prev' | 'next') => {
@@ -189,6 +213,7 @@ const EnhancedCalendar = ({
         </div>
     );
 };
+
 
 const AddMembersForm : React.FC = () => {
 
