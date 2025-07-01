@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-interface WordSearchGameProps {
-    onBack: () => void;
-}
 
 interface Position {
     row: number;
@@ -27,7 +24,7 @@ interface Level {
     timeLimit: number; // in seconds
 }
 
-const WordSearchGame: React.FC<WordSearchGameProps> = ({ onBack }) => {
+const WordSearchGame: React.FC = () => {
     const [currentLevel, setCurrentLevel] = useState<Level | null>(null);
     const [grid, setGrid] = useState<string[][]>([]);
     const [words, setWords] = useState<Word[]>([]);
