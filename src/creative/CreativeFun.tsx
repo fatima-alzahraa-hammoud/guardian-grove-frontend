@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import DrawingCanvas from "./DrawingCanvas";
+import StoryCreator from "./StoryCreator";
 
 interface CreativeActivity {
     id: string;
@@ -35,15 +36,15 @@ const CreativeFun: React.FC = () => {
         //     component: ColoringBook,
         //     category: 'Colors'
         // },
-        // {
-        //     id: 'stories',
-        //     title: 'Story Creator',
-        //     description: 'Write and illustrate your own magical stories',
-        //     icon: '📖',
-        //     color: 'from-blue-400 to-blue-600',
-        //     component: StoryCreator,
-        //     category: 'Stories'
-        // }
+        {
+            id: 'stories',
+            title: 'Story Creator',
+            description: 'Write and illustrate your own magical stories',
+            icon: '📖',
+            color: 'from-blue-400 to-blue-600',
+            component: StoryCreator,
+            category: 'Stories'
+        }
     ];
 
     const categories = ['All', 'Art', 'Colors', 'Stories'];
