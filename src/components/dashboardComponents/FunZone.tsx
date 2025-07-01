@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Games from "../../Games/Games";
 import { Button } from "../ui/button";
 import { cn } from "../../lib/utils";
+import CreativeFun from "../../creative/CreativeFun";
 
 interface FunZoneProps {
     collapsed?: boolean;
@@ -173,6 +174,7 @@ const FunZone: React.FC<FunZoneProps> = ({ collapsed = false }) => {
                                 exit={{ opacity: 0, x: -50 }}
                                 transition={{ duration: 0.5 }}
                             >
+                                <CreativeFun />
                             </motion.div>
                         )}
                     </AnimatePresence>
