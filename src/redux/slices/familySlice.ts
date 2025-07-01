@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface FamilyMember {
+    _id: string;
     name: string;
     role: string;
     avatar: string;
