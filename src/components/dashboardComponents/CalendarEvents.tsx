@@ -17,10 +17,6 @@ interface Task {
     completed: boolean;
 }
 
-interface CalendarEventsProps {
-    collapsed?: boolean;
-}
-
 // Animation variants
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -125,7 +121,7 @@ const FloatingElements = () => {
     );
 };
 
-const CalendarEvents: React.FC<CalendarEventsProps> = () => {
+const CalendarEvents: React.FC = () => {
     const [currentDate, setCurrentDate] = useState(new Date(2024, 11, 1)); // December 2024
     const [selectedDate, setSelectedDate] = useState(new Date(2024, 11, 16)); // 16th selected
     const [newTaskTitle, setNewTaskTitle] = useState('');
