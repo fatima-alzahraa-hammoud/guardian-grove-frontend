@@ -11,6 +11,7 @@ import AINotifications from "../../components/dashboardComponents/AINotification
 import Notes from "../../components/dashboardComponents/Notes";
 import BondingActivities from "../../components/dashboardComponents/BondingActivities";
 import FamilyMessaging from "../../components/dashboardComponents/FamilyMessaging";
+import CalendarEvents from "../../components/dashboardComponents/CalendarEvents";
 
 const Main : React.FC = () => {
 
@@ -38,6 +39,8 @@ const Main : React.FC = () => {
                 return <BondingActivities collapsed={collapsed}/>
             case 'familyMessaging':
                 return <FamilyMessaging/>
+            case 'calendar':
+                return <CalendarEvents />
             default:
                 return <div>Select a section</div>;
         }
