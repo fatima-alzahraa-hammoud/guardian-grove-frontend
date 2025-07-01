@@ -31,6 +31,8 @@ import logoutImage from '/assets/images/dashboard/logout.svg';
 import infoImage from '/assets/images/dashboard/badge-info.svg';
 import bondingBlackImag from '/assets/images/dashboard/bondingBlackImage.png';
 import bondingWhiteImage from '/assets/images/dashboard/bondingWhiteImage.png';
+import WhiteFamilyMessaging from '/assets/images/dashboard/WhiteFamilyMessaging.png';
+import BlackFamilyMessaging from '/assets/images/dashboard/BlackFamilyMessaging.png';
 import "../../styles/sidebar.css";
 import { useDispatch, useSelector } from 'react-redux';
 import { selectGender } from '../../redux/slices/userSlice';
@@ -126,6 +128,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, coll
             <SidebarItem icon={activeSection === "funZone" ? funWhiteImage : funBlackImage} label="Fun Zone" collapsed={collapsed} onClick={() => setActiveSection('funZone')} isActive={activeSection === 'funZone'} />
             <SidebarItem icon={activeSection === "calendar" ? calendarWhiteImage : calendarBlackImage} label="Calendar" collapsed={collapsed} onClick={() => setActiveSection('calendar')} isActive={activeSection === 'calendar'} />
             <SidebarItem icon={activeSection === "bondingActivities" ? bondingWhiteImage : bondingBlackImag} label="Bonding Activities" collapsed={collapsed}  onClick={() => setActiveSection('bondingActivities')}  isActive={activeSection === 'bondingActivities'}  />
+            <SidebarItem icon={activeSection === "familyMessaging" ? WhiteFamilyMessaging : BlackFamilyMessaging} label="Family Messaging" collapsed={collapsed}  onClick={() => setActiveSection('familyMessaging')}  isActive={activeSection === 'familyMessaging'}  />
           </nav>
         </div>
 
