@@ -12,6 +12,7 @@ import Notes from "../../components/dashboardComponents/Notes";
 import BondingActivities from "../../components/dashboardComponents/BondingActivities";
 import FamilyMessaging from "../../components/dashboardComponents/FamilyMessaging";
 import CalendarEvents from "../../components/dashboardComponents/CalendarEvents";
+import FunZone from "../../components/dashboardComponents/FunZone";
 
 const Main : React.FC = () => {
 
@@ -35,6 +36,8 @@ const Main : React.FC = () => {
                 return <GoalsAndAdventures collapsed={collapsed}/>
             case 'notifications':
                 return <AINotifications collapsed={collapsed}/>
+            case 'funZone':
+                return <FunZone collapsed={collapsed}/>
             case 'bondingActivities':
                 return <BondingActivities collapsed={collapsed}/>
             case 'familyMessaging':
