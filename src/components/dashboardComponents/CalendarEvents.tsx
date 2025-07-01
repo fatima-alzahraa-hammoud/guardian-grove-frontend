@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Calendar, Clock, Edit2, MoreHorizontal, Plus, Sparkles, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight, Calendar, Clock, MoreHorizontal, Plus, Sparkles, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Event {
@@ -65,11 +65,6 @@ const slideInFromRight = {
     visible: { x: 0, opacity: 1, transition: { type: "spring", stiffness: 100 } }
 };
 
-const pulse = {
-    hover: { scale: 1.05, transition: { duration: 0.3 } },
-    tap: { scale: 0.95 }
-};
-
 // Floating background elements
 const FloatingElements = () => {
     return (
@@ -130,7 +125,7 @@ const FloatingElements = () => {
     );
 };
 
-const CalendarEvents: React.FC<CalendarEventsProps> = ({ collapsed = false }) => {
+const CalendarEvents: React.FC<CalendarEventsProps> = () => {
     const [currentDate, setCurrentDate] = useState(new Date(2024, 11, 1)); // December 2024
     const [selectedDate, setSelectedDate] = useState(new Date(2024, 11, 16)); // 16th selected
     const [newTaskTitle, setNewTaskTitle] = useState('');
@@ -221,11 +216,6 @@ const CalendarEvents: React.FC<CalendarEventsProps> = ({ collapsed = false }) =>
     const isToday = (date: Date | null) => {
         if (!date) return false;
         return date.getDate() === 16 && date.getMonth() === 11 && date.getFullYear() === 2024;
-    };
-
-    const isSelected = (date: Date | null) => {
-        if (!date) return false;
-        return date.toDateString() === selectedDate.toDateString();
     };
 
     const getEventsForDate = (date: Date | null) => {
