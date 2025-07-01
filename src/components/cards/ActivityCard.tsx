@@ -19,17 +19,25 @@ const difficultyColors = {
     "Hard": "bg-red-100 text-red-800"
 };
 
-const ActivityCard = ({ activity }: { activity: BondingActivity }) => {
+interface ActivityCardProps {
+    activity: BondingActivity;
+    onDownload: () => void;
+}
+
+const ActivityCard = ({ activity, onDownload }: ActivityCardProps) => {
     const IconComponent = categoryIcons[activity.category] || BookOpen;
 
     const handleDownload = () => {
-        // Simulate download
+        // Create download link
         const link = document.createElement('a');
         link.href = activity.downloadUrl;
         link.download = `${activity.title.replace(/\s+/g, '-').toLowerCase()}.pdf`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        
+        // Call the download increment function
+        onDownload();
     };
 
     return (
@@ -40,9 +48,17 @@ const ActivityCard = ({ activity }: { activity: BondingActivity }) => {
         >
             {/* Thumbnail with fixed height */}
             <div className="h-48 bg-gradient-to-br from-[#3A8EBA] to-[#2c6b8f] relative overflow-hidden flex-shrink-0">
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <IconComponent className="w-16 h-16 text-white/80" />
-                </div>
+                {activity.thumbnail ? (
+                    <img 
+                        src={activity.thumbnail} 
+                        alt={activity.title}
+                        className="w-full h-full object-cover"
+                    />
+                ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <IconComponent className="w-16 h-16 text-white/80" />
+                    </div>
+                )}
                 <div className="absolute top-3 right-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${difficultyColors[activity.difficulty]}`}>
                         {activity.difficulty}
@@ -60,7 +76,7 @@ const ActivityCard = ({ activity }: { activity: BondingActivity }) => {
                     <h3 className="font-bold text-lg text-gray-800 font-comic line-clamp-1">{activity.title}</h3>
                     <div className="flex items-center space-x-1 text-yellow-500 flex-shrink-0">
                         <Star className="w-4 h-4 fill-current" />
-                        <span className="text-sm font-medium text-gray-600">{activity.rating}</span>
+                        <span className="text-sm font-medium text-gray-600">{activity.rating?.toFixed(1) || '4.5'}</span>
                     </div>
                 </div>
 
@@ -107,7 +123,7 @@ const ActivityCard = ({ activity }: { activity: BondingActivity }) => {
 
                     {/* Download count */}
                     <div className="mt-3 text-center">
-                        <span className="text-xs text-gray-500">{activity.downloads} downloads</span>
+                        <span className="text-xs text-gray-500">{activity.downloads || 0} downloads</span>
                     </div>
                 </div>
             </div>
