@@ -5,104 +5,12 @@ import { Button } from "../ui/button";
 import { cn } from "../../lib/utils";
 import ActivityCard from "../cards/ActivityCard";
 import { BondingActivity } from "../../libs/types/BondingActivity";
+import { requestApi } from "../../libs/requestApi";
+import { requestMethods } from "../../libs/enum/requestMethods";
 
 interface BondingActivitiesProps {
     collapsed: boolean;
 }
-
-// Sample data - replace with your API data
-const sampleActivities: BondingActivity[] = [
-    {
-        _id: "1",
-        title: "Family Recipe Book",
-        description: "Create a beautiful family cookbook with everyone's favorite recipes and stories behind them.",
-        category: "Creative",
-        duration: "2-3 hours",
-        difficulty: "Easy",
-        ageGroup: "All Ages",
-        participants: "3-8 people",
-        materials: ["Paper", "Pens", "Photos", "Glue"],
-        downloadUrl: "/downloads/family-recipe-book.pdf",
-        thumbnail: "/assets/images/activities/recipe-book.jpg",
-        rating: 4.8,
-        downloads: 156
-    },
-    {
-        _id: "2",
-        title: "Memory Lane Timeline",
-        description: "Build a visual timeline of your family's most precious memories together.",
-        category: "Memory",
-        duration: "1-2 hours",
-        difficulty: "Easy",
-        ageGroup: "6+",
-        participants: "2-6 people",
-        materials: ["Timeline template", "Photos", "Markers", "Stickers"],
-        downloadUrl: "/downloads/memory-timeline.pdf",
-        thumbnail: "/assets/images/activities/timeline.jpg",
-        rating: 4.9,
-        downloads: 203
-    },
-    {
-        _id: "3",
-        title: "Family Trivia Challenge",
-        description: "Test how well you know each other with fun family trivia questions and challenges.",
-        category: "Games",
-        duration: "45-60 minutes",
-        difficulty: "Medium",
-        ageGroup: "8+",
-        participants: "3-10 people",
-        materials: ["Question cards", "Score sheet", "Timer"],
-        downloadUrl: "/downloads/family-trivia.pdf",
-        thumbnail: "/assets/images/activities/trivia.jpg",
-        rating: 4.7,
-        downloads: 289
-    },
-    {
-        _id: "4",
-        title: "Gratitude Jar Activity",
-        description: "Express appreciation for each family member with heartfelt gratitude notes.",
-        category: "Emotional",
-        duration: "30-45 minutes",
-        difficulty: "Easy",
-        ageGroup: "All Ages",
-        participants: "2-8 people",
-        materials: ["Jar template", "Colored paper", "Pens", "Decorations"],
-        downloadUrl: "/downloads/gratitude-jar.pdf",
-        thumbnail: "/assets/images/activities/gratitude.jpg",
-        rating: 4.9,
-        downloads: 178
-    },
-    {
-        _id: "5",
-        title: "Adventure Planning Map",
-        description: "Plan your next family adventure together with this interactive planning activity.",
-        category: "Planning",
-        duration: "1-1.5 hours",
-        difficulty: "Medium",
-        ageGroup: "10+",
-        participants: "3-6 people",
-        materials: ["Map template", "Colored pencils", "Stickers", "Research sheets"],
-        downloadUrl: "/downloads/adventure-map.pdf",
-        thumbnail: "/assets/images/activities/adventure.jpg",
-        rating: 4.6,
-        downloads: 134
-    },
-    {
-        _id: "6",
-        title: "Storytelling Circle Cards",
-        description: "Take turns creating magical stories together with these creative prompt cards.",
-        category: "Creative",
-        duration: "30-60 minutes",
-        difficulty: "Easy",
-        ageGroup: "5+",
-        participants: "2-8 people",
-        materials: ["Story cards", "Imagination"],
-        downloadUrl: "/downloads/story-cards.pdf",
-        thumbnail: "/assets/images/activities/storytelling.jpg",
-        rating: 4.8,
-        downloads: 245
-    }
-];
 
 // Floating background elements with vibrant theme colors
 const FloatingElements = () => {
@@ -343,24 +251,53 @@ const BondingActivities: React.FC<BondingActivitiesProps> = ({ collapsed }) => {
         setFilteredActivities(filtered);
     }, []);
 
-    // Simulate API fetch
-    useEffect(() => {
-        const fetchActivities = async () => {
+    const fetchActivities = async () => {
+        try {
             setLoading(true);
-            // Simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            setActivities(sampleActivities);
-            handleFilterChange(activeFilter, sampleActivities);
-            setLoading(false);
-        };
+            const response = await requestApi({
+                route: "/bondingActivities/",
+                method: requestMethods.GET,
+            });
 
+            if (response && response.activities) {
+                setActivities(response.activities);
+                handleFilterChange(activeFilter, response.activities);
+            } else {
+                console.log("Failed to retrieve activities", response?.message);
+            }
+        } catch (error) {
+            console.log("Something went wrong", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDownloadIncrement = async (activityId: string) => {
+        try {
+            await requestApi({
+                route: `/bondingActivities/${activityId}/download`,
+                method: requestMethods.PATCH
+            });
+            // Update local state to reflect the download count increment
+            setActivities(prevActivities => 
+                prevActivities.map(activity => 
+                    activity._id === activityId 
+                        ? { ...activity, downloads: (activity.downloads || 0) + 1 } 
+                        : activity
+                )
+            );
+        } catch (error) {
+            console.log("Failed to increment download count", error);
+        }
+    };
+
+    useEffect(() => {
         fetchActivities();
-    }, [activeFilter, handleFilterChange]);
+    }, [activeFilter]);
 
     const handleFilterClick = useCallback((filter: string) => {
         setActiveFilter(filter);
-        handleFilterChange(filter, activities);
-    }, [activities, handleFilterChange]);
+    }, []);
 
     // Enhanced Loading component with theme colors
     const LoadingState = () => (
@@ -509,7 +446,7 @@ const BondingActivities: React.FC<BondingActivitiesProps> = ({ collapsed }) => {
                                 >
                                     {filteredActivities.map((activity, index) => (
                                         <motion.div
-                                            key={index}
+                                            key={activity._id}
                                             variants={{
                                                 hidden: { 
                                                     opacity: 0, 
@@ -534,7 +471,10 @@ const BondingActivities: React.FC<BondingActivitiesProps> = ({ collapsed }) => {
                                             }}
                                             whileTap={{ scale: 0.98 }}
                                         >
-                                            <ActivityCard activity={activity} />
+                                            <ActivityCard 
+                                                activity={activity} 
+                                                onDownload={() => handleDownloadIncrement(activity._id)}
+                                            />
                                         </motion.div>
                                     ))}
                                 </motion.div>
