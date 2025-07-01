@@ -10,6 +10,7 @@ import FamilyJournal from "../../components/dashboardComponents/FamilyJournal";
 import AINotifications from "../../components/dashboardComponents/AINotifications";
 import Notes from "../../components/dashboardComponents/Notes";
 import BondingActivities from "../../components/dashboardComponents/BondingActivities";
+import FamilyMessaging from "../../components/dashboardComponents/FamilyMessaging";
 
 const Main : React.FC = () => {
 
@@ -35,6 +36,8 @@ const Main : React.FC = () => {
                 return <AINotifications collapsed={collapsed}/>
             case 'bondingActivities':
                 return <BondingActivities collapsed={collapsed}/>
+            case 'familyMessaging':
+                return <FamilyMessaging/>
             default:
                 return <div>Select a section</div>;
         }
