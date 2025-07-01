@@ -9,6 +9,7 @@ import GoalsAndAdventures from "../../components/dashboardComponents/GoalsAndAdv
 import FamilyJournal from "../../components/dashboardComponents/FamilyJournal";
 import AINotifications from "../../components/dashboardComponents/AINotifications";
 import Notes from "../../components/dashboardComponents/Notes";
+import BondingActivities from "../../components/dashboardComponents/BondingActivities";
 
 const Main : React.FC = () => {
 
@@ -32,6 +33,8 @@ const Main : React.FC = () => {
                 return <GoalsAndAdventures collapsed={collapsed}/>
             case 'notifications':
                 return <AINotifications collapsed={collapsed}/>
+            case 'bondingActivities':
+                return <BondingActivities collapsed={collapsed}/>
             default:
                 return <div>Select a section</div>;
         }
