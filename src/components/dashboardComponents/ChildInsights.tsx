@@ -137,7 +137,7 @@ const mockChildData = {
   age: 10,
   memberSince: "17, 12, 2023",
   familyEmail: "tasnimhammoud@gmail.com",
-  avatar: "https://via.placeholder.com/150",
+  avatar: "/assets/images/avatars/child/avatar4.png",
   personalRank: 3,
   totalStars: 170,
   totalCoins: 20,
