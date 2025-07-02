@@ -3,15 +3,22 @@ import { motion, AnimatePresence } from "framer-motion";
 import DrawingCanvas from "./DrawingCanvas";
 import StoryCreator from "./StoryCreator";
 
+
+interface CreativeActivityComponentProps {
+    onBack: () => void;
+}
+
 interface CreativeActivity {
     id: string;
     title: string;
     description: string;
     icon: string;
     color: string;
-    component: React.ComponentType<any>;
+    component: React.ComponentType<CreativeActivityComponentProps>;
     category: 'Art' | 'Stories' | 'Colors';
 }
+
+
 
 const CreativeFun: React.FC = () => {
     const [selectedActivity, setSelectedActivity] = useState<CreativeActivity | null>(null);
