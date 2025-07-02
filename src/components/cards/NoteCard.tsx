@@ -43,6 +43,9 @@ const NoteCard: React.FC<{
         return truncatedLines + '<br>...';
     };
 
+    // Use backend ID (_id) or fallback to frontend id
+    const noteId = note._id || note.id || '';
+
     return (
         <motion.div
             className="relative group cursor-pointer w-[200px]"
@@ -142,7 +145,7 @@ const NoteCard: React.FC<{
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            onPin(note.id);
+                            onPin(noteId);
                         }}
                         className="p-2 text-gray-600 hover:text-gray-800 transition-colors duration-200 relative"
                         whileHover={{ scale: 1.3 }}
@@ -163,7 +166,7 @@ const NoteCard: React.FC<{
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            onDelete(note.id);
+                            onDelete(noteId);
                         }}
                         className="p-2 text-red-500 hover:text-red-700 transition-colors duration-200 relative"
                         whileHover={{ scale: 1.3 }}
