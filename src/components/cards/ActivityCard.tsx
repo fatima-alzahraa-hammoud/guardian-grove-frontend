@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { BondingActivity } from "../../libs/types/BondingActivity";
 
-const categoryIcons: Record<string, any> = {
+const categoryIcons: Record<string, React.ComponentType<{ className?: string }>> = {
     "Creative": Palette,
     "Memory": Heart,
     "Games": Gamepad2,
