@@ -234,7 +234,6 @@ const EmptyState = ({ activeFilter }: { activeFilter: string }) => {
 
 const BondingActivities: React.FC<BondingActivitiesProps> = ({ collapsed }) => {
     const [activeFilter, setActiveFilter] = useState<string>("All Activities");
-    const [activities, setActivities] = useState<BondingActivity[]>([]);
     const [filteredActivities, setFilteredActivities] = useState<BondingActivity[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -260,7 +259,7 @@ const BondingActivities: React.FC<BondingActivitiesProps> = ({ collapsed }) => {
             });
 
             if (response && response.activities) {
-                setActivities(response.activities);
+                // setActivities(response.activities); // Removed unused activities state
                 handleFilterChange(activeFilter, response.activities);
             } else {
                 console.log("Failed to retrieve activities", response?.message);
@@ -279,7 +278,7 @@ const BondingActivities: React.FC<BondingActivitiesProps> = ({ collapsed }) => {
                 method: requestMethods.PATCH
             });
             // Update local state to reflect the download count increment
-            setActivities(prevActivities => 
+            setFilteredActivities(prevActivities => 
                 prevActivities.map(activity => 
                     activity._id === activityId 
                         ? { ...activity, downloads: (activity.downloads || 0) + 1 } 
@@ -446,7 +445,7 @@ const BondingActivities: React.FC<BondingActivitiesProps> = ({ collapsed }) => {
                                 >
                                     {filteredActivities.map((activity, index) => (
                                         <motion.div
-                                            key={activity._id}
+                                            key={index}
                                             variants={{
                                                 hidden: { 
                                                     opacity: 0, 

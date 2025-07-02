@@ -743,7 +743,7 @@ const CalendarEvents: React.FC = () => {
                                 {getApprovedEventsForSuggestions().length > 0 ? (
                                     getApprovedEventsForSuggestions().map((event, index) => (
                                         <motion.div 
-                                            key={event._id}
+                                            key={index}
                                             className="border border-gray-200 rounded-xl p-4 relative"
                                             whileHover={{ 
                                                 y: -5,

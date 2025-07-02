@@ -1,6 +1,4 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { requestApi } from '../../libs/requestApi';
-import { requestMethods } from '../../libs/enum/requestMethods';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface Message {
     _id: string;
@@ -240,7 +238,7 @@ const messageSlice = createSlice({
         clearError: (state) => {
             state.error = null;
         },
-        resetMessages: (state) => {
+        resetMessages: () => {
             return initialState;
         },
         addChat: (state, action: PayloadAction<Chat>) => {

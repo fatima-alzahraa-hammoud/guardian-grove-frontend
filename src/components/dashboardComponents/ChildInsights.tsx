@@ -285,6 +285,7 @@ const ChildInsights = () => {
     setCurrentHighlight((prev) => 
       prev === 0 ? mockChildData.routineHighlights.length - 1 : prev - 1
     );
+    console.log(currentHighlight)
   };
 
   const handleSendFeedback = () => {

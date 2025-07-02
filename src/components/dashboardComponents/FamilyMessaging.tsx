@@ -59,8 +59,7 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = () => {
     const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
     const [groupName, setGroupName] = useState("");
     const [replyTo, setReplyTo] = useState<Message | null>(null);
-    const [page, setPage] = useState(1);
-    const [hasMoreMessages, setHasMoreMessages] = useState(true);
+    // const [hasMoreMessages, setHasMoreMessages] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isInitialized, setIsInitialized] = useState(false);
@@ -146,7 +145,7 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = () => {
     }, [dispatch, currentUser.id]);
 
     // Fetch messages for active chat
-    const fetchChatMessages = useCallback(async (chatId: string, pageNum: number = 1) => {
+    const fetchChatMessages = useCallback(async (chatId: string) => {
         try {
             console.log('📨 Fetching messages for chat:', chatId);
             const response = await requestApi({
@@ -163,7 +162,7 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = () => {
                     replace: true 
                 }));
                 
-                setHasMoreMessages(response.pagination?.hasMore || false);
+                // setHasMoreMessages(response.pagination?.hasMore || false);
             }
         } catch (error) {
             console.error("Error fetching chat messages:", error);

@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import notesImage from '/assets/images/dashboard/notesBlack.png';
-import { requestApi } from "../../libs/requestApi";
-import { requestMethods } from "../../libs/enum/requestMethods";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -358,10 +356,10 @@ const ExploreLearn: React.FC<ExploreLearnProps> = ({ collapsed }) => {
             setLoading(true);
             
             // Simulate API call - replace with actual API call
-            const response = await requestApi({
-                route: "/learning/resources",
-                method: requestMethods.GET
-            });
+            // const response = await requestApi({
+            //     route: "/learning/resources",
+            //     method: requestMethods.GET
+            // });
 
             // Mock data - replace with actual response data
             const mockData: LearningResource[] = [
@@ -648,7 +646,7 @@ const ExploreLearn: React.FC<ExploreLearnProps> = ({ collapsed }) => {
                                 >
                                     {filteredResources.map((resource, index) => (
                                         <motion.div
-                                            key={resource._id}
+                                            key={index}
                                             variants={{
                                                 hidden: { opacity: 0, y: 20, rotateY: -10 },
                                                 visible: { 
