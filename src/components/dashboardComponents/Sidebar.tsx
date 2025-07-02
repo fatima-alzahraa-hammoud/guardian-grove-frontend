@@ -39,6 +39,7 @@ import { selectGender } from '../../redux/slices/userSlice';
 import { logout } from '../../redux/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
 import SettingsDialog from '../common/UpdatePasswordDialog';
+import { useAccessibility } from '../../contexts/AccessibilityContext';
 
 interface SidebarProps {
   activeSection: string;
@@ -54,6 +55,7 @@ function classNames(...classes: string[]) {
 const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, collapsed, setCollapsed }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { handGestureEnabled, voiceGuidanceEnabled, setHandGestureEnabled, setVoiceGuidanceEnabled } = useAccessibility();
 
   const [isFamilyOpen, setIsFamilyOpen] = useState(false);
   const gender = useSelector(selectGender);
@@ -135,7 +137,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, coll
         <div className="flex justify-between pt-3 pb-6 pl-9 pr-9">
           <FooterIcon icon={logoutImage} onClick={handleLogout}/>
           <FooterIcon icon={infoImage} />
-          <SettingsDialog />
+          <SettingsDialog
+            handGestureEnabled={handGestureEnabled}
+            onHandGestureToggle={setHandGestureEnabled}
+            voiceEnabled={voiceGuidanceEnabled}
+            onVoiceToggle={setVoiceGuidanceEnabled}
+          />
         </div>
       </div>
     </div>

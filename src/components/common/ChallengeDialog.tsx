@@ -49,6 +49,7 @@ const ChallengeDialog : React.FC<ChallengeDialogProps> = ({isOpen, onClose, chal
             });
 
             if (response &&  typeof response.questionAnswered === 'boolean'){
+                console.log("Response from server:", response);
                 setAiResponse("Excellent your answer is correct! 😊");
 
                 const result = await requestApi({

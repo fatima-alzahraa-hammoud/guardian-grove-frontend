@@ -23,21 +23,44 @@ import { generateToken, messaging } from './notifications/firebase.ts';
 import { onMessage } from 'firebase/messaging';
 import {Toaster} from 'react-hot-toast';
 import { showFirebaseNotificationToast } from './lib/CustomToast.tsx';
+import HandGestureControl from './components/HandTracker.tsx';
+import { AccessibilityProvider, useAccessibility } from './contexts/AccessibilityContext';
 
 interface DecodedToken {
   userId: string;
   role: string;
 }
 
-function App() {
-
+function AppContent() {
   const dispatch = useDispatch();
   const familyId = useSelector(selectFamilyId);
   const location = useLocation();
+  const { handGestureEnabled, voiceGuidanceEnabled, setHandGestureEnabled } = useAccessibility();
 
   const [userId, setUserId] = useState<string | null>(null);
 
   const token = sessionStorage.getItem("token");
+
+  // Load accessibility settings from localStorage
+  useEffect(() => {
+    // Settings are now handled by the AccessibilityProvider
+  }, []);
+
+  // Save accessibility settings to localStorage
+  const handleHandGestureToggle = (enabled: boolean) => {
+    setHandGestureEnabled(enabled);
+    if (enabled) {
+      // Request camera permission when enabling
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(() => {
+          console.log('Camera permission granted');
+        })
+        .catch((error) => {
+          console.error('Camera permission denied:', error);
+          setHandGestureEnabled(false);
+        });
+    }
+  };
 
   useEffect(() => {
     const initializeFirebase = async () => {
@@ -143,24 +166,65 @@ function App() {
     fetchFamilyDetails();
   }, [userId, familyId, dispatch, location.pathname]);
 
+  // Only show hand gesture control on dashboard and admin pages
+  const showHandGestureControl = handGestureEnabled && (
+    location.pathname.startsWith('/dashboard') || 
+    location.pathname.startsWith('/admin') ||
+    location.pathname.startsWith('/addMembers') ||
+    location.pathname === '/changePassword'
+  );
+
   return (
     <>
-    
       <div className='App'>
         <Toaster position='top-right'/>
+        
+        {/* Hand Gesture Control - Only render when enabled and on appropriate pages */}
+        {showHandGestureControl && (
+          <HandGestureControl 
+            enabled={handGestureEnabled}
+            voiceEnabled={voiceGuidanceEnabled}
+            onToggle={handleHandGestureToggle}
+          />
+        )}
+        
         <Routes>
           <Route path='/' element={<Login />}/>
           <Route path='/signup' element={<Signup />}/>
           <Route path='/landingPage' element={<LandingPage />}/>
-          <Route path='/dashboard/*' element={ <ProtectedRoute> <Dashboard /> </ProtectedRoute> } />
+          <Route 
+            path='/dashboard/*' 
+            element={ 
+              <ProtectedRoute> 
+                <Dashboard /> 
+              </ProtectedRoute> 
+            } 
+          />
           <Route path='/addMembersQuestion' element={ <ProtectedRoute> <AddMembersBackground ChildComponent={AddMembersQuestion} /> </ProtectedRoute> } />
           <Route path='/addMembers' element={ <ProtectedRoute> <AddMembersBackground ChildComponent={AddMembersForm} /> </ProtectedRoute> } />
-          <Route path='/admin/*' element={<SidebarProvider><ProtectedAdminRoute><Admin /></ProtectedAdminRoute></SidebarProvider>}/>
+          <Route 
+            path='/admin/*' 
+            element={
+              <SidebarProvider>
+                <ProtectedAdminRoute>
+                  <Admin />
+                </ProtectedAdminRoute>
+              </SidebarProvider>
+            }
+          />
           <Route path='/changePassword' element={ <ProtectedRoute> <ChangePasswordPage /> </ProtectedRoute> } />
         </Routes>
       </div>
     </>
   )
+}
+
+function App() {
+  return (
+    <AccessibilityProvider>
+      <AppContent />
+    </AccessibilityProvider>
+  );
 }
 
 export default App
