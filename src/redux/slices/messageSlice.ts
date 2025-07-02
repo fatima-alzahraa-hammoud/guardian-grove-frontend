@@ -110,155 +110,46 @@ const initialState: MessageState = {
     messagePages: {}
 };
 
-// Async thunks
-export const fetchChats = createAsyncThunk(
-    'messages/fetchChats',
-    async (_, { rejectWithValue }) => {
-        try {
-            const response = await requestApi({
-                route: "/familyChats/messages/chats",
-                method: requestMethods.GET
-            });
-            return response.chats;
-        } catch (error: any) {
-            return rejectWithValue(error.message || 'Failed to fetch chats');
-        }
-    }
-);
-
-export const fetchMessages = createAsyncThunk(
-    'messages/fetchMessages',
-    async ({ chatId, page = 1 }: { chatId: string; page?: number }, { rejectWithValue }) => {
-        try {
-            const response = await requestApi({
-                route: `/familyChats/messages/chats/${chatId}/messages?page=${page}&limit=50`,
-                method: requestMethods.GET
-            });
-            return {
-                chatId,
-                messages: response.messages,
-                hasMore: response.pagination.hasMore,
-                page
-            };
-        } catch (error: any) {
-            return rejectWithValue(error.message || 'Failed to fetch messages');
-        }
-    }
-);
-
-export const sendMessage = createAsyncThunk(
-    'messages/sendMessage',
-    async (messageData: {
-        chatId: string;
-        content: string;
-        type?: string;
-        replyTo?: string;
-        file?: File;
-    }, { rejectWithValue }) => {
-        try {
-            const formData = new FormData();
-            formData.append('chatId', messageData.chatId);
-            formData.append('content', messageData.content);
-            if (messageData.type) formData.append('type', messageData.type);
-            if (messageData.replyTo) formData.append('replyTo', messageData.replyTo);
-            if (messageData.file) formData.append('messageFile', messageData.file);
-
-            const response = await requestApi({
-                route: `/familyChats/messages/chats/${messageData.chatId}/messages`,
-                method: requestMethods.POST,
-                body: formData,
-            });
-            return response.messageData;
-        } catch (error: any) {
-            return rejectWithValue(error.message || 'Failed to send message');
-        }
-    }
-);
-
-export const createGroupChat = createAsyncThunk(
-    'messages/createGroupChat',
-    async (groupData: {
-        name: string;
-        members: string[];
-        description?: string;
-    }, { rejectWithValue }) => {
-        try {
-            const response = await requestApi({
-                route: "/familyChats/messages/chats/group",
-                method: requestMethods.POST,
-                body: groupData
-            });
-            return response.chat;
-        } catch (error: any) {
-            return rejectWithValue(error.message || 'Failed to create group chat');
-        }
-    }
-);
-
-export const createDirectChat = createAsyncThunk(
-    'messages/createDirectChat',
-    async (memberId: string, { rejectWithValue }) => {
-        try {
-            const response = await requestApi({
-                route: "/familyChats/messages/chats/direct",
-                method: requestMethods.POST,
-                body: { memberId }
-            });
-            return response.chat;
-        } catch (error: any) {
-            return rejectWithValue(error.message || 'Failed to create direct chat');
-        }
-    }
-);
-
-export const fetchFamilyMembers = createAsyncThunk(
-    'messages/fetchFamilyMembers',
-    async (_, { rejectWithValue }) => {
-        try {
-            const response = await requestApi({
-                route: "/family/FamilyMembers",
-                method: requestMethods.GET
-            });
-            return response.members;
-        } catch (error: any) {
-            return rejectWithValue(error.message || 'Failed to fetch family members');
-        }
-    }
-);
-
-export const markMessagesAsRead = createAsyncThunk(
-    'messages/markAsRead',
-    async (chatId: string, { rejectWithValue }) => {
-        try {
-            await requestApi({
-                route: `/familyChats/messages/chats/${chatId}/read`,
-                method: requestMethods.PUT
-            });
-            return chatId;
-        } catch (error: any) {
-            return rejectWithValue(error.message || 'Failed to mark messages as read');
-        }
-    }
-);
-
 const messageSlice = createSlice({
     name: 'messages',
     initialState,
     reducers: {
         setActiveChat: (state, action: PayloadAction<Chat | null>) => {
+            // Reset unread count for the chat being activated
+            if (action.payload) {
+                const chatIndex = state.chats.findIndex(chat => chat._id === action.payload!._id);
+                if (chatIndex !== -1) {
+                    state.chats[chatIndex].unreadCount = 0;
+                }
+            }
             state.activeChat = action.payload;
         },
         addMessage: (state, action: PayloadAction<Message>) => {
             const message = action.payload;
-            if (!state.messages[message.chatId]) {
-                state.messages[message.chatId] = [];
+            const chatId = message.chatId;
+            
+            // Initialize messages array if it doesn't exist
+            if (!state.messages[chatId]) {
+                state.messages[chatId] = [];
             }
-            state.messages[message.chatId].push(message);
+            
+            // Check if message already exists to avoid duplicates
+            const existingIndex = state.messages[chatId].findIndex(msg => msg._id === message._id);
+            if (existingIndex === -1) {
+                state.messages[chatId].push(message);
+                
+                // Sort messages by timestamp to maintain order
+                state.messages[chatId].sort((a, b) => 
+                    new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+                );
+            }
             
             // Update chat's last message and move to top
-            const chatIndex = state.chats.findIndex(chat => chat._id === message.chatId);
+            const chatIndex = state.chats.findIndex(chat => chat._id === chatId);
             if (chatIndex !== -1) {
                 const chat = state.chats[chatIndex];
+                
+                // Update last message
                 chat.lastMessage = {
                     messageId: message._id,
                     content: message.content,
@@ -324,8 +215,8 @@ const messageSlice = createSlice({
             // Update online status for direct chats
             state.chats.forEach(chat => {
                 if (chat.type === 'direct') {
-                    const otherMember = chat.members.find(member => member._id !== userId);
-                    if (otherMember && otherMember._id === userId) {
+                    const otherMember = chat.members.find(member => member._id === userId);
+                    if (otherMember) {
                         chat.isOnline = isOnline;
                     }
                 }
@@ -357,104 +248,64 @@ const messageSlice = createSlice({
             const existingIndex = state.chats.findIndex(chat => chat._id === newChat._id);
             if (existingIndex === -1) {
                 state.chats.unshift(newChat);
+            } else {
+                // Update existing chat
+                state.chats[existingIndex] = newChat;
             }
         },
-        updateChatUnreadCount: (state, action: PayloadAction<{ chatId: string; count: number }>) => {
-            const { chatId, count } = action.payload;
+        updateChatUnreadCount: (state, action: PayloadAction<{ chatId: string; count: number; increment?: boolean }>) => {
+            const { chatId, count, increment = true } = action.payload;
             const chat = state.chats.find(c => c._id === chatId);
             if (chat) {
-                chat.unreadCount = count;
+                if (increment) {
+                    chat.unreadCount += count;
+                } else {
+                    chat.unreadCount = count;
+                }
+                // Ensure unread count doesn't go below 0
+                chat.unreadCount = Math.max(0, chat.unreadCount);
+            }
+        },
+        setMessages: (state, action: PayloadAction<{ chatId: string; messages: Message[]; replace?: boolean }>) => {
+            const { chatId, messages, replace = true } = action.payload;
+            
+            if (replace) {
+                state.messages[chatId] = messages;
+            } else {
+                // Append messages (for pagination)
+                if (!state.messages[chatId]) {
+                    state.messages[chatId] = [];
+                }
+                
+                // Add only new messages
+                const existingIds = new Set(state.messages[chatId].map(msg => msg._id));
+                const newMessages = messages.filter(msg => !existingIds.has(msg._id));
+                
+                state.messages[chatId] = [...newMessages, ...state.messages[chatId]];
+                
+                // Sort messages by timestamp
+                state.messages[chatId].sort((a, b) => 
+                    new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+                );
+            }
+        },
+        setChats: (state, action: PayloadAction<Chat[]>) => {
+            state.chats = action.payload;
+        },
+        markChatAsRead: (state, action: PayloadAction<string>) => {
+            const chatId = action.payload;
+            const chat = state.chats.find(c => c._id === chatId);
+            if (chat) {
+                chat.unreadCount = 0;
+            }
+        },
+        incrementChatUnread: (state, action: PayloadAction<string>) => {
+            const chatId = action.payload;
+            const chat = state.chats.find(c => c._id === chatId);
+            if (chat && state.activeChat?._id !== chatId) {
+                chat.unreadCount += 1;
             }
         }
-    },
-    extraReducers: (builder) => {
-        builder
-            // Fetch chats
-            .addCase(fetchChats.pending, (state) => {
-                state.loading.chats = true;
-                state.error = null;
-            })
-            .addCase(fetchChats.fulfilled, (state, action) => {
-                state.loading.chats = false;
-                state.chats = action.payload;
-            })
-            .addCase(fetchChats.rejected, (state, action) => {
-                state.loading.chats = false;
-                state.error = action.payload as string;
-            })
-            
-            // Fetch messages
-            .addCase(fetchMessages.pending, (state) => {
-                state.loading.messages = true;
-                state.error = null;
-            })
-            .addCase(fetchMessages.fulfilled, (state, action) => {
-                state.loading.messages = false;
-                const { chatId, messages, hasMore, page } = action.payload;
-                
-                if (page === 1) {
-                    state.messages[chatId] = messages;
-                } else {
-                    // Prepend older messages
-                    state.messages[chatId] = [...messages, ...(state.messages[chatId] || [])];
-                }
-                
-                state.hasMoreMessages[chatId] = hasMore;
-                state.messagePages[chatId] = page;
-            })
-            .addCase(fetchMessages.rejected, (state, action) => {
-                state.loading.messages = false;
-                state.error = action.payload as string;
-            })
-            
-            // Send message
-            .addCase(sendMessage.pending, (state) => {
-                state.loading.sending = true;
-                state.error = null;
-            })
-            .addCase(sendMessage.fulfilled, (state, action) => {
-                state.loading.sending = false;
-                // Message will be added via socket event
-            })
-            .addCase(sendMessage.rejected, (state, action) => {
-                state.loading.sending = false;
-                state.error = action.payload as string;
-            })
-            
-            // Create group chat
-            .addCase(createGroupChat.fulfilled, (state, action) => {
-                state.chats.unshift(action.payload);
-            })
-            
-            // Create direct chat
-            .addCase(createDirectChat.fulfilled, (state, action) => {
-                const existingChat = state.chats.find(chat => chat._id === action.payload._id);
-                if (!existingChat) {
-                    state.chats.unshift(action.payload);
-                }
-            })
-            
-            // Fetch family members
-            .addCase(fetchFamilyMembers.pending, (state) => {
-                state.loading.familyMembers = true;
-            })
-            .addCase(fetchFamilyMembers.fulfilled, (state, action) => {
-                state.loading.familyMembers = false;
-                state.familyMembers = action.payload;
-            })
-            .addCase(fetchFamilyMembers.rejected, (state, action) => {
-                state.loading.familyMembers = false;
-                state.error = action.payload as string;
-            })
-            
-            // Mark messages as read
-            .addCase(markMessagesAsRead.fulfilled, (state, action) => {
-                const chatId = action.payload;
-                const chat = state.chats.find(c => c._id === chatId);
-                if (chat) {
-                    chat.unreadCount = 0;
-                }
-            });
     }
 });
 
@@ -471,7 +322,11 @@ export const {
     clearError,
     resetMessages,
     addChat,
-    updateChatUnreadCount
+    updateChatUnreadCount,
+    setMessages,
+    setChats,
+    markChatAsRead,
+    incrementChatUnread
 } = messageSlice.actions;
 
 export default messageSlice.reducer;
