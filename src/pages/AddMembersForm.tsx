@@ -8,9 +8,16 @@ import { Input } from "../components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
 import { Button } from "../components/ui/button";
 import { cn } from "../lib/utils";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { Calendar } from "../components/ui/calendar";
 import { format } from "date-fns";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
 import Selects, { components, DropdownIndicatorProps, GroupBase, SelectInstance } from 'react-select';
 import { customStyles, interestOptions } from "../libs/constants";
 import girlImage from "/assets/images/girl.png";
@@ -43,6 +50,170 @@ const DropdownIndicator = (props: DropdownIndicatorProps<SelectOption, true, Gro
         </components.DropdownIndicator>
     );
 };  
+
+// Enhanced Calendar Component with Year/Month Dropdowns
+const EnhancedCalendar = ({ 
+    selected, 
+    onSelect, 
+    disabled 
+}: { 
+    selected?: Date; 
+    onSelect: (date: Date | undefined) => void; 
+    disabled?: (date: Date) => boolean;
+}) => {
+    const currentYear = new Date().getFullYear();
+    const [displayMonth, setDisplayMonth] = useState(
+        selected ? selected.getMonth() : new Date().getMonth()
+    );
+    const [displayYear, setDisplayYear] = useState(
+        selected ? selected.getFullYear() : currentYear
+    );
+
+    // Generate years from 1900 to current year
+    const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => currentYear - i);
+    
+    // Month names (abbreviated for compact display)
+    const months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+
+    const handleYearChange = (year: string) => {
+        const newYear = parseInt(year);
+        setDisplayYear(newYear);
+        
+        // If there's a selected date, update it with the new year
+        if (selected) {
+            const newDate = new Date(selected);
+            newDate.setFullYear(newYear);
+            onSelect(newDate);
+        } else {
+            // If no date is selected, create a new date with the first day of the current display month
+            const newDate = new Date(newYear, displayMonth, 1);
+            onSelect(newDate);
+        }
+    };
+
+    const handleMonthChange = (month: string) => {
+        const newMonth = parseInt(month);
+        setDisplayMonth(newMonth);
+        
+        // If there's a selected date, update it with the new month
+        if (selected) {
+            const newDate = new Date(selected);
+            newDate.setMonth(newMonth);
+            onSelect(newDate);
+        } else {
+            // If no date is selected, create a new date with the first day of the new month
+            const newDate = new Date(displayYear, newMonth, 1);
+            onSelect(newDate);
+        }
+    };
+
+    const navigateMonth = (direction: 'prev' | 'next') => {
+        if (direction === 'prev') {
+            if (displayMonth === 0) {
+                setDisplayMonth(11);
+                setDisplayYear(displayYear - 1);
+            } else {
+                setDisplayMonth(displayMonth - 1);
+            }
+        } else {
+            if (displayMonth === 11) {
+                setDisplayMonth(0);
+                setDisplayYear(displayYear + 1);
+            } else {
+                setDisplayMonth(displayMonth + 1);
+            }
+        }
+    };
+
+    return (
+        <div className="bg-white rounded-md border p-2 w-fit">
+            {/* Compact Year and Month Selectors */}
+            <div className="flex justify-between items-center mb-2 space-x-1">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigateMonth('prev')}
+                    disabled={displayYear <= 1900 && displayMonth <= 0}
+                    className="h-6 w-6 p-0 text-xs"
+                >
+                    <ChevronLeft className="h-3 w-3" />
+                </Button>
+                
+                <div className="flex space-x-1">
+                    <Select value={displayMonth.toString()} onValueChange={handleMonthChange}>
+                        <SelectTrigger className="h-6 text-xs w-[50px] px-1">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {months.map((month, index) => (
+                                <SelectItem key={index} value={index.toString()} className="text-xs">
+                                    {month}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    
+                    <Select value={displayYear.toString()} onValueChange={handleYearChange}>
+                        <SelectTrigger className="h-6 text-xs w-[55px] px-1">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[150px]">
+                            {years.map((year) => (
+                                <SelectItem key={year} value={year.toString()} className="text-xs">
+                                    {year}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+                
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigateMonth('next')}
+                    disabled={displayYear >= currentYear && displayMonth >= new Date().getMonth()}
+                    className="h-6 w-6 p-0 text-xs"
+                >
+                    <ChevronRight className="h-3 w-3" />
+                </Button>
+            </div>
+            
+            {/* Compact Calendar */}
+            <Calendar
+                mode="single"
+                selected={selected}
+                onSelect={onSelect}
+                disabled={disabled}
+                month={new Date(displayYear, displayMonth)}
+                onMonthChange={(date) => {
+                    setDisplayMonth(date.getMonth());
+                    setDisplayYear(date.getFullYear());
+                }}
+                className="rounded-md"
+                classNames={{
+                    months: "flex flex-col space-y-2",
+                    month: "space-y-2",
+                    caption: "hidden", // Hide default caption since we have custom header
+                    nav: "hidden", // Hide default navigation
+                    table: "w-full border-collapse",
+                    head_row: "flex",
+                    head_cell: "text-muted-foreground rounded-md w-6 h-6 font-normal text-[10px] flex items-center justify-center",
+                    row: "flex w-full",
+                    cell: "text-center text-xs p-0 relative",
+                    day: "h-6 w-6 p-0 font-normal text-xs flex items-center justify-center rounded hover:bg-gray-100",
+                    day_selected: "bg-[#3A8EBA] text-white hover:bg-[#326E9F] hover:text-white",
+                    day_today: "bg-gray-100 font-medium",
+                    day_outside: "text-muted-foreground opacity-30",
+                    day_disabled: "text-muted-foreground opacity-30 cursor-not-allowed",
+                }}
+            />
+        </div>
+    );
+};
+
 
 const AddMembersForm : React.FC = () => {
 
@@ -88,21 +259,42 @@ const AddMembersForm : React.FC = () => {
         console.log(data);
         try {
             // Minimal data for submission
-            const submitData = {
-                gender: data.gender || "female",
-                role: data.role || tab.toLowerCase(),
-                name: data.name || "",
-                birthday: data.birthday,
-                interests: data.interests || [],
-                avatar: data.avatar || "",
-            };
+            const formData = new FormData();
+
+            formData.append('gender', data.gender || 'female');
+            formData.append('role', data.role || tab.toLowerCase());
+            formData.append('name', data.name || '');
+            formData.append('birthday', data.birthday ? data.birthday.toISOString() : '');
+            formData.append('interests', JSON.stringify(data.interests || []));
             
+            if (data.avatar && data.avatar.startsWith('blob:')) {
+                try {
+                    const blobResponse = await fetch(data.avatar);
+                    const avatarBlob = await blobResponse.blob();
+                    formData.append('avatar', avatarBlob, 'avatar.png');
+                } catch (blobError) {
+                    console.error('Error converting blob to file:', blobError);
+                    toast.error('Error processing avatar image');
+                    return false;
+                }
+            } else if (data.avatar && typeof data.avatar === 'object' && (data.avatar as object) instanceof File) {
+                formData.append('avatar', data.avatar);
+            } else if (typeof data.avatar === 'string') {
+                formData.append('avatarPath', data.avatar);
+            }
+
+            // Log FormData contents for debugging
+            console.log('FormData contents:');
+            for (const [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+
             const result = await requestApi({
                 route: "/users/",
                 method: requestMethods.POST,
-                body: JSON.stringify(submitData),
+                body: formData,
             });
-            if (result) {
+            if (result && result.user) {
                 console.log(result.user);
                 // Success Toast
                 toast.success(`Create your ${tab} successful, check your email.`);
@@ -213,18 +405,19 @@ const AddMembersForm : React.FC = () => {
                                 </div>
                             </PopoverTrigger>
                             <PopoverContent
-                                className="w-auto p-0 justify-center bg-white z-50 shadow-md rounded-md"
-                                style={{ pointerEvents: "auto" }} // Ensure it captures interaction
+                                className="w-auto p-0"
+                                align="center"
+                                side="bottom"
+                                sideOffset={4}
+                                avoidCollisions={true}
+                                collisionPadding={8}
                             >
-                                <Calendar
-                                    mode="single"
+                                <EnhancedCalendar
                                     selected={selectedDate}
                                     onSelect={onDateSelect}
                                     disabled={(date) =>
                                         date > new Date() || date < new Date("1900-01-01")
                                     }
-                                    initialFocus
-                                    className="rounded-md justify-center items-center bg-white"
                                 />
                             </PopoverContent>
                         </Popover>

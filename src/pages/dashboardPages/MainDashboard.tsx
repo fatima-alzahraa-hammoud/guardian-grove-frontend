@@ -8,6 +8,12 @@ import { resetChats } from "../../redux/slices/chatSlice";
 import GoalsAndAdventures from "../../components/dashboardComponents/GoalsAndAdventures";
 import FamilyJournal from "../../components/dashboardComponents/FamilyJournal";
 import AINotifications from "../../components/dashboardComponents/AINotifications";
+import Notes from "../../components/dashboardComponents/Notes";
+import BondingActivities from "../../components/dashboardComponents/BondingActivities";
+import FamilyMessaging from "../../components/dashboardComponents/FamilyMessaging";
+import CalendarEvents from "../../components/dashboardComponents/CalendarEvents";
+import FunZone from "../../components/dashboardComponents/FunZone";
+import ExploreLearn from "../../components/dashboardComponents/ExploreAndLearn";
 
 const Main : React.FC = () => {
 
@@ -20,7 +26,7 @@ const Main : React.FC = () => {
             case 'profile':
                 return <MyProfile />;
             case 'notes':
-                return <div className="pt-20">Notes Content</div>;
+                return <Notes />;
             case 'achievements':
                 return <Achievements collapsed={collapsed}/>;
             case 'familyTree':
@@ -31,6 +37,16 @@ const Main : React.FC = () => {
                 return <GoalsAndAdventures collapsed={collapsed}/>
             case 'notifications':
                 return <AINotifications collapsed={collapsed}/>
+            case 'funZone':
+                return <FunZone collapsed={collapsed}/>
+            case 'bondingActivities':
+                return <BondingActivities collapsed={collapsed}/>
+            case 'explore&learn':
+                return <ExploreLearn collapsed={collapsed}/>
+            case 'familyMessaging':
+                return <FamilyMessaging/>
+            case 'calendar':
+                return <CalendarEvents />
             default:
                 return <div>Select a section</div>;
         }

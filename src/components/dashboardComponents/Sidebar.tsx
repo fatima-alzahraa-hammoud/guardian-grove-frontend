@@ -29,12 +29,17 @@ import funWhiteImage from '/assets/images/dashboard/funZoneWhite.png';
 import calendarWhiteImage from '/assets/images/dashboard/calendarWhite.png';
 import logoutImage from '/assets/images/dashboard/logout.svg';
 import infoImage from '/assets/images/dashboard/badge-info.svg';
+import bondingBlackImag from '/assets/images/dashboard/bondingBlackImage.png';
+import bondingWhiteImage from '/assets/images/dashboard/bondingWhiteImage.png';
+import WhiteFamilyMessaging from '/assets/images/dashboard/WhiteFamilyMessaging.png';
+import BlackFamilyMessaging from '/assets/images/dashboard/BlackFamilyMessaging.png';
 import "../../styles/sidebar.css";
 import { useDispatch, useSelector } from 'react-redux';
 import { selectGender } from '../../redux/slices/userSlice';
 import { logout } from '../../redux/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
 import SettingsDialog from '../common/UpdatePasswordDialog';
+import { useAccessibility } from '../../contexts/AccessibilityContext';
 
 interface SidebarProps {
   activeSection: string;
@@ -50,6 +55,7 @@ function classNames(...classes: string[]) {
 const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, collapsed, setCollapsed }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { handGestureEnabled, voiceGuidanceEnabled, setHandGestureEnabled, setVoiceGuidanceEnabled } = useAccessibility();
 
   const [isFamilyOpen, setIsFamilyOpen] = useState(false);
   const gender = useSelector(selectGender);
@@ -85,7 +91,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, coll
           </div>
 
 
-          <nav className="flex flex-col space-y-2 mt-6 overflow-y-auto md:custom-scrollbar md:max-h-[50vh] lg:max-h-screen">
+          <nav className="flex flex-col space-y-2 mt-6 overflow-y-auto md:custom-scrollbar md:max-h-[50vh] lg:max-h-[70vh]">
             <SidebarItem icon={activeSection === "profile" ? profileWhiteImage : profileBlackImage} label="My Profile" collapsed={collapsed} onClick={() => setActiveSection('profile')} isActive={activeSection === 'profile'} />
             <SidebarItem icon={activeSection === "notes" ? notesWhiteImage : notesBlackImage} label="My Notes" collapsed={collapsed} onClick={() => setActiveSection('notes')} isActive={activeSection === 'notes'} />
 
@@ -123,13 +129,20 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, coll
             <SidebarItem icon={activeSection === "explore&learn" ? exploreWhiteImage : exploreBlackImage} label="Explore & Learn" collapsed={collapsed} onClick={() => setActiveSection('explore&learn')} isActive={activeSection === 'explore&learn'} />
             <SidebarItem icon={activeSection === "funZone" ? funWhiteImage : funBlackImage} label="Fun Zone" collapsed={collapsed} onClick={() => setActiveSection('funZone')} isActive={activeSection === 'funZone'} />
             <SidebarItem icon={activeSection === "calendar" ? calendarWhiteImage : calendarBlackImage} label="Calendar" collapsed={collapsed} onClick={() => setActiveSection('calendar')} isActive={activeSection === 'calendar'} />
+            <SidebarItem icon={activeSection === "bondingActivities" ? bondingWhiteImage : bondingBlackImag} label="Bonding Activities" collapsed={collapsed}  onClick={() => setActiveSection('bondingActivities')}  isActive={activeSection === 'bondingActivities'}  />
+            <SidebarItem icon={activeSection === "familyMessaging" ? WhiteFamilyMessaging : BlackFamilyMessaging} label="Family Messaging" collapsed={collapsed}  onClick={() => setActiveSection('familyMessaging')}  isActive={activeSection === 'familyMessaging'}  />
           </nav>
         </div>
 
         <div className="flex justify-between pt-3 pb-6 pl-9 pr-9">
           <FooterIcon icon={logoutImage} onClick={handleLogout}/>
           <FooterIcon icon={infoImage} />
-          <SettingsDialog />
+          <SettingsDialog
+            handGestureEnabled={handGestureEnabled}
+            onHandGestureToggle={setHandGestureEnabled}
+            voiceEnabled={voiceGuidanceEnabled}
+            onVoiceToggle={setVoiceGuidanceEnabled}
+          />
         </div>
       </div>
     </div>

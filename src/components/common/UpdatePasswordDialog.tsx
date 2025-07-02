@@ -8,14 +8,28 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { ChevronDown, ChevronUp, KeyRound } from "lucide-react";
+import { Switch } from "../ui/switch";
+import { ChevronDown, ChevronUp, KeyRound, Hand, Volume2, VolumeX } from "lucide-react";
 import { toast } from 'react-toastify';
 import { requestApi } from '../../libs/requestApi';
 import { requestMethods } from '../../libs/enum/requestMethods';
 import FormErrorMessage from './FormErrorMessage';
 
-const SettingsDialog = () => {
+interface SettingsDialogProps {
+  handGestureEnabled?: boolean;
+  onHandGestureToggle?: (enabled: boolean) => void;
+  voiceEnabled?: boolean;
+  onVoiceToggle?: (enabled: boolean) => void;
+}
+
+const SettingsDialog: React.FC<SettingsDialogProps> = ({
+  handGestureEnabled = false,
+  onHandGestureToggle,
+  voiceEnabled = true,
+  onVoiceToggle
+}) => {
     const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+    const [showAccessibilityDialog, setShowAccessibilityDialog] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [passwordForm, setPasswordForm] = useState({
         oldPassword: '',
@@ -135,6 +149,37 @@ const SettingsDialog = () => {
         }
     };
 
+    const handleHandGestureToggle = (checked: boolean) => {
+        if (onHandGestureToggle) {
+            onHandGestureToggle(checked);
+        }
+        
+        if (checked) {
+            toast.success("Hand gesture control enabled!");
+            // Request camera permission
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(() => {
+                    console.log('Camera permission granted');
+                })
+                .catch((error) => {
+                    console.error('Camera permission denied:', error);
+                    toast.error("Camera permission required for hand gestures");
+                    if (onHandGestureToggle) {
+                        onHandGestureToggle(false);
+                    }
+                });
+        } else {
+            toast.info("Hand gesture control disabled");
+        }
+    };
+
+    const handleVoiceToggle = (checked: boolean) => {
+        if (onVoiceToggle) {
+            onVoiceToggle(checked);
+        }
+        toast.info(checked ? "Voice guidance enabled" : "Voice guidance disabled");
+    };
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -142,11 +187,78 @@ const SettingsDialog = () => {
                     <img src="/assets/images/dashboard/settings.svg" alt="settings" className="w-4 h-4" />
                 </div>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Settings</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
+                    
+                    {/* Accessibility Settings */}
+                    <Button
+                        variant="ghost"
+                        className="w-full flex justify-between items-center"
+                        onClick={() => setShowAccessibilityDialog(!showAccessibilityDialog)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <Hand className="h-4 w-4" />
+                            <span>Accessibility Controls</span>
+                        </div>
+                        {showAccessibilityDialog ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    </Button>
+
+                    {showAccessibilityDialog && (
+                        <div className="space-y-4 p-4 border rounded-lg">
+                            <div className="space-y-4">
+                                {/* Hand Gesture Control */}
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Hand className="h-4 w-4" />
+                                        <div>
+                                            <p className="text-sm font-medium">Hand Gesture Control</p>
+                                            <p className="text-xs text-gray-500">Control the interface with hand gestures</p>
+                                        </div>
+                                    </div>
+                                    <Switch
+                                        checked={handGestureEnabled}
+                                        onCheckedChange={handleHandGestureToggle}
+                                    />
+                                </div>
+
+                                {/* Voice Guidance */}
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        {voiceEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                                        <div>
+                                            <p className="text-sm font-medium">Voice Guidance</p>
+                                            <p className="text-xs text-gray-500">AI voice instructions for navigation</p>
+                                        </div>
+                                    </div>
+                                    <Switch
+                                        checked={voiceEnabled}
+                                        onCheckedChange={handleVoiceToggle}
+                                    />
+                                </div>
+
+                                {/* Gesture Instructions */}
+                                {handGestureEnabled && (
+                                    <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                                        <h4 className="text-sm font-semibold mb-2">Gesture Guide:</h4>
+                                        <div className="text-xs space-y-1">
+                                            <div>👆 Point (Index) - Navigate/Hover</div>
+                                            <div>✌️ Peace (Index+Middle) - Click</div>
+                                            <div>🤏 Pinch (Thumb+Index) - Right Click</div>
+                                            <div>🤚 Open Palm - Back/Close Modal</div>
+                                            <div>✊ Fist - Refresh Page</div>
+                                            <div>🤞 Index+Pinky - Scroll Up</div>
+                                            <div>🤘 Middle+Ring - Scroll Down</div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Password Update */}
                     <Button
                         variant="ghost"
                         className="w-full flex justify-between items-center"

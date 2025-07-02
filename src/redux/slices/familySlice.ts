@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface FamilyMember {
+    _id: string;
     name: string;
     role: string;
     avatar: string;
@@ -40,11 +41,14 @@ const familySlice = createSlice({
         updateFamilyName: (state, action: PayloadAction<string>) => {
             state.familyName = action.payload
         },
+        updateFamilyAvatar: (state, action: PayloadAction<string>) => {
+            state.familyAvatar = action.payload;
+        },
         clearFamily: () => initialState,
     },
 });
 
-export const { setFamily, clearFamily, updateFamilyName} = familySlice.actions;
+export const { setFamily, clearFamily, updateFamilyName, updateFamilyAvatar} = familySlice.actions;
 
 export const selectFamilyStars = (state: { family: FamilyState }) => state.family.totalStars;
 export const selectFamilyAvatar = (state: { family: FamilyState }) => state.family.familyAvatar;

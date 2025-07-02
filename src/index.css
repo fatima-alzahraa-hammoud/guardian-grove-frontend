@@ -478,3 +478,85 @@ button:focus-visible {
     margin: 0 1rem;
   }
 }
+
+[contentEditable] ul {
+    list-style-type: disc !important;
+    padding-left: 30px !important;
+    margin: 10px 0 !important;
+}
+
+[contentEditable] ol {
+    list-style-type: decimal !important;
+    padding-left: 30px !important;
+    margin: 10px 0 !important;
+}
+
+[contentEditable] li {
+    display: list-item !important;
+    list-style: inherit !important;
+    margin: 5px 0 !important;
+    padding-left: 5px !important;
+}
+
+[contentEditable] ul li {
+    list-style-type: disc !important;
+}
+
+[contentEditable] ol li {
+    list-style-type: decimal !important;
+}
+
+[contentEditable] ul ul {
+    list-style-type: circle !important;
+}
+
+[contentEditable] ul ul ul {
+    list-style-type: square !important;
+}
+
+[contentEditable] ol ol {
+    list-style-type: lower-alpha !important;
+}
+
+[contentEditable] ol ol ol {
+    list-style-type: lower-roman !important;
+}
+
+/* Text overflow with ellipsis for content editor */
+[contentEditable] {
+    display: -webkit-box;
+    -webkit-line-clamp: 20;
+    line-clamp: 20; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* When focused, allow full scrolling */
+[contentEditable]:focus {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    -webkit-box-orient: unset;
+    overflow-y: auto;
+    max-height: 500px;
+}
+
+/* Custom scrollbar for better UX */
+[contentEditable]:focus::-webkit-scrollbar {
+    width: 8px;
+}
+
+[contentEditable]:focus::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+[contentEditable]:focus::-webkit-scrollbar-thumb {
+    background: #3A8EBA;
+    border-radius: 4px;
+}
+
+[contentEditable]:focus::-webkit-scrollbar-thumb:hover {
+    background: #2C7EA8;
+}
