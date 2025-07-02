@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice';
 import userReducer from './slices/userSlice';
 import familyReducer from './slices/familySlice';
 import chatReducer from './slices/chatSlice';
+import messageReducer from './slices/messageSlice';
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     user: userReducer,
     family: familyReducer,
     chat: chatReducer,
+    messages: messageReducer, 
   },
 });
 
