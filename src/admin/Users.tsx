@@ -25,6 +25,26 @@ interface User {
     avatar?: string;
 }
 
+// API Response User interface
+interface ApiUser {
+    _id?: string;
+    id?: number;
+    name: string;
+    email: string;
+    role: 'user' | 'admin' | 'parent' | 'child';
+    status?: 'active' | 'banned';
+    achievements?: Array<{
+        _id: string;
+        name: string;
+        description?: string;
+        points?: number;
+        dateEarned?: string;
+    }>;
+    stars?: number;
+    coins?: number;
+    avatar?: string;
+}
+
 const Users: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
@@ -42,7 +62,7 @@ const Users: React.FC = () => {
             setError(null);
             console.log("Fetching users...");
             
-            const response = await requestApi({
+            const response: ApiUser[] = await requestApi({
                 route: "/users/", // Using your existing backend endpoint
                 method: requestMethods.GET
             });
@@ -51,8 +71,8 @@ const Users: React.FC = () => {
             
             if (response) {
                 // Transform backend data to match frontend interface
-                const transformedUsers = response.map((user: any) => ({
-                    id: user._id || user.id,
+                const transformedUsers: User[] = response.map((user: ApiUser) => ({
+                    id: user._id ? parseInt(user._id) : user.id || 0,
                     name: user.name,
                     email: user.email,
                     role: user.role,

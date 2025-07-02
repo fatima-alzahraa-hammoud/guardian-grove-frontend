@@ -13,14 +13,63 @@ import StatCard from './StatCard'
 import { requestApi } from '../libs/requestApi'
 import { requestMethods } from '../libs/enum/requestMethods'
 
+// Member interface
+interface Member {
+    _id: string;
+    name: string;
+    email?: string;
+    role?: string;
+    avatar?: string;
+    stars?: number;
+    coins?: number;
+    status?: string;
+}
+
+// Achievement interface
+interface Achievement {
+    _id: string;
+    name: string;
+    description?: string;
+    points?: number;
+    dateEarned?: string;
+}
+
+// Family interface
 interface Family {
     _id: string;
     familyName: string;
     email: string;
-    members: any[];
+    members: Member[];
     totalStars: number;
-    achievements: any[];
+    achievements: Achievement[];
     familyAvatar?: string;
+}
+
+// API Response interfaces
+interface FamilyResponse {
+    _id: string;
+    familyName: string;
+    email: string;
+    totalStars?: number;
+    familyAvatar?: string;
+    achievements?: Achievement[];
+    members?: Member[];
+}
+
+interface FamiliesApiResponse {
+    families: FamilyResponse[];
+    success?: boolean;
+    message?: string;
+}
+
+interface FamilyMembersResponse {
+    familyWithMembers?: {
+        _id: string;
+        familyName: string;
+        members: Member[];
+    };
+    success?: boolean;
+    message?: string;
 }
 
 interface StatTrend {
@@ -51,7 +100,7 @@ const Families: React.FC = () => {
             setError(null);
             console.log("Fetching families...");
             
-            const response = await requestApi({
+            const response: FamiliesApiResponse = await requestApi({
                 route: "/family/", // Using your existing backend endpoint
                 method: requestMethods.GET
             });
@@ -63,10 +112,10 @@ const Families: React.FC = () => {
                 
                 // Fetch members for each family to get accurate member count
                 const familiesWithMembers = await Promise.all(
-                    response.families.map(async (family: any) => {
+                    response.families.map(async (family: FamilyResponse): Promise<Family> => {
                         try {
                             console.log(`Fetching members for family ${family._id}`);
-                            const membersResponse = await requestApi({
+                            const membersResponse: FamilyMembersResponse = await requestApi({
                                 route: "/family/FamilyMembers",
                                 method: requestMethods.POST,
                                 body: { familyId: family._id }
@@ -76,13 +125,23 @@ const Families: React.FC = () => {
                             console.log(`Family ${family.familyName} has ${members.length} members`);
                             
                             return {
-                                ...family,
+                                _id: family._id,
+                                familyName: family.familyName,
+                                email: family.email,
+                                totalStars: family.totalStars || 0,
+                                familyAvatar: family.familyAvatar,
+                                achievements: family.achievements || [],
                                 members: members
                             };
                         } catch (error) {
                             console.error(`Error fetching members for family ${family._id}:`, error);
                             return {
-                                ...family,
+                                _id: family._id,
+                                familyName: family.familyName,
+                                email: family.email,
+                                totalStars: family.totalStars || 0,
+                                familyAvatar: family.familyAvatar,
+                                achievements: family.achievements || [],
                                 members: []
                             };
                         }
@@ -164,6 +223,7 @@ const Families: React.FC = () => {
     const sortedFamilies = getSortedFamilies(families);
     const totalAchievements = families.reduce((acc, family) => acc + family.achievements.length, 0);
     const totalStars = families.reduce((acc, family) => acc + (family.totalStars || 0), 0);
+    const totalMembers = families.reduce((acc, family) => acc + family.members.length, 0);
 
     const getProgressPercentage = (stars: number, maxStars: number = 1000): number => {
         return Math.min((stars / maxStars) * 100, 100);
@@ -217,7 +277,7 @@ const Families: React.FC = () => {
                 />
                 <StatCard
                     title="Total Members"
-                    value="18"
+                    value={totalMembers.toString()}
                     icon={<Users className="h-5 w-5 text-primary" />}
                     trend={{ value: 8, isPositive: true } as StatTrend}
                     padding="pl-10"

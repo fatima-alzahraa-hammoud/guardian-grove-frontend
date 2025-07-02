@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { BarChart, Users, Star, Coins, Trophy, Target } from 'lucide-react'
 import UserActivityChart from "./UserActivityChart"
@@ -32,6 +32,56 @@ interface RecentActivity {
     avatar?: string;
 }
 
+// API Response Types
+interface User {
+    name?: string;
+    stars?: number;
+    coins?: number;
+    status?: string;
+    memberSince?: string;
+    role?: string;
+    avatar?: string;
+}
+
+interface Family {
+    familyName?: string;
+    familyAvatar?: string;
+    totalStars?: number;
+}
+
+interface Achievement {
+    id: string;
+    name: string;
+}
+
+interface StoreItem {
+    id: string;
+    name: string;
+}
+
+interface LeaderboardEntry {
+    familyName: string;
+    familyAvatar: string;
+    stars: number;
+    rank: number;
+}
+
+interface LeaderboardResponse {
+    weeklyTop10?: LeaderboardEntry[];
+}
+
+interface FamiliesResponse {
+    families?: Family[];
+}
+
+interface AchievementsResponse {
+    achievements?: Achievement[];
+}
+
+interface StoreResponse {
+    items?: StoreItem[];
+}
+
 const AdminDashboard: React.FC = () => {
     const [stats, setStats] = useState<DashboardStats>({
         totalUsers: 0,
@@ -46,11 +96,115 @@ const AdminDashboard: React.FC = () => {
     const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchDashboardData();
+    const fetchUsers = async (): Promise<User[]> => {
+        try {
+            const response = await requestApi({
+                route: "/users/",
+                method: requestMethods.GET
+            });
+            return response || [];
+        } catch (error) {
+            console.error("Error fetching users:", error);
+            return [];
+        }
+    };
+
+    const fetchFamilies = async (): Promise<Family[]> => {
+        try {
+            const response: FamiliesResponse = await requestApi({
+                route: "/family/",
+                method: requestMethods.GET
+            });
+            return response?.families || [];
+        } catch (error) {
+            console.error("Error fetching families:", error);
+            return [];
+        }
+    };
+
+    const fetchAchievements = async (): Promise<Achievement[]> => {
+        try {
+            const response: AchievementsResponse = await requestApi({
+                route: "/achievements/",
+                method: requestMethods.GET
+            });
+            return response?.achievements || [];
+        } catch (error) {
+            console.error("Error fetching achievements:", error);
+            return [];
+        }
+    };
+
+    const fetchStoreItems = async (): Promise<StoreItem[]> => {
+        try {
+            const response: StoreResponse = await requestApi({
+                route: "/store/",
+                method: requestMethods.GET
+            });
+            return response?.items || [];
+        } catch (error) {
+            console.error("Error fetching store items:", error);
+            return [];
+        }
+    };
+
+    const fetchLeaderboard = async (): Promise<LeaderboardResponse | null> => {
+        try {
+            const response: LeaderboardResponse = await requestApi({
+                route: "/family/leaderboard",
+                method: requestMethods.GET
+            });
+            return response || null;
+        } catch (error) {
+            console.error("Error fetching leaderboard:", error);
+            return null;
+        }
+    };
+
+    const generateRecentActivities = useCallback((users: User[], families: Family[]) => {
+        const activities: RecentActivity[] = [];
+        
+        if (users.length > 0) {
+            // Sort users by memberSince (most recent first)
+            const recentUsers = users
+                .filter(user => user.memberSince)
+                .sort((a, b) => {
+                    const dateA = a.memberSince ? new Date(a.memberSince).getTime() : 0;
+                    const dateB = b.memberSince ? new Date(b.memberSince).getTime() : 0;
+                    return dateB - dateA;
+                })
+                .slice(0, 3);
+
+            recentUsers.forEach((user) => {
+                if (user.memberSince) {
+                    const timeAgo = getTimeAgo(new Date(user.memberSince));
+                    activities.push({
+                        user: user.name || 'Unknown User',
+                        action: user.role === 'parent' ? 'joined as a parent' : 'joined the family',
+                        time: timeAgo,
+                        avatar: user.avatar
+                    });
+                }
+            });
+        }
+
+        // Add some family-related activities
+        if (families.length > 0) {
+            const recentFamilies = families.slice(0, 2);
+            recentFamilies.forEach((family, index) => {
+                activities.push({
+                    user: family.familyName || 'Unknown Family',
+                    action: 'created a new family',
+                    time: `${index + 1} day${index > 0 ? 's' : ''} ago`,
+                    avatar: family.familyAvatar
+                });
+            });
+        }
+
+        setRecentActivities(activities.slice(0, 4));
     }, []);
 
-    const fetchDashboardData = async () => {
+    const fetchDashboardData = useCallback(async () => {
         try {
             setLoading(true);
             
@@ -71,12 +225,12 @@ const AdminDashboard: React.FC = () => {
 
             // Calculate stats from the responses
             const totalUsers = usersResponse?.length || 0;
-            const activeUsers = usersResponse?.filter((user: any) => user.status !== 'banned')?.length || 0;
+            const activeUsers = usersResponse?.filter((user: User) => user.status !== 'banned')?.length || 0;
             const totalFamilies = familiesResponse?.length || 0;
             
             // Calculate total stars and coins from all users
-            const totalStarsEarned = usersResponse?.reduce((sum: number, user: any) => sum + (user.stars || 0), 0) || 0;
-            const totalCoinsEarned = usersResponse?.reduce((sum: number, user: any) => sum + (user.coins || 0), 0) || 0;
+            const totalStarsEarned = usersResponse?.reduce((sum: number, user: User) => sum + (user.stars || 0), 0) || 0;
+            const totalCoinsEarned = usersResponse?.reduce((sum: number, user: User) => sum + (user.coins || 0), 0) || 0;
             
             const totalAchievements = achievementsResponse?.length || 0;
             const totalStoreItems = storeResponse?.length || 0;
@@ -93,7 +247,7 @@ const AdminDashboard: React.FC = () => {
 
             // Set top families from leaderboard - get first 3 families from weekly leaderboard
             if (leaderboardResponse?.weeklyTop10 && leaderboardResponse.weeklyTop10.length > 0) {
-                const topThree = leaderboardResponse.weeklyTop10.slice(0, 3).map((family: any) => ({
+                const topThree = leaderboardResponse.weeklyTop10.slice(0, 3).map((family: LeaderboardEntry) => ({
                     familyName: family.familyName,
                     familyAvatar: family.familyAvatar,
                     totalStars: family.stars,
@@ -103,11 +257,11 @@ const AdminDashboard: React.FC = () => {
             } else if (familiesResponse && familiesResponse.length > 0) {
                 // Fallback: sort families by totalStars if leaderboard is not available
                 const sortedFamilies = familiesResponse
-                    .sort((a: any, b: any) => (b.totalStars || 0) - (a.totalStars || 0))
+                    .sort((a: Family, b: Family) => (b.totalStars || 0) - (a.totalStars || 0))
                     .slice(0, 3)
-                    .map((family: any, index: number) => ({
-                        familyName: family.familyName,
-                        familyAvatar: family.familyAvatar,
+                    .map((family: Family, index: number) => ({
+                        familyName: family.familyName || 'Unknown Family',
+                        familyAvatar: family.familyAvatar || '',
                         totalStars: family.totalStars || 0,
                         rank: index + 1
                     }));
@@ -122,109 +276,11 @@ const AdminDashboard: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [generateRecentActivities]);
 
-    const fetchUsers = async () => {
-        try {
-            const response = await requestApi({
-                route: "/users/",
-                method: requestMethods.GET
-            });
-            return response || [];
-        } catch (error) {
-            console.error("Error fetching users:", error);
-            return [];
-        }
-    };
-
-    const fetchFamilies = async () => {
-        try {
-            const response = await requestApi({
-                route: "/family/",
-                method: requestMethods.GET
-            });
-            return response?.families || [];
-        } catch (error) {
-            console.error("Error fetching families:", error);
-            return [];
-        }
-    };
-
-    const fetchAchievements = async () => {
-        try {
-            const response = await requestApi({
-                route: "/achievements/",
-                method: requestMethods.GET
-            });
-            return response?.achievements || [];
-        } catch (error) {
-            console.error("Error fetching achievements:", error);
-            return [];
-        }
-    };
-
-    const fetchStoreItems = async () => {
-        try {
-            const response = await requestApi({
-                route: "/store/",
-                method: requestMethods.GET
-            });
-            return response?.items || [];
-        } catch (error) {
-            console.error("Error fetching store items:", error);
-            return [];
-        }
-    };
-
-    const fetchLeaderboard = async () => {
-        try {
-            const response = await requestApi({
-                route: "/family/leaderboard",
-                method: requestMethods.GET
-            });
-            return response || null;
-        } catch (error) {
-            console.error("Error fetching leaderboard:", error);
-            return null;
-        }
-    };
-
-    const generateRecentActivities = (users: any[], families: any[]) => {
-        const activities: RecentActivity[] = [];
-        
-        if (users.length > 0) {
-            // Sort users by memberSince (most recent first)
-            const recentUsers = users
-                .filter(user => user.memberSince)
-                .sort((a, b) => new Date(b.memberSince).getTime() - new Date(a.memberSince).getTime())
-                .slice(0, 3);
-
-            recentUsers.forEach((user) => {
-                const timeAgo = getTimeAgo(new Date(user.memberSince));
-                activities.push({
-                    user: user.name || 'Unknown User',
-                    action: user.role === 'parent' ? 'joined as a parent' : 'joined the family',
-                    time: timeAgo,
-                    avatar: user.avatar
-                });
-            });
-        }
-
-        // Add some family-related activities
-        if (families.length > 0) {
-            const recentFamilies = families.slice(0, 2);
-            recentFamilies.forEach((family, index) => {
-                activities.push({
-                    user: family.familyName || 'Unknown Family',
-                    action: 'created a new family',
-                    time: `${index + 1} day${index > 0 ? 's' : ''} ago`,
-                    avatar: family.familyAvatar
-                });
-            });
-        }
-
-        setRecentActivities(activities.slice(0, 4));
-    };
+    useEffect(() => {
+        fetchDashboardData();
+    }, [fetchDashboardData]);
 
     const getTimeAgo = (date: Date): string => {
         const now = new Date();
