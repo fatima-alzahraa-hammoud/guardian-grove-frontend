@@ -133,18 +133,18 @@ const AnimatedCoin: React.FC = () => {
 
 // Mock data - replace with your actual data fetching
 const mockChildData = {
-  name: "Fatima Hammoud",
+  name: "Tasnim Hammoud",
   age: 10,
   memberSince: "17, 12, 2023",
-  familyEmail: "fatimaalzahraahammoud@gmail.com",
+  familyEmail: "tasnimhammoud@gmail.com",
   avatar: "https://via.placeholder.com/150",
   personalRank: 3,
   totalStars: 170,
   totalCoins: 20,
-  about: "Fatima is thriving in creativity and learning, with notable achievements in problem-solving and storytelling. They are most active during the afternoon, excelling in physical tasks and creative challenges. Monitoring shows positive social interactions and a healthy routine, with room to encourage group activities and family bonding for holistic growth.",
+  about: "Tasnim is thriving in creativity and learning, with notable achievements in problem-solving and storytelling. They are most active during the afternoon, excelling in physical tasks and creative challenges. Monitoring shows positive social interactions and a healthy routine, with room to encourage group activities and family bonding for holistic growth.",
   currentLocation: "Al-Mahdi School",
-  locationUpdate: "Fatima left school at 2:45 PM, which is earlier than usual",
-  soundsMonitored: "Bullying keywords detected during a call at 4:45 PM. Please check in with Fatima.",
+  locationUpdate: "Tasnim left school at 2:45 PM, which is earlier than usual",
+  soundsMonitored: "Bullying keywords detected during a call at 4:45 PM. Please check in with Tasnim.",
   dailyRoutine: [
     { activity: "Wake Up", time: "10:00 a.m", color: "bg-blue-100 border-blue-300" },
     { activity: "Breakfast", time: "10:30 a.m", color: "bg-pink-100 border-pink-300" },
@@ -154,7 +154,7 @@ const mockChildData = {
   ],
   routineHighlights: [
     {
-      text: "Fatima is most active and engaged between 3 PM and 5 PM.",
+      text: "Tasnim is most active and engaged between 3 PM and 5 PM.",
       color: "bg-blue-50 border-blue-200 text-blue-800"
     },
     {
@@ -166,7 +166,7 @@ const mockChildData = {
       color: "bg-orange-50 border-orange-200 text-orange-800"
     },
     {
-      text: "Fatima is most active and engaged between 3 PM and 5 PM.",
+      text: "Tasnim is most active and engaged between 3 PM and 5 PM.",
       color: "bg-purple-50 border-purple-200 text-purple-800"
     }
   ],
@@ -192,11 +192,11 @@ const mockChildData = {
     { title: "Reading Champion", icon: "📚" }
   ],
   growthInsights: [
-    "Fatima is showing significant improvement in creative thinking and problem-solving.",
+    "Tasnim is showing significant improvement in creative thinking and problem-solving.",
     "They excel in completing physical tasks but need encouragement to participate in group activities."
   ],
   recommendations: [
-    "Encourage Fatima to spend more time on group activities to build social skills.",
+    "Encourage Tasnim to spend more time on group activities to build social skills.",
     "Plan a family outing this weekend to strengthen family bonding."
   ]
 };
@@ -571,7 +571,7 @@ const ChildInsights = () => {
         transition={{ delay: 0.4, duration: 0.7 }}
       >
         <div className="flex gap-2 mb-2 items-center">
-          <h3 className="font-comic font-extrabold text-base">About Fatima:</h3>
+          <h3 className="font-comic font-extrabold text-base">About Tasnim:</h3>
           <motion.img 
             src={AIMessage} 
             alt="AI message" 
@@ -970,7 +970,7 @@ const ChildInsights = () => {
           >
             {/* Dashed Border */}
             <div className="absolute inset-0 m-[8px] border-[1.5px] border-dashed border-[#FF9800] rounded-md pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <h4 className="font-comic text-[16px] font-extrabold mb-4">Do you want to assign tasks to Fatima?</h4>
+            <h4 className="font-comic text-[16px] font-extrabold mb-4">Do you want to assign tasks to Tasnim?</h4>
             <motion.button 
               className="bg-[#3A8EBA] text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors"
               whileHover={{ scale: 1.05 }}
@@ -1051,7 +1051,7 @@ const ChildInsights = () => {
           whileHover={{ boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)" }}
         >
           <h3 className="font-comic font-extrabold mb-4 text-base text-center">
-            Do you Like to send a feedback about Fatima?
+            Do you Like to send a feedback about Tasnim?
           </h3>
           <textarea
             value={feedback}
@@ -1106,7 +1106,7 @@ const ChildInsights = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Want to discuss Fatima's progress with your AI friend?
+          Want to discuss Tasnim's progress with your AI friend?
         </motion.h3>
         <motion.button
           onClick={() => navigate("/dashboard/AIFriend")}
@@ -1150,7 +1150,7 @@ const ChildInsights = () => {
             >
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
             </motion.svg>
-            Talk to your AI friend about Fatima
+            Talk to your AI friend about Tasnim
           </span>
         </motion.button>
       </motion.div>

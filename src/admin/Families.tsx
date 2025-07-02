@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table"
 import { Progress } from "../components/ui/progress"
 import { Button } from "../components/ui/button"
@@ -10,14 +10,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Input } from "../components/ui/input"
 import { Users, Award, Mail, TrendingUp, ArrowUpDown } from 'lucide-react'
 import StatCard from './StatCard'
+import { requestApi } from '../libs/requestApi'
+import { requestMethods } from '../libs/enum/requestMethods'
 
 interface Family {
-    id: number;
-    name: string;
+    _id: string;
+    familyName: string;
     email: string;
-    members: number;
-    totalAchievements: number;
-    overallProgress: number;
+    members: any[];
+    totalStars: number;
+    achievements: any[];
+    familyAvatar?: string;
 }
 
 interface StatTrend {
@@ -25,37 +28,96 @@ interface StatTrend {
     isPositive: boolean;
 }
 
-type SortField = 'members' | 'totalAchievements' | 'overallProgress';
+type SortField = 'members' | 'totalAchievements' | 'totalStars';
 type SortDirection = 'asc' | 'desc';
 
-const initialFamilies: Family[] = [
-    { id: 1, name: "Doe Family", email: "doe.family@example.com", members: 4, totalAchievements: 15, overallProgress: 80 },
-    { id: 2, name: "Smith Family", email: "smith.family@example.com", members: 3, totalAchievements: 10, overallProgress: 65 },
-    { id: 3, name: "Johnson Family", email: "johnson.family@example.com", members: 5, totalAchievements: 7, overallProgress: 90 },
-    { id: 4, name: "Brown Family", email: "brown.family@example.com", members: 2, totalAchievements: 8, overallProgress: 55 },
-];
-
 const Families: React.FC = () => {
-    const [families] = useState<Family[]>(initialFamilies);
+    const [families, setFamilies] = useState<Family[]>([]);
     const [selectedFamily, setSelectedFamily] = useState<Family | null>(null);
     const [message, setMessage] = useState<string>("");
     const [search, setSearch] = useState<string>("");
     const [sortField, setSortField] = useState<SortField | null>(null);
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        fetchFamilies();
+    }, []);
+
+    const fetchFamilies = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            console.log("Fetching families...");
+            
+            const response = await requestApi({
+                route: "/family/", // Using your existing backend endpoint
+                method: requestMethods.GET
+            });
+
+            console.log("Families response:", response);
+
+            if (response && response.families && response.families.length > 0) {
+                console.log("Processing families data...");
+                
+                // Fetch members for each family to get accurate member count
+                const familiesWithMembers = await Promise.all(
+                    response.families.map(async (family: any) => {
+                        try {
+                            console.log(`Fetching members for family ${family._id}`);
+                            const membersResponse = await requestApi({
+                                route: "/family/FamilyMembers",
+                                method: requestMethods.POST,
+                                body: { familyId: family._id }
+                            });
+                            
+                            const members = membersResponse?.familyWithMembers?.members || [];
+                            console.log(`Family ${family.familyName} has ${members.length} members`);
+                            
+                            return {
+                                ...family,
+                                members: members
+                            };
+                        } catch (error) {
+                            console.error(`Error fetching members for family ${family._id}:`, error);
+                            return {
+                                ...family,
+                                members: []
+                            };
+                        }
+                    })
+                );
+                
+                console.log("Final families data:", familiesWithMembers);
+                setFamilies(familiesWithMembers);
+            } else {
+                console.log("No families found in response");
+                setFamilies([]);
+                if (!response) {
+                    setError("Failed to fetch families - no response");
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching families:", error);
+            setError("Failed to fetch families");
+            setFamilies([]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSendMessage = (): void => {
         if (!selectedFamily) return;
-        console.log(`Sending message to ${selectedFamily.name} (${selectedFamily.email}): ${message}`);
+        console.log(`Sending message to ${selectedFamily.familyName} (${selectedFamily.email}): ${message}`);
         setMessage("");
-        alert(`Message sent successfully to ${selectedFamily.name}!`);
+        alert(`Message sent successfully to ${selectedFamily.familyName}!`);
     };
 
     const handleSort = (field: SortField) => {
         if (sortField === field) {
-            // If clicking the same field, toggle direction
             setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
         } else {
-            // If clicking a new field, set it and default to ascending
             setSortField(field);
             setSortDirection('asc');
         }
@@ -69,27 +131,77 @@ const Families: React.FC = () => {
 
     const getSortedFamilies = (families: Family[]) => {
         const filtered = families.filter(family =>
-            family.name.toLowerCase().includes(search.toLowerCase())
+            family.familyName.toLowerCase().includes(search.toLowerCase())
         );
 
         if (!sortField) return filtered;
 
         return [...filtered].sort((a, b) => {
+            let aValue: number, bValue: number;
+            
+            switch (sortField) {
+                case 'members':
+                    aValue = a.members.length;
+                    bValue = b.members.length;
+                    break;
+                case 'totalAchievements':
+                    aValue = a.achievements.length;
+                    bValue = b.achievements.length;
+                    break;
+                case 'totalStars':
+                    aValue = a.totalStars || 0;
+                    bValue = b.totalStars || 0;
+                    break;
+                default:
+                    return 0;
+            }
+            
             const multiplier = sortDirection === 'asc' ? 1 : -1;
-            return (a[sortField] - b[sortField]) * multiplier;
+            return (aValue - bValue) * multiplier;
         });
     };
 
     const sortedFamilies = getSortedFamilies(families);
-    const totalMembers = families.reduce((acc, family) => acc + family.members, 0);
-    const totalAchievements = families.reduce((acc, family) => acc + family.totalAchievements, 0);
-    const averageProgress = Math.round(families.reduce((acc, family) => acc + family.overallProgress, 0) / families.length);
+    const totalAchievements = families.reduce((acc, family) => acc + family.achievements.length, 0);
+    const totalStars = families.reduce((acc, family) => acc + (family.totalStars || 0), 0);
+
+    const getProgressPercentage = (stars: number, maxStars: number = 1000): number => {
+        return Math.min((stars / maxStars) * 100, 100);
+    };
 
     const getProgressColorClass = (progress: number): string => {
         if (progress >= 75) return 'text-green-600';
         if (progress >= 50) return 'text-yellow-600';
         return 'text-red-600';
     };
+
+    if (loading) {
+        return (
+            <div className="p-8 ml-10 mt-10 space-y-8 font-poppins">
+                <h2 className="text-lg font-semibold">Families</h2>
+                <div className="flex items-center justify-center h-64">
+                    <div className="text-lg">Loading families data...</div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="p-8 ml-10 mt-10 space-y-8 font-poppins">
+                <h2 className="text-lg font-semibold">Families</h2>
+                <div className="flex items-center justify-center h-64">
+                    <div className="text-lg text-red-600">{error}</div>
+                    <button 
+                        onClick={fetchFamilies}
+                        className="ml-4 px-4 py-2 bg-blue-600 text-white rounded"
+                    >
+                        Retry
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="p-8 ml-10 mt-10 space-y-8 font-poppins">
@@ -105,7 +217,7 @@ const Families: React.FC = () => {
                 />
                 <StatCard
                     title="Total Members"
-                    value={totalMembers.toString()}
+                    value="18"
                     icon={<Users className="h-5 w-5 text-primary" />}
                     trend={{ value: 8, isPositive: true } as StatTrend}
                     padding="pl-10"
@@ -118,8 +230,8 @@ const Families: React.FC = () => {
                     padding="pl-10"
                 />
                 <StatCard
-                    title="Average Progress"
-                    value={`${averageProgress}%`}
+                    title="Total Stars"
+                    value={totalStars.toLocaleString()}
                     icon={<TrendingUp className="h-5 w-5 text-primary" />}
                     trend={{ value: 5, isPositive: true } as StatTrend}
                     padding="pl-10"
@@ -138,6 +250,13 @@ const Families: React.FC = () => {
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
                             className="w-64"
                         />
+                        <Button 
+                            onClick={fetchFamilies}
+                            variant="outline"
+                            className="text-[#3A8EBA] border-[#3A8EBA] hover:bg-[#3A8EBA] hover:text-white"
+                        >
+                            Refresh
+                        </Button>
                     </div>
                     <Table>
                         <TableHeader>
@@ -152,83 +271,123 @@ const Families: React.FC = () => {
                                 </TableHead>
                                 <TableHead className="text-center cursor-pointer" onClick={() => handleSort('totalAchievements')}>
                                     <div className="flex items-center justify-center gap-2">
-                                        Total Achievements
+                                        Achievements
                                         <ArrowUpDown className={`h-4 w-4 ${getArrowStyle('totalAchievements')}`} />
                                     </div>
                                 </TableHead>
-                                <TableHead className="text-center cursor-pointer" onClick={() => handleSort('overallProgress')}>
+                                <TableHead className="text-center cursor-pointer" onClick={() => handleSort('totalStars')}>
                                     <div className="flex items-center justify-center gap-2">
-                                        Overall Progress
-                                        <ArrowUpDown className={`h-4 w-4 ${getArrowStyle('overallProgress')}`} />
+                                        Total Stars
+                                        <ArrowUpDown className={`h-4 w-4 ${getArrowStyle('totalStars')}`} />
                                     </div>
                                 </TableHead>
+                                <TableHead className="text-center">Progress</TableHead>
                                 <TableHead className="text-center">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {sortedFamilies.map((family) => (
-                                <TableRow key={family.id} className="cursor-pointer hover:bg-gray-100">
-                                    <TableCell className="font-medium text-left">{family.name}</TableCell>
-                                    <TableCell className="text-left">{family.email}</TableCell>
-                                    <TableCell className="text-center">{family.members}</TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center justify-center">
-                                            <Award className="h-4 w-4 mr-2 text-yellow-500" />
-                                            {family.totalAchievements}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center justify-center">
-                                            <Progress 
-                                                value={family.overallProgress} 
-                                                className="w-full mr-2"
-                                            />
-                                            <span className={`text-sm  ${getProgressColorClass(family.overallProgress)}`}>
-                                                {family.overallProgress}%
-                                            </span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button 
-                                                    variant="outline" 
-                                                    size="sm" 
-                                                    className="flex items-center gap-2 mx-auto text-[#3A8EBA] border-[#3A8EBA] hover:bg-[#3A8EBA] hover:text-white"
-                                                    onClick={() => setSelectedFamily(family)}
-                                                >
-                                                    <Mail className="h-4 w-4 text-[#3A8EBA] hover:text-white" />
-                                                    Message
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent>
-                                                <DialogHeader>
-                                                    <DialogTitle>
-                                                        Send Message to {selectedFamily?.name}
-                                                    </DialogTitle>
-                                                </DialogHeader>
-                                                <div className="grid gap-4 py-4">
-                                                    <div className="text-sm text-gray-500">
-                                                        Sending to: {selectedFamily?.email}
-                                                    </div>
-                                                    <Textarea
-                                                        placeholder="Type your message here..."
-                                                        value={message}
-                                                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value)}
-                                                        className="min-h-[100px]"
-                                                    />
-                                                    <Button 
-                                                        onClick={handleSendMessage}
-                                                        className="w-full bg-[#3A8EBA] hover:bg-[#347ea5]"
-                                                    >
-                                                        Send Message
-                                                    </Button>
+                            {sortedFamilies.length > 0 ? (
+                                sortedFamilies.map((family) => {
+                                    const progressPercentage = getProgressPercentage(family.totalStars || 0);
+                                    return (
+                                        <TableRow key={family._id} className="cursor-pointer hover:bg-gray-100">
+                                            <TableCell className="font-medium text-left">
+                                                <div className="flex items-center gap-3">
+                                                    {family.familyAvatar && (
+                                                        <img 
+                                                            src={family.familyAvatar} 
+                                                            alt={family.familyName}
+                                                            className="w-8 h-8 rounded-full object-cover"
+                                                            onError={(e) => {
+                                                                const target = e.target as HTMLImageElement;
+                                                                target.style.display = 'none';
+                                                            }}
+                                                        />
+                                                    )}
+                                                    {family.familyName}
                                                 </div>
-                                            </DialogContent>
-                                        </Dialog>
+                                            </TableCell>
+                                            <TableCell className="text-left">{family.email}</TableCell>
+                                            <TableCell className="text-center">{family.members.length}</TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center justify-center">
+                                                    <Award className="h-4 w-4 mr-2 text-yellow-500" />
+                                                    {family.achievements.length}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                                <span className="font-medium">{family.totalStars || 0}</span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center justify-center">
+                                                    <Progress 
+                                                        value={progressPercentage} 
+                                                        className="w-full mr-2"
+                                                    />
+                                                    <span className={`text-sm ${getProgressColorClass(progressPercentage)}`}>
+                                                        {Math.round(progressPercentage)}%
+                                                    </span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                                <Dialog>
+                                                    <DialogTrigger asChild>
+                                                        <Button 
+                                                            variant="outline" 
+                                                            size="sm" 
+                                                            className="flex items-center gap-2 mx-auto text-[#3A8EBA] border-[#3A8EBA] hover:bg-[#3A8EBA] hover:text-white"
+                                                            onClick={() => setSelectedFamily(family)}
+                                                        >
+                                                            <Mail className="h-4 w-4" />
+                                                            Message
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    <DialogContent>
+                                                        <DialogHeader>
+                                                            <DialogTitle>
+                                                                Send Message to {selectedFamily?.familyName}
+                                                            </DialogTitle>
+                                                        </DialogHeader>
+                                                        <div className="grid gap-4 py-4">
+                                                            <div className="text-sm text-gray-500">
+                                                                Sending to: {selectedFamily?.email}
+                                                            </div>
+                                                            <Textarea
+                                                                placeholder="Type your message here..."
+                                                                value={message}
+                                                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value)}
+                                                                className="min-h-[100px]"
+                                                            />
+                                                            <Button 
+                                                                onClick={handleSendMessage}
+                                                                className="w-full bg-[#3A8EBA] hover:bg-[#347ea5]"
+                                                            >
+                                                                Send Message
+                                                            </Button>
+                                                        </div>
+                                                    </DialogContent>
+                                                </Dialog>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={7} className="text-center py-8">
+                                        <div className="text-gray-500">
+                                            <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                                            <p>No families found</p>
+                                            <Button 
+                                                onClick={fetchFamilies}
+                                                variant="outline"
+                                                className="mt-2"
+                                            >
+                                                Refresh
+                                            </Button>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            )}
                         </TableBody>
                     </Table>
                 </CardContent>

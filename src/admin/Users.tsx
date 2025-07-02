@@ -1,81 +1,188 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import StatCard from './StatCard';
-import { UserCheck, UserPlus, UsersIcon, UserX } from 'lucide-react';
+import { UserCheck, UserPlus, UsersIcon, UserX, Star, Coins } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table"
 import { Input } from "../components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import UserManageDialog from '../components/common/UserManageDialog';
 import EditUserDialog from '../components/common/EditUserDialog';
-
+import { requestApi } from '../libs/requestApi';
+import { requestMethods } from '../libs/enum/requestMethods';
 
 interface User {
     id: number;
     name: string;
     email: string;
-    type: 'parent' | 'child';
-    role: 'user' | 'admin';
+    role: 'user' | 'admin' | 'parent' | 'child';
     status: 'active' | 'banned';
     achievements: number;
     progress: number;
     stars: number;
     coins: number;
+    avatar?: string;
 }
 
-// Mock data
-const initialUsers: User[] = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', type: 'parent', role: 'user', status: 'active', achievements: 5, progress: 75, stars: 100, coins: 500 },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', type: 'child', role: 'user', status: 'active', achievements: 3, progress: 60, stars: 75, coins: 300 },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', type: 'parent', role: 'admin', status: 'active', achievements: 7, progress: 90, stars: 150, coins: 750 },
-    { id: 4, name: 'Alice Brown', email: 'alice@example.com', type: 'child', role: 'user', status: 'banned', achievements: 2, progress: 40, stars: 50, coins: 200 },
-  ]
-
 const Users: React.FC = () => {
-    const [users, setUsers] = useState<User[]>(initialUsers);
-
-    const activeUsers = users.filter(user => user.status === 'active').length;
-    const parentUsers = users.filter(user => user.type === 'parent').length;
-    const bannedUsers = users.filter(user => user.status === 'banned').length;
+    const [users, setUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const [filter, setFilter] = useState<'all' | 'parent' | 'child'>('all')
     const [search, setSearch] = useState('')
     const [selectedUser, setSelectedUser] = useState<User | null>(null)
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    const handleRowClick = (user: User) => {
-      setSelectedUser(user);
-      setIsDialogOpen(true);
+    // Fetch users from backend
+    const fetchUsers = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            console.log("Fetching users...");
+            
+            const response = await requestApi({
+                route: "/users/", // Using your existing backend endpoint
+                method: requestMethods.GET
+            });
+            
+            console.log("Users response:", response);
+            
+            if (response) {
+                // Transform backend data to match frontend interface
+                const transformedUsers = response.map((user: any) => ({
+                    id: user._id || user.id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                    status: user.status || 'active',
+                    achievements: user.achievements?.length || 0,
+                    progress: Math.round(((user.stars || 0) / 1000) * 100),
+                    stars: user.stars || 0,
+                    coins: user.coins || 0,
+                    avatar: user.avatar
+                }));
+                
+                console.log("Transformed users:", transformedUsers);
+                setUsers(transformedUsers);
+            } else {
+                setUsers([]);
+            }
+        } catch (error) {
+            console.error("Error fetching users:", error);
+            setError("Failed to fetch users");
+            setUsers([]);
+        } finally {
+            setLoading(false);
+        }
     };
-  
-    const handleSave = (updatedUser: User) => {
-      setUsers((prevUsers) =>
-        prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
-      );
-    };
-  
-    const filteredUsers = users.filter(user =>
-        (filter === 'all' || user.type === filter) &&
-        user.name.toLowerCase().includes(search.toLowerCase())
-    )
 
-    const handleStatusChange = (userId: number, newStatus: 'active' | 'banned') => {
-        setUsers(users.map(user =>
-            user.id === userId ? { ...user, status: newStatus } : user
-        ))
-      }
-    
-    const handleRoleChange = (userId: number, newRole: 'user' | 'admin') => {
-        setUsers(users.map(user =>
-            user.id === userId ? { ...user, role: newRole } : user
-        ))
+    useEffect(() => {
+        fetchUsers();
+    }, []);
+
+    // Calculate stats
+    const activeUsers = users.filter(user => user.status === 'active').length;
+    const parentUsers = users.filter(user => user.role === 'parent').length;
+    const bannedUsers = users.filter(user => user.status === 'banned').length;
+
+    const handleRowClick = (user: User) => {
+        setSelectedUser(user);
+        setIsDialogOpen(true);
+    };
+
+    const handleSave = (updatedUser: User) => {
+        setUsers((prevUsers) =>
+            prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+        );
+    };
+
+    const filteredUsers = users.filter(user => {
+        const matchesSearch = user.name.toLowerCase().includes(search.toLowerCase());
+        const matchesFilter = filter === 'all' || user.role === filter;
+        return matchesSearch && matchesFilter;
+    });
+
+    const handleStatusChange = async (userId: number, newStatus: 'active' | 'banned') => {
+        try {
+            console.log(`Updating user ${userId} status to ${newStatus}`);
+            
+            // If you have admin endpoints in your backend, use them. Otherwise, this might need backend support
+            // For now, just update locally and you can add backend call later
+            setUsers(users.map(user =>
+                user.id === userId ? { ...user, status: newStatus } : user
+            ));
+            
+            // Uncomment when you have backend endpoint:
+            /*
+            const response = await requestApi({
+                route: "/users/admin/status",
+                method: requestMethods.PUT,
+                body: { userId, status: newStatus }
+            });
+            */
+            
+            console.log(`User ${userId} status updated to ${newStatus}`);
+        } catch (error) {
+            console.error("Error updating user status:", error);
+        }
     }
 
+    const handleRoleChange = async (userId: number, newRole: 'user' | 'admin') => {
+        try {
+            console.log(`Updating user ${userId} role to ${newRole}`);
+            
+            // Update locally for now
+            setUsers(users.map(user =>
+                user.id === userId ? { ...user, role: newRole } : user
+            ));
+            
+            // Uncomment when you have backend endpoint:
+            /*
+            const response = await requestApi({
+                route: "/users/admin/role", 
+                method: requestMethods.PUT,
+                body: { userId, role: newRole }
+            });
+            */
+            
+            console.log(`User ${userId} role updated to ${newRole}`);
+        } catch (error) {
+            console.error("Error updating user role:", error);
+        }
+    }
 
-    return(
+    if (loading) {
+        return (
+            <div className="p-8 ml-10 mt-10 space-y-8 font-poppins">
+                <h2 className="font-poppins text-lg font-semibold">Users</h2>
+                <div className="flex items-center justify-center h-64">
+                    <div className="text-lg">Loading users...</div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="p-8 ml-10 mt-10 space-y-8 font-poppins">
+                <h2 className="font-poppins text-lg font-semibold">Users</h2>
+                <div className="flex items-center justify-center h-64">
+                    <div className="text-lg text-red-600">{error}</div>
+                    <button 
+                        onClick={fetchUsers}
+                        className="ml-4 px-4 py-2 bg-blue-600 text-white rounded"
+                    >
+                        Retry
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    return (
         <div className="p-8 ml-10 mt-10 space-y-8 font-poppins">
-
             <h2 className="font-poppins text-lg font-semibold">Users</h2>
 
             {/* Stats Cards Row */}
@@ -124,7 +231,7 @@ const Users: React.FC = () => {
                         />
                         <Select value={filter} onValueChange={(value: 'all' | 'parent' | 'child') => setFilter(value)}>
                             <SelectTrigger className="w-36">
-                                <SelectValue placeholder="Filter by type" />
+                                <SelectValue placeholder="Filter by role" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">All Users</SelectItem>
@@ -136,11 +243,12 @@ const Users: React.FC = () => {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Name</TableHead>
+                                <TableHead>User</TableHead>
                                 <TableHead>Email</TableHead>
-                                <TableHead>Type</TableHead>
                                 <TableHead>Role</TableHead>
                                 <TableHead>Status</TableHead>
+                                <TableHead>Stars</TableHead>
+                                <TableHead>Coins</TableHead>
                                 <TableHead>Actions</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -151,9 +259,31 @@ const Users: React.FC = () => {
                                     className="cursor-pointer hover:bg-gray-100"
                                     onClick={() => handleRowClick(user)}
                                 >
-                                    <TableCell>{user.name}</TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-[#3A8EBA] flex items-center justify-center overflow-hidden">
+                                                {user.avatar ? (
+                                                    <img 
+                                                        src={user.avatar} 
+                                                        alt={user.name}
+                                                        className="w-full h-full object-cover"
+                                                        onError={(e) => {
+                                                            const target = e.target as HTMLImageElement;
+                                                            target.style.display = 'none';
+                                                            const parent = target.parentElement;
+                                                            if (parent) {
+                                                                parent.innerHTML = `<span class="text-white text-sm font-semibold">${user.name[0]}</span>`;
+                                                            }
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <span className="text-white text-sm font-semibold">{user.name[0]}</span>
+                                                )}
+                                            </div>
+                                            <span className="font-medium">{user.name}</span>
+                                        </div>
+                                    </TableCell>
                                     <TableCell>{user.email}</TableCell>
-                                    <TableCell className="capitalize">{user.type}</TableCell>
                                     <TableCell className="capitalize">{user.role}</TableCell>
                                     <TableCell>
                                         <span className={`px-2 py-1 rounded-full text-xs ${
@@ -164,9 +294,25 @@ const Users: React.FC = () => {
                                         {user.status}
                                         </span>
                                     </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-1">
+                                            <Star className="h-4 w-4 text-yellow-500" />
+                                            <span className="font-medium">{user.stars}</span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-1">
+                                            <Coins className="h-4 w-4 text-amber-500" />
+                                            <span className="font-medium">{user.coins}</span>
+                                        </div>
+                                    </TableCell>
                                     <TableCell> 
                                         <UserManageDialog
-                                            user={user}
+                                            user={{
+                                                ...user,
+                                                role: user.role === "admin" ? "admin" : "user",
+                                                type: user.role === "parent" ? "parent" : "child"
+                                            }}
                                             onStatusChange={handleStatusChange}
                                             onRoleChange={handleRoleChange}
                                         />    
@@ -179,7 +325,11 @@ const Users: React.FC = () => {
             </Card>
 
             <EditUserDialog
-                user={selectedUser}
+                user={selectedUser ? { 
+                    ...selectedUser, 
+                    role: selectedUser.role === "admin" ? "admin" : "user",
+                    type: selectedUser.role === "parent" ? "parent" : "child"
+                } : null}
                 isOpen={isDialogOpen}
                 onClose={() => setIsDialogOpen(false)}
                 onSave={handleSave}
