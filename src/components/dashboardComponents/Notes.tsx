@@ -87,7 +87,7 @@ const Notes: React.FC<NotesProps> = ({ collapsed = false }) => {
             });
             if (response?.notes) {
                 // Convert dates and ensure proper format
-                const formattedNotes = response.notes.map((note: any) => ({
+                const formattedNotes = response.notes.map((note: Note) => ({
                     ...note,
                     id: note._id, // Map _id to id for compatibility
                     createdAt: new Date(note.createdAt),
