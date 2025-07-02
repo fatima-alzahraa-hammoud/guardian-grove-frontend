@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import { Note, TextStyle } from "../dashboardComponents/Notes";
 
-
 const NoteEditor: React.FC<{
     note: Note;
     setNote: (note: Note) => void;
@@ -24,6 +23,7 @@ const NoteEditor: React.FC<{
     removeChecklistItem: (itemId: string) => void;
     contentRef: React.RefObject<HTMLDivElement>;
     saveToHistory: (content: string) => void;
+    onAIRequest: (message: string, noteContent: string) => Promise<string>;
 }> = ({ 
     note, 
     setNote,
@@ -32,13 +32,15 @@ const NoteEditor: React.FC<{
     canUndo, 
     canRedo,
     contentRef,
-    saveToHistory
+    saveToHistory,
+    onAIRequest
 }) => {
     const [showColorPicker, setShowColorPicker] = useState(false);
     const [showTextColorPicker, setShowTextColorPicker] = useState(false);
     const [showAIAssistant, setShowAIAssistant] = useState(false);
     const [aiMessage, setAIMessage] = useState("");
     const [aiResponse, setAIResponse] = useState("");
+    const [aiLoading, setAILoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [currentFormatting, setCurrentFormatting] = useState({
         bold: false,
@@ -102,23 +104,57 @@ const NoteEditor: React.FC<{
                 contentRef.current.innerHTML = placeholderHTML;
             }
         }
-    }, [note.id, contentRef]);
+    }, [note.id || note._id, contentRef]);
 
-    const handleAISubmit = () => {
-        if (!aiMessage.trim()) return;
+    // AI Assistant functions
+    const handleAISubmit = async () => {
+        if (!aiMessage.trim() || aiLoading) return;
         
-        // Mock AI response for demonstration
-        const responses = [
-            "Great idea! Let me help you expand on that.",
-            "I can help you organize these thoughts better.",
-            "Here's a suggestion to improve your writing...",
-            "That's an interesting point. Consider adding more details.",
-            "Would you like me to help structure this content?"
-        ];
+        setAILoading(true);
+        try {
+            const response = await onAIRequest(aiMessage, note.content);
+            setAIResponse(`You: ${aiMessage}\n\nAI: ${response}`);
+            setAIMessage("");
+        } catch (error) {
+            console.error("Error getting AI response:", error);
+            setAIResponse(`You: ${aiMessage}\n\nAI: Sorry, I couldn't process your request right now.`);
+            setAIMessage("");
+        } finally {
+            setAILoading(false);
+        }
+    };
+
+    const handleQuickAction = async (action: string) => {
+        if (aiLoading) return;
         
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-        setAIResponse(`You: ${aiMessage}\n\nAI: ${randomResponse}`);
-        setAIMessage("");
+        setAILoading(true);
+        try {
+            let message = "";
+            switch (action) {
+                case "Improve Grammar":
+                    message = "Please improve the grammar and fix any spelling mistakes in this note.";
+                    break;
+                case "Make Creative":
+                    message = "Please make this note more creative and engaging while keeping the main ideas.";
+                    break;
+                case "Add Bullets":
+                    message = "Please organize this content into bullet points for better readability.";
+                    break;
+                case "Summarize":
+                    message = "Please provide a concise summary of this note's main points.";
+                    break;
+                default:
+                    message = action;
+            }
+            
+            const response = await onAIRequest(message, note.content);
+            setAIResponse(`Quick Action - ${action}:\n\nAI: ${response}`);
+        } catch (error) {
+            console.error("Error with quick action:", error);
+            setAIResponse(`Quick Action - ${action}:\n\nAI: Sorry, I couldn't process this action right now.`);
+        } finally {
+            setAILoading(false);
+        }
     };
 
     // Apply text formatting functions
@@ -771,10 +807,11 @@ const NoteEditor: React.FC<{
                                 ].map((action) => (
                                     <motion.button
                                         key={action.label}
-                                        className="p-2 bg-white rounded-lg text-left text-xs hover:bg-[#3A8EBA] hover:text-white transition-all duration-200 border border-gray-100 shadow-sm"
+                                        className="p-2 bg-white rounded-lg text-left text-xs hover:bg-[#3A8EBA] hover:text-white transition-all duration-200 border border-gray-100 shadow-sm disabled:opacity-50"
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
-                                        onClick={() => setAIMessage(action.label)}
+                                        onClick={() => handleQuickAction(action.label)}
+                                        disabled={aiLoading}
                                     >
                                         <div className="flex flex-col items-center space-y-1">
                                             <span className="text-lg">{action.icon}</span>
@@ -789,15 +826,22 @@ const NoteEditor: React.FC<{
                         <div className="flex-1 p-4 overflow-y-auto">
                             <h4 className="text-sm font-comic font-bold text-gray-700 mb-3">Chat</h4>
                             <div className="space-y-3 max-h-[300px] overflow-y-auto">
-                                {aiResponse && (
+                                {aiResponse ? (
                                     <div className="bg-white rounded-lg p-3 text-sm border border-gray-100 shadow-sm">
                                         <div className="whitespace-pre-wrap">{aiResponse}</div>
                                     </div>
-                                )}
-                                {!aiResponse && (
+                                ) : (
                                     <div className="text-center text-gray-500 text-sm py-8">
                                         <Bot size={24} className="mx-auto mb-2 opacity-50" />
                                         Start a conversation with AI!
+                                    </div>
+                                )}
+                                {aiLoading && (
+                                    <div className="bg-white rounded-lg p-3 text-sm border border-gray-100 shadow-sm">
+                                        <div className="flex items-center space-x-2">
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#3A8EBA]"></div>
+                                            <span className="text-gray-600">AI is thinking...</span>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -814,15 +858,20 @@ const NoteEditor: React.FC<{
                                         placeholder="Ask AI anything..."
                                         className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-[#3A8EBA] focus:ring-1 focus:ring-blue-100 transition-all duration-200 font-poppins"
                                         onKeyPress={(e) => e.key === 'Enter' && handleAISubmit()}
+                                        disabled={aiLoading}
                                     />
                                     <motion.button 
                                         onClick={handleAISubmit}
                                         className="px-3 py-2 bg-[#3A8EBA] text-white rounded-lg hover:bg-[#2C7EA8] transition-all duration-200 shadow-lg disabled:opacity-50"
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        disabled={!aiMessage.trim()}
+                                        disabled={!aiMessage.trim() || aiLoading}
                                     >
-                                        <Send size={14} />
+                                        {aiLoading ? (
+                                            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                                        ) : (
+                                            <Send size={14} />
+                                        )}
                                     </motion.button>
                                 </div>
                                 <p className="text-xs text-gray-500 text-center font-poppins">
