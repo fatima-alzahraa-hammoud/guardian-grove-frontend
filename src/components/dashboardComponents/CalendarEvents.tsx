@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Calendar, Clock, MoreHorizontal, Plus, Sparkles, Check } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, Calendar, Clock, MoreHorizontal, Plus, Sparkles, Check, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { requestApi } from '../../libs/requestApi';
+import { requestMethods } from '../../libs/enum/requestMethods';
+import { useSelector } from "react-redux";
+import { selectRole } from "../../redux/slices/userSlice";
 
 interface Event {
     id: string;
@@ -8,13 +12,23 @@ interface Event {
     date: Date;
     time: string;
     description?: string;
-    type: 'birthday' | 'picnic' | 'appointment' | 'reminder';
+    type: 'birthday' | 'picnic' | 'appointment' | 'reminder' | 'bonding';
+    status?: 'pending' | 'approved' | 'rejected';
 }
 
 interface Task {
     id: string;
     title: string;
     completed: boolean;
+}
+
+interface BondingEvent {
+    _id: string;
+    title: string;
+    description: string;
+    date: Date;
+    time: string;
+    status: 'pending' | 'approved' | 'rejected';
 }
 
 // Animation variants
@@ -61,7 +75,6 @@ const slideInFromRight = {
     visible: { x: 0, opacity: 1, transition: { type: "spring", stiffness: 100 } }
 };
 
-// Floating background elements
 const FloatingElements = () => {
     return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -126,30 +139,17 @@ const CalendarEvents: React.FC = () => {
     const [selectedDate, setSelectedDate] = useState(new Date(2024, 11, 16)); // 16th selected
     const [newTaskTitle, setNewTaskTitle] = useState('');
     const [isGeneratingEvents, setIsGeneratingEvents] = useState(false);
-    
-    const [events] = useState<Event[]>([
+    const [allBondingEvents, setAllBondingEvents] = useState<BondingEvent[]>([]);
+    const role = useSelector(selectRole);
+
+    // Updated events state - start with fewer mock events and add bonding events from API
+    const [events, setEvents] = useState<Event[]>([
         {
             id: '1',
             title: "Leon's Birthday",
             date: new Date(2024, 11, 17),
             time: 'All day',
             type: 'birthday'
-        },
-        {
-            id: '2',
-            title: 'Family Picnic',
-            date: new Date(2024, 11, 16),
-            time: '6:00 pm',
-            description: "Let's make a picnic today before 6:00 pm!",
-            type: 'picnic'
-        },
-        {
-            id: '3',
-            title: 'Family Picnic',
-            date: new Date(2024, 11, 16),
-            time: '7:00 pm',
-            description: "Let's make a picnic today before 6:00 pm!",
-            type: 'picnic'
         }
     ]);
 
@@ -175,6 +175,44 @@ const CalendarEvents: React.FC = () => {
     ];
 
     const dayNames = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+
+    // Fetch all bonding events (pending and approved)
+    useEffect(() => {
+        const fetchBondingEvents = async () => {
+            try {
+                const response = await requestApi({
+                    route: "/events",
+                    method: requestMethods.GET
+                });
+                if (response && response.events) {
+                    setAllBondingEvents(response.events);
+                    
+                    // Add approved bonding events to the main events list
+                    const approvedEvents = response.events
+                        .filter((e: BondingEvent) => e.status === 'approved')
+                        .map((e: BondingEvent) => ({
+                            id: e._id,
+                            title: e.title,
+                            date: new Date(e.date),
+                            time: e.time,
+                            description: e.description,
+                            type: 'bonding' as const,
+                            status: e.status
+                        }));
+                    
+                    // Update events with approved bonding events
+                    setEvents(prevEvents => [
+                        ...prevEvents.filter(e => e.type !== 'bonding'), // Remove existing bonding events
+                        ...approvedEvents // Add new approved bonding events
+                    ]);
+                }
+            } catch (error) {
+                console.error("Error fetching bonding events:", error);
+            }
+        };
+
+        fetchBondingEvents();
+    }, []);
 
     const getDaysInMonth = (date: Date) => {
         const year = date.getFullYear();
@@ -221,6 +259,17 @@ const CalendarEvents: React.FC = () => {
         );
     };
 
+    const getPendingEvents = () => {
+        return allBondingEvents.filter(e => e.status === 'pending');
+    };
+
+    const getApprovedEventsForSuggestions = () => {
+        // Get approved events for the AI suggestions section
+        return allBondingEvents
+            .filter(e => e.status === 'approved')
+            .slice(0, 2); // Show only first 2 for the suggestions grid
+    };
+
     const toggleTaskCompletion = (taskId: string) => {
         setTasks(tasks.map(task => 
             task.id === taskId ? { ...task, completed: !task.completed } : task
@@ -239,13 +288,94 @@ const CalendarEvents: React.FC = () => {
         }
     };
 
-    const generateBondingEvents = () => {
+    const generateBondingEvents = async () => {
         setIsGeneratingEvents(true);
-        setTimeout(() => {
+        try {
+            const response = await requestApi({
+                route: "/events/generate",
+                method: requestMethods.POST
+            });
+
+            if (response && response.events) {
+                alert(`Generated ${response.events.length} bonding events! Waiting for parent approval.`);
+                // Refresh the bonding events list
+                setAllBondingEvents(prev => [...prev, ...response.events]);
+            }
+        } catch (error) {
+            console.error("Error generating events:", error);
+            alert("Failed to generate events. Please try again.");
+        } finally {
             setIsGeneratingEvents(false);
-            // In a real app, this would update events state
-            alert("Bonding events generated!");
-        }, 1500);
+        }
+    };
+
+    const handleApproveEvent = async (eventId: string) => {
+        try {
+            const response = await requestApi({
+                route: "/events/review",
+                method: requestMethods.POST,
+                body: { eventId, status: 'approved' }
+            });
+            
+            if (response) {
+                // Update the bonding events list
+                setAllBondingEvents(prev => 
+                    prev.map(e => 
+                        e._id === eventId 
+                            ? { ...e, status: 'approved' as const }
+                            : e
+                    )
+                );
+
+                // Add to main events list
+                const approvedEvent = allBondingEvents.find(e => e._id === eventId);
+                if (approvedEvent) {
+                    const newEvent: Event = {
+                        id: approvedEvent._id,
+                        title: approvedEvent.title,
+                        date: new Date(approvedEvent.date),
+                        time: approvedEvent.time,
+                        description: approvedEvent.description,
+                        type: 'bonding',
+                        status: 'approved'
+                    };
+                    setEvents(prev => [...prev, newEvent]);
+                }
+            }
+        } catch (error) {
+            console.error("Error approving event:", error);
+        }
+    };
+
+    const handleRejectEvent = async (eventId: string) => {
+        try {
+            await requestApi({
+                route: "/events/review",
+                method: requestMethods.POST,
+                body: { eventId, status: 'rejected' }
+            });
+            
+            // Update the bonding events list
+            setAllBondingEvents(prev => 
+                prev.map(e => 
+                    e._id === eventId 
+                        ? { ...e, status: 'rejected' as const }
+                        : e
+                )
+            );
+        } catch (error) {
+            console.error("Error rejecting event:", error);
+        }
+    };
+
+    const getEventTypeColor = (type: string) => {
+        switch (type) {
+            case 'birthday': return 'bg-[#FF6B6B]';
+            case 'bonding': return 'bg-[#4ECDC4]';
+            case 'picnic': return 'bg-[#4ECDC4]';
+            case 'appointment': return 'bg-[#FFD166]';
+            default: return 'bg-[#3A8EBA]';
+        }
     };
 
     return (
@@ -390,19 +520,69 @@ const CalendarEvents: React.FC = () => {
                                             transition={{ type: "spring", stiffness: 300 }}
                                         >
                                             <motion.div 
-                                                className={`w-2 h-2 rounded-full ${
-                                                    event.type === 'birthday' ? 'bg-[#FF6B6B]' : 
-                                                    event.type === 'picnic' ? 'bg-[#4ECDC4]' : 
-                                                    event.type === 'appointment' ? 'bg-[#FFD166]' : 
-                                                    'bg-[#3A8EBA]'
-                                                }`}
+                                                className={`w-2 h-2 rounded-full ${getEventTypeColor(event.type)}`}
                                                 whileHover={{ scale: 1.5 }}
                                             />
-                                            <span className="text-gray-700 text-sm">{event.title}</span>
+                                            <div>
+                                                <span className="text-gray-700 text-sm font-medium">{event.title}</span>
+                                                {event.description && (
+                                                    <p className="text-xs text-gray-500">{event.description}</p>
+                                                )}
+                                                <p className="text-xs text-gray-400">{event.time}</p>
+                                            </div>
                                         </motion.div>
                                     ))}
                                 </AnimatePresence>
+                                {getEventsForDate(selectedDate).length === 0 && (
+                                    <p className="text-gray-500 text-sm">No events for this date</p>
+                                )}
                             </div>
+
+                            {/* Pending Events Section for Parents */}
+                            {role === 'parent' && getPendingEvents().length > 0 && (
+                                <div className="mt-6">
+                                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Pending Approval</h4>
+                                    <div className="space-y-2">
+                                        {getPendingEvents().map(event => (
+                                            <motion.div
+                                                key={event._id}
+                                                className="p-3 bg-yellow-50 rounded-lg border border-yellow-100"
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ type: "spring", stiffness: 300 }}
+                                            >
+                                                <div className="flex justify-between items-start">
+                                                    <div>
+                                                        <p className="font-medium text-sm">{event.title}</p>
+                                                        <p className="text-xs text-gray-600">{event.description}</p>
+                                                        <p className="text-xs text-gray-500 mt-1">
+                                                            {new Date(event.date).toLocaleDateString()} at {event.time}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex gap-1">
+                                                        <motion.button
+                                                            onClick={() => handleApproveEvent(event._id)}
+                                                            className="p-1 bg-green-500 text-white rounded"
+                                                            whileHover={{ scale: 1.1 }}
+                                                            whileTap={{ scale: 0.9 }}
+                                                        >
+                                                            <Check size={14} />
+                                                        </motion.button>
+                                                        <motion.button
+                                                            onClick={() => handleRejectEvent(event._id)}
+                                                            className="p-1 bg-red-500 text-white rounded"
+                                                            whileHover={{ scale: 1.1 }}
+                                                            whileTap={{ scale: 0.9 }}
+                                                        >
+                                                            <X size={14} />
+                                                        </motion.button>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </motion.div>
 
                         {/* Tasks Section */}
@@ -502,7 +682,10 @@ const CalendarEvents: React.FC = () => {
                                     className="text-gray-700"
                                     whileHover={{ x: 5 }}
                                 >
-                                    Sara's Birthday Tomorrow
+                                    {events.filter(e => e.type === 'birthday').length > 0 
+                                        ? `${events.find(e => e.type === 'birthday')?.title} Tomorrow`
+                                        : 'No upcoming birthdays'
+                                    }
                                 </motion.div>
                                 <motion.hr 
                                     className="border-gray-200"
@@ -514,7 +697,19 @@ const CalendarEvents: React.FC = () => {
                                     className="text-gray-700"
                                     whileHover={{ x: 5 }}
                                 >
-                                    3 Pending Tasks for Today
+                                    {tasks.filter(t => !t.completed).length} Pending Tasks for Today
+                                </motion.div>
+                                <motion.hr 
+                                    className="border-gray-200"
+                                    initial={{ scaleX: 0 }}
+                                    animate={{ scaleX: 1 }}
+                                    transition={{ duration: 0.5, delay: 0.1 }}
+                                />
+                                <motion.div 
+                                    className="text-gray-700"
+                                    whileHover={{ x: 5 }}
+                                >
+                                    {allBondingEvents.filter(e => e.status === 'approved').length} Active Bonding Events
                                 </motion.div>
                             </div>
                         </motion.div>
@@ -525,7 +720,7 @@ const CalendarEvents: React.FC = () => {
                             className="bg-white border-[1px] rounded-2xl p-6 shadow-sm"
                         >
                             <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-xl font-semibold text-gray-900">AI Events Suggestions</h3>
+                                <h3 className="text-xl font-semibold text-gray-900">Bonding Events</h3>
                                 <div className="flex gap-2">
                                     <motion.button 
                                         className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -545,77 +740,57 @@ const CalendarEvents: React.FC = () => {
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
-                                {/* First Event Card */}
-                                <motion.div 
-                                    className="border border-gray-200 rounded-xl p-4 relative"
-                                    whileHover={{ 
-                                        y: -5,
-                                        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-                                        transition: { duration: 0.3 }
-                                    }}
-                                >
-                                    <div className="flex items-start justify-between mb-3">
-                                        <motion.span 
-                                            className="bg-[#3A8EBA] text-white text-xs px-3 py-1 rounded-full font-medium"
-                                            initial={{ scale: 0.8 }}
-                                            animate={{ scale: 1 }}
-                                            transition={{ type: "spring", stiffness: 500 }}
+                                {getApprovedEventsForSuggestions().length > 0 ? (
+                                    getApprovedEventsForSuggestions().map((event, index) => (
+                                        <motion.div 
+                                            key={event._id}
+                                            className="border border-gray-200 rounded-xl p-4 relative"
+                                            whileHover={{ 
+                                                y: -5,
+                                                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+                                                transition: { duration: 0.3 }
+                                            }}
                                         >
-                                            12 Min Left
-                                        </motion.span>
-                                        <button className="text-gray-400 hover:text-gray-600">
-                                            <MoreHorizontal size={16} />
-                                        </button>
-                                    </div>
-                                    <h4 className="font-semibold text-gray-900 mb-2">Family Picnic</h4>
-                                    <p className="text-sm text-gray-600 mb-4">Let's make a picnic today before 6:00 pm!</p>
-                                    <div className="flex items-center gap-4 text-xs text-gray-500">
-                                        <div className="flex items-center gap-1">
-                                            <Calendar size={12} />
-                                            <span>16 Dec 2024</span>
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                            <Clock size={12} />
-                                            <span>6:00 pm</span>
-                                        </div>
-                                    </div>
-                                </motion.div>
-
-                                {/* Second Event Card */}
-                                <motion.div 
-                                    className="border border-gray-200 rounded-xl p-4 relative"
-                                    whileHover={{ 
-                                        y: -5,
-                                        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-                                        transition: { duration: 0.3 }
-                                    }}
-                                >
-                                    <div className="flex items-start justify-between mb-3">
-                                        <motion.span 
-                                            className="bg-[#3A8EBA] text-white text-xs px-3 py-1 rounded-full font-medium"
-                                            initial={{ scale: 0.8 }}
-                                            animate={{ scale: 1 }}
-                                            transition={{ type: "spring", stiffness: 500 }}
+                                            <div className="flex items-start justify-between mb-3">
+                                                <motion.span 
+                                                    className="bg-[#3A8EBA] text-white text-xs px-3 py-1 rounded-full font-medium"
+                                                    initial={{ scale: 0.8 }}
+                                                    animate={{ scale: 1 }}
+                                                    transition={{ type: "spring", stiffness: 500 }}
+                                                >
+                                                    Approved
+                                                </motion.span>
+                                                <button className="text-gray-400 hover:text-gray-600">
+                                                    <MoreHorizontal size={16} />
+                                                </button>
+                                            </div>
+                                            <h4 className="font-semibold text-gray-900 mb-2">{event.title}</h4>
+                                            <p className="text-sm text-gray-600 mb-4">{event.description}</p>
+                                            <div className="flex items-center gap-4 text-xs text-gray-500">
+                                                <div className="flex items-center gap-1">
+                                                    <Calendar size={12} />
+                                                    <span>{new Date(event.date).toLocaleDateString()}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <Clock size={12} />
+                                                    <span>{event.time}</span>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ))
+                                ) : (
+                                    <div className="col-span-2 text-center py-8">
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            className="text-gray-500"
                                         >
-                                            72 Min Left
-                                        </motion.span>
-                                        <button className="text-gray-400 hover:text-gray-600">
-                                            <MoreHorizontal size={16} />
-                                        </button>
+                                            <Sparkles size={48} className="mx-auto mb-4 text-gray-300" />
+                                            <p className="text-lg font-medium mb-2">No bonding events yet</p>
+                                            <p className="text-sm">Click "Generate Bonding" to create family activities!</p>
+                                        </motion.div>
                                     </div>
-                                    <h4 className="font-semibold text-gray-900 mb-2">Family Picnic</h4>
-                                    <p className="text-sm text-gray-600 mb-4">Let's make a picnic today before 6:00 pm!</p>
-                                    <div className="flex items-center gap-4 text-xs text-gray-500">
-                                        <div className="flex items-center gap-1">
-                                            <Calendar size={12} />
-                                            <span>16 Dec 2024</span>
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                            <Clock size={12} />
-                                            <span>7:00 pm</span>
-                                        </div>
-                                    </div>
-                                </motion.div>
+                                )}
                             </div>
                         </motion.div>
 
