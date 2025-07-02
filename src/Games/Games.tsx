@@ -3,6 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import WordSearchGame from "./WordSearchGame";
 import MemoryGame from "./MemoryGame";
 
+interface GameComponentProps {
+    onBack: () => void;
+}
+
 interface GameCard {
     id: string;
     title: string;
@@ -11,7 +15,7 @@ interface GameCard {
     difficulty: 'Easy' | 'Medium' | 'Hard';
     category: 'Puzzle' | 'Memory' | 'Math' | 'Strategy';
     color: string;
-    component: React.ComponentType<any>;
+    component: React.ComponentType<GameComponentProps>;
 }
 
 const Games: React.FC = () => {
