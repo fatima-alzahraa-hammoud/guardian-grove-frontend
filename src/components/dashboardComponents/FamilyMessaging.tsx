@@ -1,52 +1,85 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { selectName, selectAvatar, selectRole } from "../../redux/slices/userSlice";
 import { selectFamilyMembers } from "../../redux/slices/familySlice";
-
-interface Message {
-    id: string;
-    senderId: string;
-    senderName: string;
-    senderAvatar: string;
-    content: string;
-    timestamp: Date;
-    type: 'text' | 'emoji' | 'sticker';
-    chatId: string;
-}
-
-interface Chat {
-    id: string;
-    name: string;
-    avatar?: string;
-    type: 'direct' | 'group';
-    members: string[];
-    lastMessage?: Message;
-    unreadCount: number;
-    isOnline?: boolean;
-}
+import { 
+    selectChats, 
+    selectActiveChat, 
+    selectMessages, 
+    selectOnlineUsers, 
+    selectTypingUsers,
+    selectMessageLoading,
+    setActiveChat,
+    addMessage,
+    addChat,
+    setMessages,
+    setChats,
+    markChatAsRead
+} from "../../redux/slices/messageSlice";
+import { useSocket } from "../../hooks/useSocket";
+import { requestApi } from "../../libs/requestApi";
+import { requestMethods } from "../../libs/enum/requestMethods";
+import { RootState } from "../../redux/store";
 
 interface FamilyMessagingProps {
     collapsed?: boolean;
 }
 
+interface Member {
+    _id: string;
+    name: string;
+    avatar?: string;
+}
+
+
+// Use the Message type from the Redux slice to ensure compatibility
+import type { Message, Chat } from "../../redux/slices/messageSlice";
+
 const FamilyMessaging: React.FC<FamilyMessagingProps> = () => {
+    const dispatch = useDispatch();
     const currentUser = {
+        id: useSelector((state: RootState) => state.user._id),
         name: useSelector(selectName),
         avatar: useSelector(selectAvatar),
         role: useSelector(selectRole)
     };
     
     const familyMembers = useSelector(selectFamilyMembers);
-    const [activeChat, setActiveChat] = useState<Chat | null>(null);
+    const chats = useSelector(selectChats);
+    const activeChat = useSelector(selectActiveChat);
+    const messages = useSelector(selectMessages(activeChat?._id || ""));
+    const onlineUsers = useSelector(selectOnlineUsers);
+    const typingUsers = useSelector(selectTypingUsers(activeChat?._id || ""));
+    const loading = useSelector(selectMessageLoading);
+
     const [message, setMessage] = useState("");
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [chats, setChats] = useState<Chat[]>([]);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [showCreateGroup, setShowCreateGroup] = useState(false);
     const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
     const [groupName, setGroupName] = useState("");
+    const [replyTo, setReplyTo] = useState<Message | null>(null);
+    const [page, setPage] = useState(1);
+    const [hasMoreMessages, setHasMoreMessages] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isInitialized, setIsInitialized] = useState(false);
+
+    // Get user token for socket connection
+    const token = localStorage.getItem('accessToken');
+
+    // Initialize socket connection
+    const {
+        socket,
+        isConnected,
+        sendMessage: socketSendMessage,
+        handleTyping,
+        addReaction: socketAddReaction,
+        markMessagesAsRead
+    } = useSocket({ 
+        token, 
+        userId: currentUser.id || "" 
+    });
 
     // Sample emojis for quick access
     const quickEmojis = ["😊", "❤️", "👍", "😂", "🎉", "🥰", "👏", "🔥", "💯", "🌟"];
@@ -93,132 +126,294 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = () => {
         );
     };
 
-    // Initialize sample chats and messages
-    useEffect(() => {
-        // Create family group chat
-        const familyGroup: Chat = {
-            id: "family-group",
-            name: "Family Chat 👨‍👩‍👧‍👦",
-            type: "group",
-            members: familyMembers.map(m => m._id),
-            unreadCount: 0
-        };
+    // Fetch family chats on component mount
+    const fetchFamilyChats = useCallback(async () => {
+        if (!currentUser.id) return;
+        
+        try {
+            const response = await requestApi({
+                route: "/familyChats",
+                method: requestMethods.GET
+            });
 
-        // Create direct chats with family members
-        const directChats: Chat[] = familyMembers
-            .filter(member => member.name !== currentUser.name)
-            .map(member => ({
-                id: `direct-${member._id}`,
-                name: member.name,
-                avatar: member.avatar,
-                type: "direct" as const,
-                members: [member._id, "current-user"],
-                unreadCount: Math.floor(Math.random() * 3),
-                isOnline: Math.random() > 0.5
-            }));
-
-        setChats([familyGroup, ...directChats]);
-
-        // Sample messages
-        const sampleMessages: Message[] = [
-            {
-                id: "1",
-                senderId: "mom",
-                senderName: "Mom",
-                senderAvatar: "/assets/images/mom-avatar.png",
-                content: "Good morning everyone! 🌅",
-                timestamp: new Date(Date.now() - 3600000),
-                type: "text",
-                chatId: "family-group"
-            },
-            {
-                id: "2",
-                senderId: "dad",
-                senderName: "Dad",
-                senderAvatar: "/assets/images/dad-avatar.png",
-                content: "Who wants pancakes for breakfast? 🥞",
-                timestamp: new Date(Date.now() - 3000000),
-                type: "text",
-                chatId: "family-group"
+            if (response?.chats) {
+                console.log('📋 Fetched chats:', response.chats);
+                dispatch(setChats(response.chats));
             }
-        ];
-        setMessages(sampleMessages);
-    }, [familyMembers, currentUser.name]);
+        } catch (error) {
+            console.error("Error fetching family chats:", error);
+        }
+    }, [dispatch, currentUser.id]);
+
+    // Fetch messages for active chat
+    const fetchChatMessages = useCallback(async (chatId: string, pageNum: number = 1) => {
+        try {
+            console.log('📨 Fetching messages for chat:', chatId);
+            const response = await requestApi({
+                route: `/familyChats/${chatId}/messages`,
+                method: requestMethods.GET
+            });
+
+            if (response?.messages) {
+                console.log('📨 Fetched messages:', response.messages.length);
+                // Replace messages for the chat
+                dispatch(setMessages({ 
+                    chatId, 
+                    messages: response.messages, 
+                    replace: true 
+                }));
+                
+                setHasMoreMessages(response.pagination?.hasMore || false);
+            }
+        } catch (error) {
+            console.error("Error fetching chat messages:", error);
+        }
+    }, [dispatch]);
+
+    // Create or get direct chat
+    const createDirectChat = useCallback(async (memberId: string) => {
+        try {
+            console.log('👥 Creating direct chat with:', memberId);
+            const response = await requestApi({
+                route: "/familyChats/chats/direct",
+                method: requestMethods.POST,
+                body: { memberId }
+            });
+
+            if (response?.chat) {
+                dispatch(addChat(response.chat));
+                dispatch(setActiveChat(response.chat));
+            }
+        } catch (error) {
+            console.error("Error creating direct chat:", error);
+        }
+    }, [dispatch]);
+
+    // Initialize component
+    useEffect(() => {
+        if (currentUser.id && !isInitialized) {
+            console.log('🚀 Initializing Family Messaging...');
+            fetchFamilyChats();
+            setIsInitialized(true);
+        }
+    }, [fetchFamilyChats, currentUser.id, isInitialized]);
+
+    // Fetch messages when active chat changes
+    useEffect(() => {
+        if (activeChat && activeChat._id) {
+            console.log('💬 Active chat changed to:', activeChat._id);
+            fetchChatMessages(activeChat._id);
+            
+            // Mark chat as read when switching to it
+            dispatch(markChatAsRead(activeChat._id));
+            
+            // Mark messages as read via socket
+            if (socket?.connected) {
+                markMessagesAsRead(activeChat._id);
+            }
+        }
+    }, [activeChat?._id, fetchChatMessages, socket, markMessagesAsRead, dispatch]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
     useEffect(() => {
-        scrollToBottom();
+        if (messages.length > 0) {
+            scrollToBottom();
+        }
     }, [messages]);
 
-    const sendMessage = () => {
+    // Send message via API and socket
+    const sendMessageHandler = async () => {
         if (!message.trim() || !activeChat) return;
 
-        const newMessage: Message = {
-            id: Date.now().toString(),
-            senderId: "current-user",
-            senderName: currentUser.name || "",
-            senderAvatar: currentUser.avatar || "",
-            content: message,
-            timestamp: new Date(),
-            type: "text",
-            chatId: activeChat.id
-        };
+        const messageContent = message.trim();
+        setMessage(""); // Clear input immediately for better UX
+        setReplyTo(null);
 
-        setMessages(prev => [...prev, newMessage]);
-        setMessage("");
+        try {
+            // Send via socket for real-time delivery
+            if (socket?.connected) {
+                console.log('📤 Sending message via socket');
+                socketSendMessage({
+                    chatId: activeChat._id,
+                    content: messageContent,
+                    type: 'text',
+                    replyTo: replyTo?._id
+                });
+            } else {
+                console.log('📤 Sending message via API (socket not connected)');
+                // Fallback to API if socket not connected
+                const response = await requestApi({
+                    route: `/familyChats/${activeChat._id}/messages`,
+                    method: requestMethods.POST,
+                    body: {
+                        chatId: activeChat._id,
+                        content: messageContent,
+                        type: 'text',
+                        replyTo: replyTo?._id
+                    }
+                });
+
+                if (response?.messageData) {
+                    dispatch(addMessage(response.messageData));
+                }
+            }
+        } catch (error) {
+            console.error("Error sending message:", error);
+            // Restore message content on error
+            setMessage(messageContent);
+        }
     };
 
-    const sendQuickEmoji = (emoji: string) => {
+    // Send quick emoji
+    const sendQuickEmoji = async (emoji: string, isSticker = false) => {
         if (!activeChat) return;
 
-        const newMessage: Message = {
-            id: Date.now().toString(),
-            senderId: "current-user",
-            senderName: currentUser.name || "",
-            senderAvatar: currentUser.avatar || "",
-            content: emoji,
-            timestamp: new Date(),
-            type: "emoji",
-            chatId: activeChat.id
-        };
+        console.log("Sending emoji/sticker:", emoji);
 
-        setMessages(prev => [...prev, newMessage]);
+        try {
+            if (socket?.connected) {
+                socketSendMessage({
+                    chatId: activeChat._id,
+                    content: emoji,
+                    type: isSticker ? 'sticker' : 'emoji'
+                });
+            } else {
+                const response = await requestApi({
+                    route: `/familyChats/${activeChat._id}/messages`,
+                    method: requestMethods.POST,
+                    body: {
+                        chatId: activeChat._id,
+                        content: emoji,
+                        type: isSticker ? 'sticker' : 'emoji'
+                    }
+                });
+
+                if (response?.messageData) {
+                    dispatch(addMessage(response.messageData));
+                }
+            }
+        } catch (error) {
+            console.error("Error sending emoji:", error);
+        }
     };
 
-    const createGroupChat = () => {
+    // Create group chat
+    const createGroupChat = async () => {
         if (!groupName.trim() || selectedMembers.length === 0) return;
 
-        const newGroup: Chat = {
-            id: `group-${Date.now()}`,
-            name: groupName,
-            type: "group",
-            members: [...selectedMembers, "current-user"],
-            unreadCount: 0
-        };
+        try {
+            const response = await requestApi({
+                route: "/familyChats/group",
+                method: requestMethods.POST,
+                body: {
+                    name: groupName,
+                    members: selectedMembers,
+                    description: ""
+                }
+            });
 
-        setChats(prev => [newGroup, ...prev]);
-        setShowCreateGroup(false);
-        setGroupName("");
-        setSelectedMembers([]);
-        setActiveChat(newGroup);
+            if (response?.chat) {
+                dispatch(addChat(response.chat));
+                dispatch(setActiveChat(response.chat));
+                setShowCreateGroup(false);
+                setGroupName("");
+                setSelectedMembers([]);
+            }
+        } catch (error) {
+            console.error("Error creating group chat:", error);
+        }
     };
 
-    const formatTime = (date: Date) => {
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    // Handle file upload
+    const handleFileUpload = async (file: File) => {
+        if (!activeChat) return;
+
+        const formData = new FormData();
+        formData.append('messageFile', file);
+        formData.append('content', `Shared ${file.type.startsWith('image/') ? 'an image' : 'a file'}: ${file.name}`);
+        formData.append('type', file.type.startsWith('image/') ? 'image' : 'file');
+
+        try {
+            const response = await requestApi({
+                route: `/familyChats/${activeChat._id}/messages`,
+                method: requestMethods.POST,
+                body: formData,
+            });
+
+            if (response?.messageData) {
+                dispatch(addMessage(response.messageData));
+            }
+        } catch (error) {
+            console.error("Error uploading file:", error);
+        }
     };
 
-    const getChatMessages = (chatId: string) => {
-        return messages.filter(msg => msg.chatId === chatId);
+    // Handle reaction
+    const handleReaction = async (messageId: string, emoji: string) => {
+        try {
+            if (socket?.connected) {
+                console.log('😊 Using socket for reaction');
+                socketAddReaction(messageId, emoji);
+            } else {
+                console.log('😊 Falling back to API for reaction');
+                await requestApi({
+                    route: `/familyChats/messages/${messageId}/reactions`,
+                    method: requestMethods.POST,
+                    body: { emoji }
+                });
+            }
+        } catch (error) {
+            console.error("Error adding reaction:", error);
+        }
+    };
+
+    // Handle typing
+    const handleTypingInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setMessage(e.target.value);
+        if (activeChat && socket?.connected) {
+            handleTyping(activeChat._id);
+        }
+    };
+
+    // Format time
+    const formatTime = (date: string | Date) => {
+        return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
+    // Check if user is online
+    const isUserOnline = (userId: string) => onlineUsers.includes(userId);
+
+    // Get other member for direct chat
+    const getOtherMember = (chat: Chat): Member | undefined => {
+        return chat.members.find((member: Member) => member._id !== currentUser.id);
+    };
+
+    // Handle chat selection
+    const handleChatSelect = (chat: Chat) => {
+        console.log('🔄 Selecting chat:', chat._id);
+        dispatch(setActiveChat(chat));
     };
 
     return (
         <div className="mx-auto px-4 max-w-7xl pt-20 min-h-screen flex flex-col font-poppins flex-grow relative">
             <FloatingParticles />
 
-            {/* Main messaging container - adjusted for better width utilization */}
+            {/* Connection status indicator */}
+            <motion.div 
+                className={`fixed top-4 right-4 z-50 px-4 py-2 rounded-full text-sm font-medium ${
+                    isConnected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                }`}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3 }}
+            >
+                {isConnected ? '🟢 Connected' : '🔴 Disconnected'}
+            </motion.div>
+
+            {/* Main messaging container */}
             <motion.div 
                 className="flex-1 flex bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100"
                 initial={{ opacity: 0, y: 20 }}
@@ -226,7 +421,7 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = () => {
                 transition={{ duration: 0.7, delay: 0.2 }}
                 style={{ minHeight: '70vh', maxHeight: '88vh' }}
             >
-                {/* Chat List - Made more compact */}
+                {/* Chat List */}
                 <motion.div 
                     className="w-80 border-r border-gray-200 flex flex-col bg-gradient-to-b from-gray-50 to-white"
                     initial={{ x: -20, opacity: 0 }}
@@ -250,69 +445,114 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = () => {
                         </div>
                     </div>
 
+                    {/* Family Members for Direct Chat */}
+                    <div className="p-4 border-b border-gray-200">
+                        <p className="text-xs font-medium text-gray-500 mb-3">Start new chat</p>
+                        <div className="flex space-x-2 overflow-x-auto pb-2">
+                            {familyMembers
+                                .filter(member => member._id !== currentUser.id)
+                                .map((member) => (
+                                    <motion.button
+                                        key={member._id}
+                                        onClick={() => createDirectChat(member._id)}
+                                        className="flex-shrink-0 text-center"
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        <div className="relative">
+                                            <img 
+                                                src={member.avatar || "https://via.placeholder.com/40"} 
+                                                alt={member.name}
+                                                className="w-10 h-10 rounded-full border-2 border-gray-200"
+                                            />
+                                            {isUserOnline(member._id) && (
+                                                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
+                                            )}
+                                        </div>
+                                        <p className="text-xs text-gray-600 mt-1 truncate w-12">{member.name.split(' ')[0]}</p>
+                                    </motion.button>
+                                ))}
+                        </div>
+                    </div>
+
                     {/* Chat List Items */}
                     <div className="flex-1 overflow-y-auto">
-                        {chats.map((chat, index) => (
-                            <motion.div
-                                key={chat.id}
-                                className={`p-4 border-b border-gray-100 cursor-pointer transition-all duration-300 ${
-                                    activeChat?.id === chat.id 
-                                        ? 'bg-blue-50 border-l-4 border-l-[#3A8EBA] shadow-sm' 
-                                        : 'hover:bg-gray-50'
-                                }`}
-                                onClick={() => setActiveChat(chat)}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                                whileHover={{ scale: 1.01 }}
-                            >
-                                <div className="flex items-center space-x-3">
-                                    <div className="relative">
-                                        {chat.type === 'group' ? (
-                                            <motion.div 
-                                                className="w-12 h-12 bg-gradient-to-br from-[#3A8EBA] to-[#2C7EA8] rounded-full flex items-center justify-center shadow-lg"
-                                                whileHover={{ scale: 1.1, rotate: 5 }}
-                                            >
-                                                <span className="text-white font-bold text-lg">👨‍👩‍👧‍👦</span>
-                                            </motion.div>
-                                        ) : (
-                                            <motion.img 
-                                                src={chat.avatar || "https://via.placeholder.com/48"} 
-                                                alt={chat.name}
-                                                className="w-12 h-12 rounded-full border-3 border-white shadow-md"
-                                                whileHover={{ scale: 1.1 }}
-                                            />
-                                        )}
-                                        {chat.isOnline && chat.type === 'direct' && (
-                                            <motion.div 
-                                                className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"
-                                                animate={{ scale: [1, 1.2, 1] }}
-                                                transition={{ duration: 2, repeat: Infinity }}
-                                            />
-                                        )}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="font-medium text-gray-900 truncate text-sm">{chat.name}</p>
-                                        {chat.lastMessage && (
-                                            <p className="text-xs text-gray-500 truncate mt-1">{chat.lastMessage.content}</p>
-                                        )}
-                                    </div>
-                                    {chat.unreadCount > 0 && (
-                                        <motion.div 
-                                            className="bg-red-500 text-white text-xs rounded-full min-w-5 h-5 flex items-center justify-center px-1.5"
-                                            animate={{ scale: [1, 1.2, 1] }}
-                                            transition={{ duration: 1, repeat: Infinity }}
-                                        >
-                                            {chat.unreadCount}
-                                        </motion.div>
-                                    )}
-                                </div>
-                            </motion.div>
-                        ))}
+                        {loading.chats ? (
+                            <div className="p-4 text-center">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#3A8EBA] mx-auto"></div>
+                            </div>
+                        ) : (
+                            chats.map((chat, index) => {
+                                const otherMember = chat.type === 'direct' ? getOtherMember(chat) : null;
+                                const isOnline = chat.type === 'direct' && otherMember ? isUserOnline(otherMember._id) : false;
+                                
+                                return (
+                                    <motion.div
+                                        key={chat._id}
+                                        className={`p-4 border-b border-gray-100 cursor-pointer transition-all duration-300 ${
+                                            activeChat?._id === chat._id 
+                                                ? 'bg-blue-50 border-l-4 border-l-[#3A8EBA] shadow-sm' 
+                                                : 'hover:bg-gray-50'
+                                        }`}
+                                        onClick={() => handleChatSelect(chat)}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: index * 0.1 }}
+                                        whileHover={{ scale: 1.01 }}
+                                    >
+                                        <div className="flex items-center space-x-3">
+                                            <div className="relative">
+                                                {chat.type === 'group' ? (
+                                                    <motion.div 
+                                                        className="w-12 h-12 bg-gradient-to-br from-[#3A8EBA] to-[#2C7EA8] rounded-full flex items-center justify-center shadow-lg"
+                                                        whileHover={{ scale: 1.1, rotate: 5 }}
+                                                    >
+                                                        <span className="text-white font-bold text-lg">👨‍👩‍👧‍👦</span>
+                                                    </motion.div>
+                                                ) : (
+                                                    <motion.img 
+                                                        src={otherMember?.avatar || "https://via.placeholder.com/48"} 
+                                                        alt={chat.name}
+                                                        className="w-12 h-12 rounded-full border-3 border-white shadow-md"
+                                                        whileHover={{ scale: 1.1 }}
+                                                    />
+                                                )}
+                                                {isOnline && (
+                                                    <motion.div 
+                                                        className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"
+                                                        animate={{ scale: [1, 1.2, 1] }}
+                                                        transition={{ duration: 2, repeat: Infinity }}
+                                                    />
+                                                )}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-medium text-gray-900 truncate text-sm">
+                                                    {chat.type === 'direct' && otherMember ? otherMember.name : chat.name}
+                                                </p>
+                                                {chat.lastMessage && (
+                                                    <p className="text-xs text-gray-500 truncate mt-1">
+                                                        {chat.lastMessage.senderName}: {chat.lastMessage.content}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            {chat.unreadCount > 0 && (
+                                                <motion.div 
+                                                    className="bg-red-500 text-white text-xs rounded-full min-w-5 h-5 flex items-center justify-center px-1.5"
+                                                    animate={{ scale: [1, 1.2, 1] }}
+                                                    transition={{ duration: 1, repeat: Infinity }}
+                                                >
+                                                    {chat.unreadCount}
+                                                </motion.div>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                );
+                            })
+                        )}
                     </div>
                 </motion.div>
 
-                {/* Chat Area - Takes remaining space */}
+                {/* Chat Area */}
                 <div className="flex-1 flex flex-col">
                     {activeChat ? (
                         <>
@@ -332,22 +572,38 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = () => {
                                         </motion.div>
                                     ) : (
                                         <motion.img 
-                                            src={activeChat.avatar || "https://via.placeholder.com/48"} 
+                                            src={getOtherMember(activeChat)?.avatar || "https://via.placeholder.com/48"} 
                                             alt={activeChat.name}
                                             className="w-12 h-12 rounded-full border-3 border-white shadow-lg"
                                             whileHover={{ scale: 1.1 }}
                                         />
                                     )}
                                     <div>
-                                        <h3 className="font-comic font-bold text-white text-lg">{activeChat.name}</h3>
-                                        {activeChat.type === 'direct' && activeChat.isOnline && (
+                                        <h3 className="font-comic font-bold text-white text-lg">
+                                            {activeChat.type === 'direct' && getOtherMember(activeChat) 
+                                                ? getOtherMember(activeChat)?.name 
+                                                : activeChat.name}
+                                        </h3>
+                                        {activeChat.type === 'direct' && (() => {
+                                            const otherMember = getOtherMember(activeChat);
+                                            return otherMember && isUserOnline(otherMember._id) && (
+                                                <motion.p 
+                                                    className="text-white/80 text-sm flex items-center"
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                >
+                                                    <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                                                    Online
+                                                </motion.p>
+                                            );
+                                        })()}
+                                        {typingUsers.length > 0 && (
                                             <motion.p 
-                                                className="text-white/80 text-sm flex items-center"
+                                                className="text-white/80 text-sm"
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                             >
-                                                <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
-                                                Online
+                                                {typingUsers.map(user => user.userName).join(', ')} typing...
                                             </motion.p>
                                         )}
                                     </div>
@@ -356,45 +612,166 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = () => {
 
                             {/* Messages */}
                             <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-blue-50/20 to-white">
-                                <AnimatePresence>
-                                    {getChatMessages(activeChat.id).map((msg) => (
-                                        <motion.div
-                                            key={msg.id}
-                                            className={`flex ${msg.senderId === 'current-user' ? 'justify-end' : 'justify-start'}`}
-                                            initial={{ opacity: 0, y: 20, scale: 0.8 }}
-                                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                                            exit={{ opacity: 0, scale: 0.8 }}
-                                            transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                                        >
-                                            <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl relative shadow-sm ${
-                                                msg.senderId === 'current-user' 
-                                                    ? 'bg-[#3A8EBA] text-white' 
-                                                    : 'bg-white border border-gray-200'
-                                            }`}>
-                                                {msg.senderId !== 'current-user' && activeChat.type === 'group' && (
-                                                    <p className="text-xs font-medium text-gray-500 mb-1">{msg.senderName}</p>
-                                                )}
-                                                {msg.type === 'emoji' ? (
-                                                    <motion.span 
-                                                        className="text-4xl"
-                                                        whileHover={{ scale: 1.2 }}
-                                                    >
-                                                        {msg.content}
-                                                    </motion.span>
-                                                ) : (
-                                                    <p className="text-sm leading-relaxed">{msg.content}</p>
-                                                )}
-                                                <p className={`text-xs mt-2 ${
-                                                    msg.senderId === 'current-user' ? 'text-white/70' : 'text-gray-400'
+                                {loading.messages ? (
+                                    <div className="text-center py-8">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#3A8EBA] mx-auto"></div>
+                                    </div>
+                                ) : (
+                                    <AnimatePresence>
+                                        {messages.map((msg) => (
+                                            <motion.div
+                                                key={msg._id}
+                                                className={`flex ${msg.senderId === currentUser.id ? 'justify-end' : 'justify-start'}`}
+                                                initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0.8 }}
+                                                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                                            >
+                                                <div className={`max-w-xs lg:max-w-md group relative ${
+                                                    msg.senderId === currentUser.id ? 'ml-auto' : 'mr-auto'
                                                 }`}>
-                                                    {formatTime(msg.timestamp)}
-                                                </p>
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                </AnimatePresence>
+                                                    {/* Reply indicator */}
+                                                    {msg.replyTo && (
+                                                        <div className={`text-xs text-gray-500 mb-1 p-2 rounded-lg bg-gray-100 border-l-2 ${
+                                                            msg.senderId === currentUser.id ? 'border-blue-400' : 'border-gray-400'
+                                                        }`}>
+                                                            <p className="font-medium">{msg.replyTo.senderName}</p>
+                                                            <p className="truncate">{msg.replyTo.content}</p>
+                                                        </div>
+                                                    )}
+
+                                                    <div className={`px-4 py-3 rounded-2xl relative shadow-sm ${
+                                                        msg.senderId === currentUser.id 
+                                                            ? 'bg-[#3A8EBA] text-white' 
+                                                            : 'bg-white border border-gray-200'
+                                                    }`}>
+                                                        {msg.senderId !== currentUser.id && activeChat.type === 'group' && (
+                                                            <p className="text-xs font-medium text-gray-500 mb-1">{msg.senderName}</p>
+                                                        )}
+                                                        
+                                                        {msg.type === 'emoji' ? (
+                                                            <motion.span 
+                                                                className="text-4xl"
+                                                                whileHover={{ scale: 1.2 }}
+                                                            >
+                                                                {msg.content}
+                                                            </motion.span>
+                                                        ) : msg.type === 'image' ? (
+                                                            <div>
+                                                                <img 
+                                                                    src={msg.fileUrl} 
+                                                                    alt="Shared image" 
+                                                                    className="max-w-full h-auto rounded-lg mb-2"
+                                                                />
+                                                                <p className="text-sm">{msg.content}</p>
+                                                            </div>
+                                                        ) : msg.type === 'file' ? (
+                                                            <div className="flex items-center space-x-2">
+                                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                                </svg>
+                                                                <div>
+                                                                    <p className="text-sm font-medium">{msg.fileName}</p>
+                                                                    <p className="text-xs opacity-70">{msg.fileSize ? `${(msg.fileSize / 1024 / 1024).toFixed(2)} MB` : ''}</p>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <p className="text-sm leading-relaxed">{msg.content}</p>
+                                                        )}
+
+                                                        {/* Message reactions */}
+                                                        {msg.reactions && msg.reactions.length > 0 && (
+                                                            <div className="flex flex-wrap gap-1 mt-2">
+                                                                {Object.entries(
+                                                                    msg.reactions.reduce<Record<string, string[]>>((acc, reaction) => {
+                                                                        acc[reaction.emoji] = acc[reaction.emoji] || [];
+                                                                        acc[reaction.emoji].push(reaction.userId);
+                                                                        return acc;
+                                                                    }, {})
+                                                                ).map(([emoji, userIds]) => (
+                                                                    // ...existing code...
+
+                                                                    <motion.button
+                                                                        key={emoji}
+                                                                        onClick={() => handleReaction(msg._id, emoji)}
+                                                                        className={`text-xs px-2 py-1 rounded-full border ${
+                                                                            userIds.includes(currentUser.id || "")
+                                                                                ? 'bg-blue-100 border-blue-300'
+                                                                                : 'bg-gray-100 border-gray-300'
+                                                                        }`}
+                                                                        whileHover={{ scale: 1.1 }}
+                                                                        whileTap={{ scale: 0.95 }}
+                                                                    >
+                                                                        {emoji} {userIds.length}
+                                                                    </motion.button>
+                                                                ))}
+                                                            </div>
+                                                        )}
+
+                                                        <div className="flex items-center justify-between mt-2">
+                                                            <p className={`text-xs ${
+                                                                msg.senderId === currentUser.id ? 'text-white/70' : 'text-gray-400'
+                                                            }`}>
+                                                                {formatTime(msg.timestamp)}
+                                                                {msg.edited && <span className="ml-1">(edited)</span>}
+                                                            </p>
+                                                            
+                                                            {/* Quick reaction button */}
+                                                            <motion.button
+                                                                onClick={() => handleReaction(msg._id, '❤️')}
+                                                                className="opacity-0 group-hover:opacity-100 text-xs hover:scale-110 transition-all"
+                                                                whileHover={{ scale: 1.2 }}
+                                                                whileTap={{ scale: 0.9 }}
+                                                            >
+                                                                ❤️
+                                                            </motion.button>
+                                                        </div>
+
+                                                        {/* Message options menu */}
+                                                        <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <motion.button
+                                                                onClick={() => setReplyTo(msg)}
+                                                                className="bg-gray-100 hover:bg-gray-200 p-1 rounded-full text-xs"
+                                                                whileHover={{ scale: 1.1 }}
+                                                                whileTap={{ scale: 0.95 }}
+                                                            >
+                                                                ↩️
+                                                            </motion.button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </AnimatePresence>
+                                )}
                                 <div ref={messagesEndRef} />
                             </div>
+
+                            {/* Reply indicator */}
+                            <AnimatePresence>
+                                {replyTo && (
+                                    <motion.div
+                                        className="px-6 py-2 bg-gray-50 border-t border-gray-200 flex items-center justify-between"
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: 20 }}
+                                    >
+                                        <div className="flex items-center space-x-2">
+                                            <span className="text-sm text-gray-500">Replying to</span>
+                                            <span className="text-sm font-medium">{replyTo.senderName}</span>
+                                            <span className="text-sm text-gray-400 truncate max-w-32">{replyTo.content}</span>
+                                        </div>
+                                        <motion.button
+                                            onClick={() => setReplyTo(null)}
+                                            className="text-gray-400 hover:text-gray-600"
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.95 }}
+                                        >
+                                            ✕
+                                        </motion.button>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
 
                             {/* Quick Emoji Bar */}
                             <motion.div 
@@ -426,6 +803,19 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = () => {
                                 transition={{ delay: 0.4 }}
                             >
                                 <div className="flex items-center space-x-4">
+                                    {/* File upload button */}
+                                    <motion.button
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="text-gray-400 hover:text-[#3A8EBA] transition-colors duration-200 p-2 rounded-full hover:bg-gray-50"
+                                        whileHover={{ scale: 1.1, rotate: 10 }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                                        </svg>
+                                    </motion.button>
+
+                                    {/* Emoji picker button */}
                                     <motion.button
                                         onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                                         className="text-gray-400 hover:text-[#3A8EBA] transition-colors duration-200 p-2 rounded-full hover:bg-gray-50"
@@ -436,25 +826,48 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = () => {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                     </motion.button>
+
                                     <input
                                         type="text"
                                         value={message}
-                                        onChange={(e) => setMessage(e.target.value)}
-                                        onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                                        onChange={handleTypingInput}
+                                        onKeyPress={(e) => e.key === 'Enter' && sendMessageHandler()}
                                         placeholder="Type a loving message..."
                                         className="flex-1 p-4 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#3A8EBA] focus:border-transparent bg-gray-50 focus:bg-white transition-all duration-200"
+                                        disabled={loading.sending}
                                     />
+                                    
                                     <motion.button
-                                        onClick={sendMessage}
-                                        className="bg-[#3A8EBA] text-white p-4 rounded-full hover:bg-[#2C7EA8] transition-colors duration-200 shadow-lg hover:shadow-xl"
+                                        onClick={sendMessageHandler}
+                                        disabled={!message.trim() || loading.sending}
+                                        className="bg-[#3A8EBA] text-white p-4 rounded-full hover:bg-[#2C7EA8] transition-colors duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                     >
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                                        </svg>
+                                        {loading.sending ? (
+                                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                        ) : (
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                            </svg>
+                                        )}
                                     </motion.button>
                                 </div>
+
+                                {/* Hidden file input */}
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            handleFileUpload(file);
+                                            e.target.value = '';
+                                        }
+                                    }}
+                                    accept="image/*,video/*,.pdf,.doc,.docx,.txt"
+                                    className="hidden"
+                                />
 
                                 {/* Emoji Picker */}
                                 <AnimatePresence>
@@ -470,7 +883,7 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = () => {
                                                     <motion.button
                                                         key={sticker}
                                                         onClick={() => {
-                                                            sendQuickEmoji(sticker);
+                                                            sendQuickEmoji(sticker, true);
                                                             setShowEmojiPicker(false);
                                                         }}
                                                         className="text-3xl hover:bg-white rounded-xl p-3 transition-colors shadow-sm hover:shadow-md"
@@ -578,7 +991,7 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = () => {
                                 <p className="text-sm font-medium text-gray-700 mb-4">Select family members:</p>
                                 <div className="space-y-3 max-h-48 overflow-y-auto">
                                     {familyMembers
-                                        .filter(member => member.name !== currentUser.name)
+                                        .filter(member => member._id !== currentUser.id)
                                         .map((member) => (
                                             <motion.label 
                                                 key={member._id} 
