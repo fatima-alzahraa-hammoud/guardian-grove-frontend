@@ -440,7 +440,7 @@ const ExploreLearn: React.FC<ExploreLearnProps> = ({ collapsed }) => {
     useEffect(() => {
         if (resources.length === 0) return;
 
-        let filtered = resources.filter(resource => {
+        const filtered = resources.filter(resource => {
             // Filter by tab
             const matchesTab = activeTab === "Books" 
                 ? resource.type === "book"
