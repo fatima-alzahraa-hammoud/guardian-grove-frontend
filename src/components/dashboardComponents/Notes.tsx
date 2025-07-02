@@ -1,10 +1,13 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import NoteCard from "../cards/NoteCard";
 import NoteEditor from "../cards/NoteEditor";
+import { requestApi } from "../../libs/requestApi"; 
+import { requestMethods } from "../../libs/enum/requestMethods";
 
 export interface Note {
-    id: string;
+    _id?: string; // Updated to match backend
+    id?: string; // Keep for backward compatibility
     title: string;
     content: string;
     backgroundColor: string;
@@ -13,6 +16,7 @@ export interface Note {
     isPinned: boolean;
     isChecklist: boolean;
     checklistItems: { id: string; text: string; completed: boolean }[];
+    type?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -47,6 +51,8 @@ const Notes: React.FC<NotesProps> = ({ collapsed = false }) => {
     
     const [history, setHistory] = useState<string[]>([]);
     const [historyIndex, setHistoryIndex] = useState(-1);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     
     const contentRef = useRef<HTMLDivElement>(null);
 
@@ -64,6 +70,38 @@ const Notes: React.FC<NotesProps> = ({ collapsed = false }) => {
         "#F0F4C3", // Light Lime Yellow
         "#FFFFFF"  // White
     ];
+
+    // Load notes on component mount
+    useEffect(() => {
+        fetchNotes();
+    }, []);
+
+    // Fetch notes from backend
+    const fetchNotes = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await requestApi({
+                route: "/userNotes",
+                method: requestMethods.GET
+            });
+            if (response?.notes) {
+                // Convert dates and ensure proper format
+                const formattedNotes = response.notes.map((note: any) => ({
+                    ...note,
+                    id: note._id, // Map _id to id for compatibility
+                    createdAt: new Date(note.createdAt),
+                    updatedAt: new Date(note.updatedAt)
+                }));
+                setNotes(formattedNotes);
+            }
+        } catch (error) {
+            console.error("Error fetching notes:", error);
+            setError("Failed to load notes");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Animation variants
     const containerVariants = {
@@ -132,7 +170,6 @@ const Notes: React.FC<NotesProps> = ({ collapsed = false }) => {
 
     const handleCreateNote = () => {
         const newNote: Note = {
-            id: Date.now().toString(),
             title: "",
             content: "",
             backgroundColor: selectedColor,
@@ -141,6 +178,7 @@ const Notes: React.FC<NotesProps> = ({ collapsed = false }) => {
             isPinned: false,
             isChecklist: false,
             checklistItems: [],
+            type: "personal",
             createdAt: new Date(),
             updatedAt: new Date()
         };
@@ -148,34 +186,131 @@ const Notes: React.FC<NotesProps> = ({ collapsed = false }) => {
         setIsCreating(true);
     };
 
-    const handleSaveNote = () => {
-        if (editingNote) {
-            if (editingNote.title.trim() || editingNote.content.trim()) {
-                editingNote.updatedAt = new Date();
-                
-                if (notes.find(note => note.id === editingNote.id)) {
+    const handleSaveNote = async () => {
+        if (!editingNote) return;
+
+        try {
+            // Don't save if both title and content are empty
+            if (!editingNote.title.trim() && !editingNote.content.trim()) {
+                setEditingNote(null);
+                setIsCreating(false);
+                return;
+            }
+
+            editingNote.updatedAt = new Date();
+            
+            if (editingNote._id || editingNote.id) {
+                // Update existing note
+                const response = await requestApi({
+                    route: "/userNotes",
+                    method: requestMethods.PUT,
+                    body: {
+                        noteId: editingNote._id || editingNote.id,
+                        title: editingNote.title,
+                        content: editingNote.content,
+                        backgroundColor: editingNote.backgroundColor,
+                        textColor: editingNote.textColor,
+                        fontSize: editingNote.fontSize,
+                        isPinned: editingNote.isPinned,
+                        isChecklist: editingNote.isChecklist,
+                        checklistItems: editingNote.checklistItems
+                    }
+                });
+
+                if (response?.note) {
+                    const updatedNote = {
+                        ...response.note,
+                        id: response.note._id,
+                        createdAt: new Date(response.note.createdAt),
+                        updatedAt: new Date(response.note.updatedAt)
+                    };
                     setNotes(notes.map(note => 
-                        note.id === editingNote.id ? editingNote : note
+                        (note._id || note.id) === (editingNote._id || editingNote.id) ? updatedNote : note
                     ));
-                } else {
-                    setNotes([editingNote, ...notes]);
+                }
+            } else {
+                // Create new note
+                const response = await requestApi({
+                    route: "/userNotes",
+                    method: requestMethods.POST,
+                    body: {
+                        title: editingNote.title,
+                        content: editingNote.content,
+                        type: editingNote.type || "personal",
+                        backgroundColor: editingNote.backgroundColor,
+                        textColor: editingNote.textColor,
+                        fontSize: editingNote.fontSize,
+                        isPinned: editingNote.isPinned,
+                        isChecklist: editingNote.isChecklist,
+                        checklistItems: editingNote.checklistItems
+                    }
+                });
+
+                if (response?.note) {
+                    const newNote = {
+                        ...response.note,
+                        id: response.note._id,
+                        createdAt: new Date(response.note.createdAt),
+                        updatedAt: new Date(response.note.updatedAt)
+                    };
+                    setNotes([newNote, ...notes]);
                 }
             }
+        } catch (error) {
+            console.error("Error saving note:", error);
+            setError("Failed to save note");
         }
+
         setEditingNote(null);
         setIsCreating(false);
         setHistory([]);
         setHistoryIndex(-1);
     };
 
-    const handleDeleteNote = (id: string) => {
-        setNotes(notes.filter(note => note.id !== id));
+    const handleDeleteNote = async (id: string) => {
+        try {
+            await requestApi({
+                route: "/userNotes",
+                method: requestMethods.DELETE,
+                body: { noteId: id }
+            });
+
+            setNotes(notes.filter(note => (note._id || note.id) !== id));
+        } catch (error) {
+            console.error("Error deleting note:", error);
+            setError("Failed to delete note");
+        }
     };
 
-    const handlePinNote = (id: string) => {
-        setNotes(notes.map(note => 
-            note.id === id ? { ...note, isPinned: !note.isPinned } : note
-        ));
+    const handlePinNote = async (id: string) => {
+        try {
+            const noteToPin = notes.find(note => (note._id || note.id) === id);
+            if (!noteToPin) return;
+
+            const response = await requestApi({
+                route: "/userNotes",
+                method: requestMethods.PUT,
+                body: {
+                    noteId: id,
+                    isPinned: !noteToPin.isPinned
+                }
+            });
+
+            if (response?.note) {
+                const updatedNote = {
+                    ...response.note,
+                    id: response.note._id,
+                    createdAt: new Date(response.note.createdAt),
+                    updatedAt: new Date(response.note.updatedAt)
+                };
+                setNotes(notes.map(note => 
+                    (note._id || note.id) === id ? updatedNote : note
+                ));
+            }
+        } catch (error) {
+            console.error("Error pinning note:", error);
+            setError("Failed to pin note");
+        }
     };
 
     const handleUndo = () => {
@@ -256,6 +391,25 @@ const Notes: React.FC<NotesProps> = ({ collapsed = false }) => {
         }
     };
 
+    // AI Assistant function
+    const handleAIRequest = async (message: string, noteContent: string): Promise<string> => {
+        try {
+            const response = await requestApi({
+                route: "/userNotes/askChat",
+                method: requestMethods.POST,
+                body: {
+                    message,
+                    noteContent
+                }
+            });
+
+            return response?.response || "Sorry, I couldn't generate a response right now.";
+        } catch (error) {
+            console.error("Error getting AI response:", error);
+            return "Sorry, there was an error communicating with the AI assistant.";
+        }
+    };
+
     const filteredNotes = notes.filter(note =>
         note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         note.content.toLowerCase().includes(searchTerm.toLowerCase())
@@ -264,12 +418,41 @@ const Notes: React.FC<NotesProps> = ({ collapsed = false }) => {
     const pinnedNotes = filteredNotes.filter(note => note.isPinned);
     const unpinnedNotes = filteredNotes.filter(note => !note.isPinned);
 
+    // Loading state
+    if (loading) {
+        return (
+            <div className="pt-24 min-h-screen flex justify-center items-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3A8EBA] mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading your notes...</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className={`pt-24 min-h-screen flex justify-center relative`}>
             {/* Background particles */}
             <FloatingParticles />
             
             <div className={`w-full flex-grow font-poppins mx-auto px-4 ${collapsed ? "max-w-6xl" : "max-w-5xl"}`}>
+                {/* Error message */}
+                {error && (
+                    <motion.div 
+                        className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                    >
+                        {error}
+                        <button 
+                            onClick={() => setError(null)}
+                            className="ml-2 text-red-500 hover:text-red-700"
+                        >
+                            ×
+                        </button>
+                    </motion.div>
+                )}
+
                 {/* Header - Updated to match Achievements style */}
                 <motion.div 
                     className="text-left mb-10"
@@ -372,7 +555,7 @@ const Notes: React.FC<NotesProps> = ({ collapsed = false }) => {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                 {pinnedNotes.map((note, index) => (
                                     <NoteCard
-                                        key={note.id}
+                                        key={note._id || note.id}
                                         note={note}
                                         index={index}
                                         onEdit={setEditingNote}
@@ -400,7 +583,7 @@ const Notes: React.FC<NotesProps> = ({ collapsed = false }) => {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                 {unpinnedNotes.map((note, index) => (
                                     <NoteCard
-                                        key={note.id}
+                                        key={note._id || note.id}
                                         note={note}
                                         index={index}
                                         onEdit={setEditingNote}
@@ -573,6 +756,7 @@ const Notes: React.FC<NotesProps> = ({ collapsed = false }) => {
                                             removeChecklistItem={removeChecklistItem}
                                             contentRef={contentRef}
                                             saveToHistory={saveToHistory}
+                                            onAIRequest={handleAIRequest}
                                         />
                                     </motion.div>
                                 )}
