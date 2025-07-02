@@ -146,7 +146,7 @@ const CalendarEvents: React.FC = () => {
     const [events, setEvents] = useState<Event[]>([
         {
             id: '1',
-            title: "Leon's Birthday",
+            title: "tasnim's Birthday",
             date: new Date(2024, 11, 17),
             time: 'All day',
             type: 'birthday'
