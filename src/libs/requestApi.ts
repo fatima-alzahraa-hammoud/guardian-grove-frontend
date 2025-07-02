@@ -1,7 +1,7 @@
 import axios, { Method, AxiosError } from "axios";
 import { toast } from "react-toastify";
 
-axios.defaults.baseURL =  import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+axios.defaults.baseURL =  import.meta.env.VITE_API_URL ||"http://127.0.0.1:8000";
 console.log("API Base URL:", axios.defaults.baseURL);
 console.log("Environment:", import.meta.env.VITE_API_URL);
 interface RequestApiParams {
