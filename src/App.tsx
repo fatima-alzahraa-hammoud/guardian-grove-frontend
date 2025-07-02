@@ -25,6 +25,7 @@ import {Toaster} from 'react-hot-toast';
 import { showFirebaseNotificationToast } from './lib/CustomToast.tsx';
 import HandGestureControl from './components/HandTracker.tsx';
 import { AccessibilityProvider, useAccessibility } from './contexts/AccessibilityContext';
+import ChildInsights from './components/dashboardComponents/ChildInsights';
 
 interface DecodedToken {
   userId: string;
@@ -213,6 +214,7 @@ function AppContent() {
             }
           />
           <Route path='/changePassword' element={ <ProtectedRoute> <ChangePasswordPage /> </ProtectedRoute> } />
+          <Route path='/child/:childId' element={<ProtectedRoute><ChildInsights /></ProtectedRoute>} />
         </Routes>
       </div>
     </>

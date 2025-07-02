@@ -560,8 +560,9 @@ const MyProfile : React.FC = () => {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => {
-                                        // Navigate to child's profile or handle click
-                                        console.log('Clicked on child:', child.name);
+                                        // Navigate to child's insights/profile using their _id
+                                          navigate(`/child/${child._id}`);
+
                                     }}
                                 >
                                     <motion.div
