@@ -175,7 +175,7 @@ const Users: React.FC = () => {
         }
     }
 
-    const handleRoleChange = async (userId: number, newRole: 'user' | 'admin') => {
+    const handleRoleChange = async (userId: number, newRole: 'child' | 'parent' | 'admin') => {
         try {
             console.log(`Updating user ${userId} role to ${newRole}`);
             
