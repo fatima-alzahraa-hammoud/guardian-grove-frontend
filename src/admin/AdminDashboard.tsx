@@ -70,6 +70,10 @@ interface LeaderboardResponse {
     weeklyTop10?: LeaderboardEntry[];
 }
 
+interface UsersResponse {
+    users?: User[];
+}
+
 interface FamiliesResponse {
     families?: Family[];
 }
@@ -98,11 +102,15 @@ const AdminDashboard: React.FC = () => {
 
     const fetchUsers = async (): Promise<User[]> => {
         try {
-            const response = await requestApi({
+            const response: UsersResponse = await requestApi({
                 route: "/users/",
                 method: requestMethods.GET
             });
-            return response || [];
+            // Handle both array and object responses
+            if (Array.isArray(response)) {
+                return response;
+            }
+            return response?.users || [];
         } catch (error) {
             console.error("Error fetching users:", error);
             return [];
@@ -222,6 +230,9 @@ const AdminDashboard: React.FC = () => {
                 fetchStoreItems(),
                 fetchLeaderboard()
             ]);
+
+            console.log('Users response:', usersResponse); // Debug log
+            console.log('Families response:', familiesResponse); // Debug log
 
             // Calculate stats from the responses
             const totalUsers = usersResponse?.length || 0;
@@ -460,4 +471,4 @@ const AdminDashboard: React.FC = () => {
     )
 }
 
-export default AdminDashboard
+export default AdminDashboard;

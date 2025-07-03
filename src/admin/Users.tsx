@@ -45,6 +45,11 @@ interface ApiUser {
     avatar?: string;
 }
 
+// API Response wrapper interface
+interface UsersResponse {
+    users?: ApiUser[];
+}
+
 const Users: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
@@ -62,17 +67,37 @@ const Users: React.FC = () => {
             setError(null);
             console.log("Fetching users...");
             
-            const response: ApiUser[] = await requestApi({
+            const response = await requestApi({
                 route: "/users/", // Using your existing backend endpoint
                 method: requestMethods.GET
             });
             
-            console.log("Users response:", response);
+            console.log("Raw API response:", response);
             
-            if (response) {
+            let apiUsers: ApiUser[] = [];
+            
+            // Handle different response formats
+            if (Array.isArray(response)) {
+                // If response is directly an array
+                apiUsers = response;
+            } else if (response && typeof response === 'object' && 'users' in response) {
+                // If response is an object with users property
+                apiUsers = (response as UsersResponse).users || [];
+            } else if (response && typeof response === 'object') {
+                // If response is an object but not wrapped in users property
+                // This might be the case if your API returns a single object
+                apiUsers = [response as ApiUser];
+            } else {
+                console.warn("Unexpected response format:", response);
+                apiUsers = [];
+            }
+            
+            console.log("Extracted API users:", apiUsers);
+            
+            if (apiUsers.length > 0) {
                 // Transform backend data to match frontend interface
-                const transformedUsers: User[] = response.map((user: ApiUser) => ({
-                    id: user._id ? parseInt(user._id) : user.id || 0,
+                const transformedUsers: User[] = apiUsers.map((user: ApiUser, index: number) => ({
+                    id: user._id ? parseInt(user._id) : user.id || index + 1,
                     name: user.name,
                     email: user.email,
                     role: user.role,
@@ -87,11 +112,12 @@ const Users: React.FC = () => {
                 console.log("Transformed users:", transformedUsers);
                 setUsers(transformedUsers);
             } else {
+                console.log("No users found in response");
                 setUsers([]);
             }
         } catch (error) {
             console.error("Error fetching users:", error);
-            setError("Failed to fetch users");
+            setError("Failed to fetch users. Please check your API connection.");
             setUsers([]);
         } finally {
             setLoading(false);
@@ -192,7 +218,7 @@ const Users: React.FC = () => {
                     <div className="text-lg text-red-600">{error}</div>
                     <button 
                         onClick={fetchUsers}
-                        className="ml-4 px-4 py-2 bg-blue-600 text-white rounded"
+                        className="ml-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                     >
                         Retry
                     </button>
@@ -237,112 +263,124 @@ const Users: React.FC = () => {
                 />
             </div>
 
-            <Card>
-                <CardHeader className="pb-4">
-                    <CardTitle className="text-base">User List</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex justify-between mb-4">
-                        <Input
-                            placeholder="Search users..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            className="w-64"
-                        />
-                        <Select value={filter} onValueChange={(value: 'all' | 'parent' | 'child') => setFilter(value)}>
-                            <SelectTrigger className="w-36">
-                                <SelectValue placeholder="Filter by role" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Users</SelectItem>
-                                <SelectItem value="parent">Parents</SelectItem>
-                                <SelectItem value="child">Children</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>User</TableHead>
-                                <TableHead>Email</TableHead>
-                                <TableHead>Role</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Stars</TableHead>
-                                <TableHead>Coins</TableHead>
-                                <TableHead>Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {filteredUsers.map((user) => (
-                                <TableRow
-                                    key={user.id}
-                                    className="cursor-pointer hover:bg-gray-100"
-                                    onClick={() => handleRowClick(user)}
-                                >
-                                    <TableCell>
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-[#3A8EBA] flex items-center justify-center overflow-hidden">
-                                                {user.avatar ? (
-                                                    <img 
-                                                        src={user.avatar} 
-                                                        alt={user.name}
-                                                        className="w-full h-full object-cover"
-                                                        onError={(e) => {
-                                                            const target = e.target as HTMLImageElement;
-                                                            target.style.display = 'none';
-                                                            const parent = target.parentElement;
-                                                            if (parent) {
-                                                                parent.innerHTML = `<span class="text-white text-sm font-semibold">${user.name[0]}</span>`;
-                                                            }
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    <span className="text-white text-sm font-semibold">{user.name[0]}</span>
-                                                )}
-                                            </div>
-                                            <span className="font-medium">{user.name}</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>{user.email}</TableCell>
-                                    <TableCell className="capitalize">{user.role}</TableCell>
-                                    <TableCell>
-                                        <span className={`px-2 py-1 rounded-full text-xs ${
-                                        user.status === 'active' 
-                                            ? 'bg-green-100 text-green-800' 
-                                            : 'bg-red-100 text-red-800'
-                                        }`}>
-                                        {user.status}
-                                        </span>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center gap-1">
-                                            <Star className="h-4 w-4 text-yellow-500" />
-                                            <span className="font-medium">{user.stars}</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center gap-1">
-                                            <Coins className="h-4 w-4 text-amber-500" />
-                                            <span className="font-medium">{user.coins}</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell> 
-                                        <UserManageDialog
-                                            user={{
-                                                ...user,
-                                                role: user.role === "admin" ? "admin" : "user",
-                                                type: user.role === "parent" ? "parent" : "child"
-                                            }}
-                                            onStatusChange={handleStatusChange}
-                                            onRoleChange={handleRoleChange}
-                                        />    
-                                    </TableCell>
+            {/* Show message if no users */}
+            {users.length === 0 && !loading && !error && (
+                <Card>
+                    <CardContent className="p-8 text-center">
+                        <p className="text-gray-500">No users found. Please check your API connection or add some users.</p>
+                    </CardContent>
+                </Card>
+            )}
+
+            {/* User List */}
+            {users.length > 0 && (
+                <Card>
+                    <CardHeader className="pb-4">
+                        <CardTitle className="text-base">User List</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex justify-between mb-4">
+                            <Input
+                                placeholder="Search users..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="w-64"
+                            />
+                            <Select value={filter} onValueChange={(value: 'all' | 'parent' | 'child') => setFilter(value)}>
+                                <SelectTrigger className="w-36">
+                                    <SelectValue placeholder="Filter by role" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Users</SelectItem>
+                                    <SelectItem value="parent">Parents</SelectItem>
+                                    <SelectItem value="child">Children</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>User</TableHead>
+                                    <TableHead>Email</TableHead>
+                                    <TableHead>Role</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead>Stars</TableHead>
+                                    <TableHead>Coins</TableHead>
+                                    <TableHead>Actions</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
+                            </TableHeader>
+                            <TableBody>
+                                {filteredUsers.map((user) => (
+                                    <TableRow
+                                        key={user.id}
+                                        className="cursor-pointer hover:bg-gray-100"
+                                        onClick={() => handleRowClick(user)}
+                                    >
+                                        <TableCell>
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-[#3A8EBA] flex items-center justify-center overflow-hidden">
+                                                    {user.avatar ? (
+                                                        <img 
+                                                            src={user.avatar} 
+                                                            alt={user.name}
+                                                            className="w-full h-full object-cover"
+                                                            onError={(e) => {
+                                                                const target = e.target as HTMLImageElement;
+                                                                target.style.display = 'none';
+                                                                const parent = target.parentElement;
+                                                                if (parent) {
+                                                                    parent.innerHTML = `<span class="text-white text-sm font-semibold">${user.name[0]}</span>`;
+                                                                }
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <span className="text-white text-sm font-semibold">{user.name[0]}</span>
+                                                    )}
+                                                </div>
+                                                <span className="font-medium">{user.name}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>{user.email}</TableCell>
+                                        <TableCell className="capitalize">{user.role}</TableCell>
+                                        <TableCell>
+                                            <span className={`px-2 py-1 rounded-full text-xs ${
+                                            user.status === 'active' 
+                                                ? 'bg-green-100 text-green-800' 
+                                                : 'bg-red-100 text-red-800'
+                                            }`}>
+                                            {user.status}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-1">
+                                                <Star className="h-4 w-4 text-yellow-500" />
+                                                <span className="font-medium">{user.stars}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-1">
+                                                <Coins className="h-4 w-4 text-amber-500" />
+                                                <span className="font-medium">{user.coins}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell> 
+                                            <UserManageDialog
+                                                user={{
+                                                    ...user,
+                                                    role: user.role === "admin" ? "admin" : "user",
+                                                    type: user.role === "parent" ? "parent" : "child"
+                                                }}
+                                                onStatusChange={handleStatusChange}
+                                                onRoleChange={handleRoleChange}
+                                            />    
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+            )}
 
             <EditUserDialog
                 user={selectedUser ? { 

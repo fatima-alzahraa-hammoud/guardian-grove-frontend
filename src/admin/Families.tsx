@@ -101,62 +101,90 @@ const Families: React.FC = () => {
             console.log("Fetching families...");
             
             const response: FamiliesApiResponse = await requestApi({
-                route: "/family/", // Using your existing backend endpoint
+                route: "/family/",
                 method: requestMethods.GET
             });
 
             console.log("Families response:", response);
 
-            if (response && response.families && response.families.length > 0) {
-                console.log("Processing families data...");
-                
-                // Fetch members for each family to get accurate member count
-                const familiesWithMembers = await Promise.all(
-                    response.families.map(async (family: FamilyResponse): Promise<Family> => {
-                        try {
-                            console.log(`Fetching members for family ${family._id}`);
-                            const membersResponse: FamilyMembersResponse = await requestApi({
-                                route: "/family/FamilyMembers",
-                                method: requestMethods.POST,
-                                body: { familyId: family._id }
-                            });
-                            
-                            const members = membersResponse?.familyWithMembers?.members || [];
-                            console.log(`Family ${family.familyName} has ${members.length} members`);
-                            
-                            return {
-                                _id: family._id,
-                                familyName: family.familyName,
-                                email: family.email,
-                                totalStars: family.totalStars || 0,
-                                familyAvatar: family.familyAvatar,
-                                achievements: family.achievements || [],
-                                members: members
-                            };
-                        } catch (error) {
-                            console.error(`Error fetching members for family ${family._id}:`, error);
-                            return {
-                                _id: family._id,
-                                familyName: family.familyName,
-                                email: family.email,
-                                totalStars: family.totalStars || 0,
-                                familyAvatar: family.familyAvatar,
-                                achievements: family.achievements || [],
-                                members: []
-                            };
-                        }
-                    })
-                );
-                
-                console.log("Final families data:", familiesWithMembers);
-                setFamilies(familiesWithMembers);
-            } else {
+            // Better validation of response structure
+            if (!response) {
+                console.error("No response received");
+                setError("Failed to fetch families - no response");
+                setFamilies([]);
+                return;
+            }
+
+            if (!response.families) {
+                console.error("No families property in response:", response);
+                setError("Invalid response format");
+                setFamilies([]);
+                return;
+            }
+
+            if (!Array.isArray(response.families)) {
+                console.error("Families is not an array:", response.families);
+                setError("Invalid families data format");
+                setFamilies([]);
+                return;
+            }
+
+            if (response.families.length === 0) {
                 console.log("No families found in response");
                 setFamilies([]);
-                if (!response) {
-                    setError("Failed to fetch families - no response");
-                }
+                return;
             }
+
+            console.log("Processing families data...");
+            
+            // Fetch members for each family to get accurate member count
+            const familiesWithMembers = await Promise.all(
+                response.families.map(async (family: FamilyResponse): Promise<Family> => {
+                    try {
+                        console.log(`Fetching members for family ${family._id}`);
+                        const membersResponse: FamilyMembersResponse = await requestApi({
+                            route: "/family/FamilyMembers",
+                            method: requestMethods.POST,
+                            body: { familyId: family._id }
+                        });
+                        
+                        const members = membersResponse?.familyWithMembers?.members || [];
+                        console.log(`Family ${family.familyName} has ${members.length} members`);
+                        
+                        return {
+                            _id: family._id,
+                            familyName: family.familyName,
+                            email: family.email,
+                            totalStars: family.totalStars || 0,
+                            familyAvatar: family.familyAvatar,
+                            achievements: family.achievements || [],
+                            members: Array.isArray(members) ? members : []
+                        };
+                    } catch (error) {
+                        console.error(`Error fetching members for family ${family._id}:`, error);
+                        return {
+                            _id: family._id,
+                            familyName: family.familyName,
+                            email: family.email,
+                            totalStars: family.totalStars || 0,
+                            familyAvatar: family.familyAvatar,
+                            achievements: family.achievements || [],
+                            members: []
+                        };
+                    }
+                })
+            );
+            
+            console.log("Final families data:", familiesWithMembers);
+            
+            // Ensure we're setting an array
+            if (Array.isArray(familiesWithMembers)) {
+                setFamilies(familiesWithMembers);
+            } else {
+                console.error("familiesWithMembers is not an array:", familiesWithMembers);
+                setFamilies([]);
+            }
+            
         } catch (error) {
             console.error("Error fetching families:", error);
             setError("Failed to fetch families");
@@ -189,6 +217,12 @@ const Families: React.FC = () => {
     };
 
     const getSortedFamilies = (families: Family[]) => {
+        // Add type guard to ensure families is an array
+        if (!Array.isArray(families)) {
+            console.error('families is not an array:', families);
+            return [];
+        }
+        
         const filtered = families.filter(family =>
             family.familyName.toLowerCase().includes(search.toLowerCase())
         );

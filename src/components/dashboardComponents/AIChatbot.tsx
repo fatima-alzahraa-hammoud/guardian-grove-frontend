@@ -10,14 +10,11 @@ import { requestMethods } from "../../libs/enum/requestMethods";
 import MessageComponent from "../common/MessageComponent";
 import VoiceDialog from "../common/VoiceDialog";
 
-
 interface AIChatbotProps {
     collapsed: boolean;
-  }
-  
+}
 
 const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
-
     const [input, setInput] = useState<string>("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const chats = useSelector(selectChats);
@@ -26,9 +23,7 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
     const [isCall, setIsCall] = useState(false);
 
-
     const isBotResponding = useSelector(selectIsResponding);
-
     const dispatch = useDispatch();
 
     const activeChat = chats.find((chat) => chat._id === activeChatId) || null;
@@ -37,7 +32,6 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
     }, [activeChat]);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
-
     const [isDialogOpen, setDialogOpen] = useState(false);
     
     const handleDialogOpen = () => {
@@ -52,12 +46,10 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
           
     // Auto-scroll to bottom when new messages arrive
     useEffect(() => {
-        // Ensure scroll is always at the bottom after messages change
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [messages]);
-     
 
     useEffect(() => {
         if (textareaRef.current) {
@@ -83,6 +75,7 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                     activeChatId = result.chat._id;
                 }else{
                     toast.error("something went wrong ", result.message);
+                    return;
                 }
             }
         
@@ -95,6 +88,7 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                     body: data
                 });
                 dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
+                
                 if (response) {
                     if (activeChatId !== null) {
                         dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: response.aiResponse.content }));
@@ -105,18 +99,26 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                         toast.error("something went wrong ", response.message);
                     }
 
-                    if (isCall && response.audio) {
-                        setAudio(new Audio("data:audio/mp3;base64," + response.audio));
+                    // Handle Cloudinary audio URL (auto-play like before)
+                    if (isCall && response.audioUrl) {
+                        setAudio(new Audio(response.audioUrl));
+                    } else if (isCall && response.audioError) {
+                        toast.warn("Audio generation failed, but message was sent");
                     }
+                } else {
+                    toast.error("Failed to get response from server");
                 }
             } else {
                 toast.warn("Message cannot be empty!", { position: "top-center" });
             }
         } catch (error) {
-            console.log("Something went wrong!",error);
+            console.error("Voice input error:", error);
+            dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
+            toast.error("Something went wrong while processing your voice message");
         }
     };
 
+    // Handle audio playback (auto-play like your original code)
     useEffect(() => {
         if (audio) {
             audio.play().catch((err) => console.error("Audio play failed", err));
@@ -129,11 +131,17 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
      // Handle message submission
      const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        if (!input.trim()) {
+            toast.warn("Message cannot be empty!", { position: "top-center" });
+            return;
+        }
+
         try {
+            // Add user message to chat first
             if (activeChatId !== null) {
                 dispatch(addMessageToChat({ chatId: activeChatId, sender: "user", message: input.trim() }));
-                setInput("");
-            } else{
+            } else {
                 const result = await requestApi({
                     route: "/chats/",
                     method: requestMethods.POST,
@@ -141,46 +149,57 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                 });
                 if (result && result.chat){
                     dispatch(addChat(result.chat));
-                    await dispatch(setActiveChat(result.chat._id));
+                    dispatch(setActiveChat(result.chat._id));
                     activeChatId = result.chat._id;
-                    setInput("");
-                }else{
+                } else {
                     toast.error("something went wrong ", result.message);
+                    return;
                 }
             }
 
-            const data = {sender:"user", message: input.trim(), chatId: activeChatId, isCall: isCall};
-            if (input.trim()) {
-                dispatch(setBotResponding({ chatId: activeChatId, isResponding: true }));
-                const response = await requestApi({
-                    route: "/chats/handle",
-                    method: requestMethods.POST,
-                    body: data
-                });
-                dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
-                if (response){
-                    if (activeChatId !== null){
-                        dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: response.aiResponse.content }));
-                        if (activeChatTitle !== response.chat.title){
-                            dispatch(updateChatTitle({chatId: activeChatId, title: response.chat.title}))
-                        }
+            const messageText = input.trim();
+            setInput(""); // Clear input immediately
+
+            const data = {sender:"user", message: messageText, chatId: activeChatId, isCall: isCall};
+            
+            dispatch(setBotResponding({ chatId: activeChatId, isResponding: true }));
+            
+            const response = await requestApi({
+                route: "/chats/handle",
+                method: requestMethods.POST,
+                body: data
+            });
+            
+            dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
+            
+            if (response) {
+                if (activeChatId !== null) {
+                    dispatch(addMessageToChat({ chatId: activeChatId, sender: "bot", message: response.aiResponse.content }));
+                    if (activeChatTitle !== response.chat.title) {
+                        dispatch(updateChatTitle({chatId: activeChatId, title: response.chat.title}));
                     }
-                    else{
-                        toast.error("something went wrong ", response.message);
-                    }
+                } else {
+                    toast.error("something went wrong ", response.message);
                 }
-                setInput("");
-            }
-            else{
-                toast.warn("Message cannot be empty!", { position: "top-center" });
+
+                // Handle Cloudinary audio URL (auto-play like before)
+                if (isCall && response.audioUrl) {
+                    setAudio(new Audio(response.audioUrl));
+                } else if (isCall && response.audioError) {
+                    toast.warn("Audio generation failed, but message was sent");
+                }
+            } else {
+                toast.error("Failed to get response from server");
             }
         } catch (error) {
-            console.log("Something went wrong!",error);
+            console.error("Submit error:", error);
+            dispatch(setBotResponding({ chatId: activeChatId, isResponding: false }));
+            toast.error("Something went wrong while sending your message");
         }
     };
     
     const formatTimestamp = (timestamp: Date | string): string => {
-        const date = new Date(timestamp);  // Convert to Date object
+        const date = new Date(timestamp);
         if (isNaN(date.getTime())) {
             return ""; 
         }
@@ -200,12 +219,12 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                         
                     {/* Chatbot Container */}
                     <Card className="h-[calc(100vh-9rem)] bg-[#CDE7FE] border-none shadow-none w-full mt-4">
-                        <div className="max-h-[530px]  overflow-y-auto p-4 space-y-6">
+                        <div className="max-h-[530px] overflow-y-auto p-4 space-y-6">
                             {messages.length > 0 ? (
                                 messages.map((message, index) => (
-                                    <div className={`flex ${message.sender === "user" ? "justify-end items-end" : "justify-start items-start"}`}>
+                                    <div key={index} className={`flex ${message.sender === "user" ? "justify-end items-end" : "justify-start items-start"}`}>
                                         <div className={`max-w-[70%] rounded-2xl p-3 ${message.sender === "user" ? "bg-[#3A8EBA] text-white" : "bg-white text-black"} overflow-hidden`}>
-                                            <MessageComponent key={index} message={message.message} />
+                                            <MessageComponent message={message.message} />
                                             <div className={`text-xs mt-1 text-left ${message.sender === "user" ? "text-gray-300" : "text-gray-500"}`}>
                                                 {formatTimestamp(message.timestamp)}
                                             </div>
@@ -214,29 +233,31 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                                 ))
                             ) : (
                                 <p className="text-center text-gray-500 font-semibold font-comic text-lg">
-                                    🗨️ Hey there! Start the conversation, and I’ll be happy to chat with you! 😊
+                                    🗨️ Hey there! Start the conversation, and I'll be happy to chat with you! 😊
                                 </p>
                             )}
+                            
                             {/* Show preloader when bot is responding */}
                             {isBotResponding && (
                                 <div className="flex justify-start">
-                                    <div className=" bg-white text-black p-3 rounded-2xl">
+                                    <div className="bg-white text-black p-3 rounded-2xl">
                                         <div className="flex items-center justify-center w-full">
                                             <img src="/assets/images/preloader.gif" alt="loading..." className="w-12" />
                                         </div>
                                     </div>
                                 </div>
                             )}
+                            
                             {/* Scroll target at the bottom */}
                             <div ref={messagesEndRef} />
                         </div>
                     </Card>
                     
                     {/* Messaging container */}
-                    <form className="absolute -bottom-2 w-full bg-[#3A8EBA] rounded-3xl z-10 p-3 text-white">
+                    <form onSubmit={handleSubmit} className="absolute -bottom-2 w-full bg-[#3A8EBA] rounded-3xl z-10 p-3 text-white">
                         <div className="relative flex items-center justify-center rounded-xl border-0">       
                             <div className="flex gap-2">
-                                <label htmlFor="fileUpload" className="inline-flex shrink-0 cursor-pointer select-none items-center justify-center gap-1.5 whitespace-nowrap text-nowrap border font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-offset-1 [&>svg]:pointer-events-none [&>svg]:size-4 [&_svg]:shrink-0 px-3 text-sm has-[>kbd]:gap-2 has-[>svg]:px-2 has-[>kbd]:pr-[6px] rounded-full focus:bg-muted size-7 hover:bg-gray-100  hover:text-black">
+                                <label htmlFor="fileUpload" className="inline-flex shrink-0 cursor-pointer select-none items-center justify-center gap-1.5 whitespace-nowrap text-nowrap border font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-offset-1 [&>svg]:pointer-events-none [&>svg]:size-4 [&_svg]:shrink-0 px-3 text-sm has-[>kbd]:gap-2 has-[>svg]:px-2 has-[>kbd]:pr-[6px] rounded-full focus:bg-muted size-7 hover:bg-gray-100 hover:text-black">
                                     <input className="sr-only" id="fileUpload" multiple type="file" />
                                     <Paperclip className="h-5 w-5" />
                                     <span className="sr-only">Attach Files</span>
@@ -254,14 +275,20 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                                     minHeight: "42px", 
                                     maxHeight: "200px", 
                                 }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && !e.shiftKey) {
+                                        e.preventDefault();
+                                        handleSubmit(e);
+                                    }
+                                }}
                             />
-
 
                             <div className="ml-auto flex items-center gap-2">
                                 <button
                                     className="inline-flex shrink-0 cursor-pointer select-none items-center justify-center gap-1.5 whitespace-nowrap text-nowrap border font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-offset-1 has-[:focus-visible]:ring-2 [&>svg]:pointer-events-none [&>svg]:size-5 [&_svg]:shrink-0 text-background border-white bg-white hover:border-[#eae9e9] focus:border-[#eae9e9] focus:bg-[#eae9e9] focus-visible:border-[#eae9e9] focus-visible:bg-[#eae9e9] px-3 text-sm rounded-full size-9 text-black hover:bg-[#eae9e9]"
                                     type="button"
                                     onClick={input.trim() ? handleSubmit : handleDialogOpen}
+                                    disabled={isBotResponding}
                                 >
                                     {input.trim() ? (
                                         <Send className="h-5 w-5 text-black" />
@@ -271,11 +298,15 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
                                     <span className="sr-only">{input.trim() ? "Send Message" : "Voice Mode"}</span>
                                 </button>
                             </div>
-
                         </div>
                     </form>
-                    <VoiceDialog open={isDialogOpen} onOpenChange={setDialogOpen} onClose={handleDialogClose} onSendMessage={handleVoiceInput}/>
-
+                    
+                    <VoiceDialog 
+                        open={isDialogOpen} 
+                        onOpenChange={setDialogOpen} 
+                        onClose={handleDialogClose} 
+                        onSendMessage={handleVoiceInput}
+                    />
                 </div>
             </div>
         </div>
@@ -283,7 +314,6 @@ const AIChatbot : React.FC<AIChatbotProps>  = ({collapsed}) => {
 };
 
 export default AIChatbot;
-
 
 {/*
 / Chatbot 
