@@ -69,6 +69,7 @@
     "socket.io-client": "^4.8.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
+    "three": "^0.178.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {
@@ -80,6 +81,7 @@
     "@types/react-dom": "^18.3.5",
     "@types/react-slick": "^0.23.13",
     "@types/recharts": "^1.8.29",
+    "@types/three": "^0.178.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.29.0",
