@@ -5,6 +5,7 @@ import Store from "./dashboardPages/Store";
 import Main from "./dashboardPages/MainDashboard";
 import AIFriend from "./dashboardPages/AIFriend";
 import Leaderboard from "./dashboardPages/Leaderboard";
+import MagicGarden from "./dashboardPages/MagicGarden";
 
 const Dashboard : React.FC = () => {
 
@@ -16,6 +17,7 @@ const Dashboard : React.FC = () => {
                 <Route path="/store" element={<Store />}/>
                 <Route path="/AIFriend" element={<AIFriend />}/>
                 <Route path="/Leaderboard" element={<Leaderboard />}/>
+                <Route path="/MagicGarden" element={<MagicGarden />}/>
             </Routes>
         </div>
     );
