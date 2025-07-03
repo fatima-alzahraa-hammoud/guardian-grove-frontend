@@ -135,8 +135,8 @@ const FloatingElements = () => {
 };
 
 const CalendarEvents: React.FC = () => {
-    const [currentDate, setCurrentDate] = useState(new Date(2024, 11, 1)); // December 2024
-    const [selectedDate, setSelectedDate] = useState(new Date(2024, 11, 16)); // 16th selected
+    const [currentDate, setCurrentDate] = useState(new Date()); // December 2024
+    const [selectedDate, setSelectedDate] = useState(new Date()); // 16th selected
     const [newTaskTitle, setNewTaskTitle] = useState('');
     const [isGeneratingEvents, setIsGeneratingEvents] = useState(false);
     const [allBondingEvents, setAllBondingEvents] = useState<BondingEvent[]>([]);
@@ -147,7 +147,7 @@ const CalendarEvents: React.FC = () => {
         {
             id: '1',
             title: "tasnim's Birthday",
-            date: new Date(2024, 11, 17),
+            date: new Date(2025, 7, 4),
             time: 'All day',
             type: 'birthday'
         }
@@ -249,7 +249,12 @@ const CalendarEvents: React.FC = () => {
 
     const isToday = (date: Date | null) => {
         if (!date) return false;
-        return date.getDate() === 16 && date.getMonth() === 11 && date.getFullYear() === 2024;
+        const now = new Date();
+        return (
+            date.getDate() === now.getDate() &&
+            date.getMonth() === now.getMonth() &&
+            date.getFullYear() === now.getFullYear()
+        );
     };
 
     const getEventsForDate = (date: Date | null) => {
