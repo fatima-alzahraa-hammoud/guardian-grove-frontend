@@ -81,7 +81,7 @@ const AddGoalDialog: React.FC<AddGoalDialogProps> = ({ open, onOpenChange, onGoa
 
             if (response && response.tasks && Array.isArray(response.tasks)) {
                 // Validate task structure
-                const validTasks = response.tasks.filter((task: any) => 
+                const validTasks = response.tasks.filter((task: Task) => 
                     task.title && 
                     task.description && 
                     task.rewards && 
