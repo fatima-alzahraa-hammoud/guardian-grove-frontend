@@ -151,7 +151,7 @@ const AdminAchievements: React.FC = () => {
             console.log("Deleting achievement:", achievementId)
             
             const response = await requestApi({
-                route: `/achievements/delete`,
+                route: `/achievements/`,
                 method: requestMethods.DELETE,
                 body: { achievementId: achievementId }
             })

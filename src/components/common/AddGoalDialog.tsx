@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Label } from "../ui/label";
-import { Loader2, Wand2, Star, Coins } from "lucide-react";
+import { Loader2, Wand2, Star, Coins, AlertCircle } from "lucide-react";
 import { requestApi } from "../../libs/requestApi";
 import { requestMethods } from "../../libs/enum/requestMethods";
 import { useSelector } from "react-redux";
@@ -24,26 +24,40 @@ const AddGoalDialog: React.FC<AddGoalDialogProps> = ({ open, onOpenChange, onGoa
     
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [dueDate, setDueDate] = useState<string>("");
     const [generatedTasks, setGeneratedTasks] = useState<Task[]>([]);
     const [isGeneratingTasks, setIsGeneratingTasks] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [hasGeneratedTasks, setHasGeneratedTasks] = useState(false);
+    const [error, setError] = useState<string>("");
 
     // Reset form when dialog opens/closes
     useEffect(() => {
         if (!open) {
             setTitle("");
             setDescription("");
+            setDueDate("");
             setGeneratedTasks([]);
             setIsGeneratingTasks(false);
             setIsSaving(false);
             setHasGeneratedTasks(false);
+            setError("");
         }
     }, [open]);
 
     const handleGenerateTasks = async () => {
+        // Clear any previous errors
+        setError("");
+        
         if (!title.trim() || !description.trim()) {
+            setError("Please fill in both title and description before generating tasks");
             toast.error("Please fill in both title and description before generating tasks");
+            return;
+        }
+
+        if (!userId) {
+            setError("User not found. Please try logging in again.");
+            toast.error("User not found. Please try logging in again.");
             return;
         }
 
@@ -53,38 +67,69 @@ const AddGoalDialog: React.FC<AddGoalDialogProps> = ({ open, onOpenChange, onGoa
 
         try {
             const response = await requestApi({
-                route: "/users/generateTasksForGoal", // Adjust this endpoint as needed
+                route: "/users/generateTasksForGoal",
                 method: requestMethods.POST,
                 body: {
                     userId,
                     title: title.trim(),
-                    description: description.trim()
+                    description: description.trim(),
+                    dueDate: dueDate ? new Date(dueDate).toISOString() : undefined
                 }
             });
 
-            if (response && response.tasks) {
-                setGeneratedTasks(response.tasks);
-                setHasGeneratedTasks(true);
-                toast.success("Tasks generated successfully!");
+            console.log("Generate tasks response:", response); // Debug log
+
+            if (response && response.tasks && Array.isArray(response.tasks)) {
+                // Validate task structure
+                const validTasks = response.tasks.filter((task: Task) => 
+                    task.title && 
+                    task.description && 
+                    task.rewards && 
+                    typeof task.rewards.stars === 'number' && 
+                    typeof task.rewards.coins === 'number'
+                );
+
+                if (validTasks.length > 0) {
+                    setGeneratedTasks(validTasks);
+                    setHasGeneratedTasks(true);
+                    toast.success(`${validTasks.length} tasks generated successfully!`);
+                } else {
+                    setError("Generated tasks have invalid format");
+                    toast.error("Generated tasks have invalid format");
+                }
             } else {
-                toast.error("Failed to generate tasks: " + (response?.message || "Unknown error"));
+                const errorMessage = response?.message || "Failed to generate tasks";
+                setError(errorMessage);
+                toast.error(errorMessage);
             }
         } catch (error) {
             console.error("Error generating tasks:", error);
-            toast.error("Something went wrong while generating tasks");
+            const errorMessage = "Something went wrong while generating tasks. Please try again.";
+            setError(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsGeneratingTasks(false);
         }
     };
 
     const handleSaveGoal = async () => {
+        setError("");
+        
         if (!title.trim() || !description.trim()) {
+            setError("Please fill in both title and description");
             toast.error("Please fill in both title and description");
             return;
         }
 
         if (!hasGeneratedTasks || generatedTasks.length === 0) {
+            setError("Please generate tasks before saving the goal");
             toast.error("Please generate tasks before saving the goal");
+            return;
+        }
+
+        if (!userId) {
+            setError("User not found. Please try logging in again.");
+            toast.error("User not found. Please try logging in again.");
             return;
         }
 
@@ -92,15 +137,18 @@ const AddGoalDialog: React.FC<AddGoalDialogProps> = ({ open, onOpenChange, onGoa
 
         try {
             const response = await requestApi({
-                route: "/userGoals/createGoal", // Adjust this endpoint as needed
+                route: "/userGoals/", // Make sure this endpoint exists
                 method: requestMethods.POST,
                 body: {
                     userId,
                     title: title.trim(),
                     description: description.trim(),
-                    tasks: generatedTasks
+                    tasks: generatedTasks,
+                    dueDate: dueDate ? new Date(dueDate).toISOString() : undefined
                 }
             });
+
+            console.log("Create goal response:", response); // Debug log
 
             if (response && response.goal) {
                 toast.success("Goal created successfully!");
@@ -113,11 +161,15 @@ const AddGoalDialog: React.FC<AddGoalDialogProps> = ({ open, onOpenChange, onGoa
                 // Close the dialog
                 onOpenChange(false);
             } else {
-                toast.error("Failed to create goal: " + (response?.message || "Unknown error"));
+                const errorMessage = response?.message || "Failed to create goal";
+                setError(errorMessage);
+                toast.error(errorMessage);
             }
         } catch (error) {
             console.error("Error creating goal:", error);
-            toast.error("Something went wrong while creating the goal");
+            const errorMessage = "Something went wrong while creating the goal. Please try again.";
+            setError(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsSaving(false);
         }
@@ -126,8 +178,8 @@ const AddGoalDialog: React.FC<AddGoalDialogProps> = ({ open, onOpenChange, onGoa
     const calculateTotalRewards = () => {
         return generatedTasks.reduce(
             (total, task) => ({
-                stars: total.stars + task.rewards.stars,
-                coins: total.coins + task.rewards.coins
+                stars: total.stars + (task.rewards?.stars || 0),
+                coins: total.coins + (task.rewards?.coins || 0)
             }),
             { stars: 0, coins: 0 }
         );
@@ -143,10 +195,18 @@ const AddGoalDialog: React.FC<AddGoalDialogProps> = ({ open, onOpenChange, onGoa
                 </DialogHeader>
 
                 <div className="space-y-6 font-poppins">
+                    {/* Error Display */}
+                    {error && (
+                        <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                            <AlertCircle className="w-4 h-4" />
+                            <span className="text-sm">{error}</span>
+                        </div>
+                    )}
+
                     {/* Goal Title */}
                     <div className="space-y-2">
                         <Label htmlFor="title" className="text-sm font-semibold">
-                            Goal Title
+                            Goal Title *
                         </Label>
                         <Input
                             id="title"
@@ -156,22 +216,52 @@ const AddGoalDialog: React.FC<AddGoalDialogProps> = ({ open, onOpenChange, onGoa
                             placeholder="Enter your goal title..."
                             className="w-full"
                             disabled={isGeneratingTasks || isSaving}
+                            maxLength={100} // Add character limit
                         />
+                        <div className="text-xs text-gray-500">{title.length}/100 characters</div>
                     </div>
 
                     {/* Goal Description */}
                     <div className="space-y-2">
                         <Label htmlFor="description" className="text-sm font-semibold">
-                            Goal Description
+                            Goal Description *
                         </Label>
                         <Textarea
                             id="description"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Describe your goal in detail..."
+                            placeholder="Describe your goal in detail... What do you want to achieve and why?"
                             className="w-full min-h-[100px] resize-none"
                             disabled={isGeneratingTasks || isSaving}
+                            maxLength={500} // Add character limit
                         />
+                        <div className="text-xs text-gray-500">{description.length}/500 characters</div>
+                    </div>
+
+                    {/* Due Date */}
+                    <div className="space-y-2">
+                        <Label htmlFor="dueDate" className="text-sm font-semibold">
+                            Due Date (Optional)
+                        </Label>
+                        <Input
+                            id="dueDate"
+                            type="date"
+                            value={dueDate}
+                            onChange={(e) => setDueDate(e.target.value)}
+                            min={new Date().toISOString().split('T')[0]} // Prevent selecting past dates
+                            className="w-full"
+                            disabled={isGeneratingTasks || isSaving}
+                        />
+                        {dueDate && (
+                            <div className="text-xs text-gray-500">
+                                Target completion: {new Date(dueDate).toLocaleDateString('en-US', {
+                                    weekday: 'long',
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
+                                })}
+                            </div>
+                        )}
                     </div>
 
                     {/* Generate Tasks Button */}
@@ -199,7 +289,9 @@ const AddGoalDialog: React.FC<AddGoalDialogProps> = ({ open, onOpenChange, onGoa
                     {hasGeneratedTasks && generatedTasks.length > 0 && (
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">
-                                <h3 className="font-semibold text-lg font-comic">Generated Tasks</h3>
+                                <h3 className="font-semibold text-lg font-comic">
+                                    Generated Tasks ({generatedTasks.length})
+                                </h3>
                                 <div className="flex items-center gap-4 text-sm">
                                     <div className="flex items-center gap-1">
                                         <Star className="w-4 h-4 text-yellow-500" />
@@ -211,6 +303,23 @@ const AddGoalDialog: React.FC<AddGoalDialogProps> = ({ open, onOpenChange, onGoa
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Goal Timeline Info */}
+                            {dueDate && (
+                                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                    <div className="flex items-center gap-2 text-sm text-blue-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-calendar">
+                                            <path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>
+                                        </svg>
+                                        <span className="font-medium">Goal Timeline:</span>
+                                        <span>Target completion by {new Date(dueDate).toLocaleDateString('en-US', {
+                                            month: 'short',
+                                            day: 'numeric',
+                                            year: 'numeric'
+                                        })}</span>
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
                                 {generatedTasks.map((task, index) => (
@@ -231,16 +340,38 @@ const AddGoalDialog: React.FC<AddGoalDialogProps> = ({ open, onOpenChange, onGoa
                                             <div className="flex items-center gap-3 text-sm">
                                                 <div className="flex items-center gap-1">
                                                     <Star className="w-3 h-3 text-yellow-500" />
-                                                    <span>{task.rewards.stars}</span>
+                                                    <span>{task.rewards?.stars || 0}</span>
                                                 </div>
                                                 <div className="flex items-center gap-1">
                                                     <Coins className="w-3 h-3 text-yellow-500" />
-                                                    <span>{task.rewards.coins}</span>
+                                                    <span>{task.rewards?.coins || 0}</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 ))}
+                            </div>
+
+                            {/* Regenerate Tasks Button */}
+                            <div className="flex justify-center">
+                                <Button
+                                    onClick={handleGenerateTasks}
+                                    disabled={isGeneratingTasks || isSaving}
+                                    variant="outline"
+                                    className="px-4 py-2 rounded-full text-sm"
+                                >
+                                    {isGeneratingTasks ? (
+                                        <>
+                                            <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                                            Regenerating...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Wand2 className="w-3 h-3 mr-2" />
+                                            Regenerate Tasks
+                                        </>
+                                    )}
+                                </Button>
                             </div>
                         </div>
                     )}

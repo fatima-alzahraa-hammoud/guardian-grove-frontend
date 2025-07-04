@@ -10,7 +10,7 @@ interface User {
     name: string;
     email: string;
     type: "parent" | "child";
-    role: "user" | "admin";
+    role: "user" | "parent" | "child" | "admin";
     status: "active" | "banned";
     achievements: number;
     progress: number;
@@ -21,7 +21,7 @@ interface User {
 interface UserManageDialogProps {
     user: User | null;
     onStatusChange: (userId: number, newStatus: "active" | "banned") => void;
-    onRoleChange: (userId: number, newRole: "user" | "admin") => void;
+    onRoleChange: (userId: number, newRole: "child" | "parent" | "admin") => void;
 }
 
 const UserManageDialog: React.FC<UserManageDialogProps> = ({ user, onStatusChange, onRoleChange }) => {
@@ -79,13 +79,14 @@ const UserManageDialog: React.FC<UserManageDialogProps> = ({ user, onStatusChang
                         </Label>
                         <Select
                             value={user.role}
-                            onValueChange={(value: "user" | "admin") => onRoleChange(user.id, value)}
+                            onValueChange={(value: "child" | "parent" | "admin") => onRoleChange(user.id, value)}
                         >
                             <SelectTrigger className="border border-[#3A8EBA] focus:ring-[#3A8EBA] focus:border-[#3A8EBA]">
                                 <SelectValue placeholder="Select role" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="user">User</SelectItem>
+                                <SelectItem value="parent">Parent</SelectItem>
+                                <SelectItem value="child">Child</SelectItem>
                                 <SelectItem value="admin">Admin</SelectItem>
                             </SelectContent>
                         </Select>
