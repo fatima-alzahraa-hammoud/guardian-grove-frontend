@@ -198,8 +198,9 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange, onG
 
     return(
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl p-10">
-                <DialogHeader>
+            <DialogContent className="max-w-2xl max-h-[90vh] p-0 flex flex-col">
+                {/* Fixed Header */}
+                <DialogHeader className="px-10 pt-10 pb-4 border-b flex-shrink-0">
                     <DialogTitle className="flex items-center justify-between font-comic text-lg">
                         <div>
                             <span className=" font-bold">Goal: </span>
@@ -213,78 +214,81 @@ const TasksDialog : React.FC<TasksDialogProps> = ({goal, open, onOpenChange, onG
                     </DialogTitle>
                 </DialogHeader>
 
-                <div className="mt-2">
-                    {/* Rewards section */}
-                    <div className="mb-6 font-comic">
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <span className="font-semibold">Total Stars:</span>
-                                    <span>{goal.rewards.stars}</span>
+                {/* Scrollable Content */}
+                <div className="flex-1 overflow-y-auto px-10 pb-10">
+                    <div className="mt-2">
+                        {/* Rewards section */}
+                        <div className="mb-6 font-comic">
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-semibold">Total Stars:</span>
+                                        <span>{goal.rewards.stars}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-semibold">Total Coins:</span>
+                                        <span>{goal.rewards.coins}</span>
+                                    </div>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="font-semibold">Total Coins:</span>
-                                    <span>{goal.rewards.coins}</span>
+                                    <span className="font-semibold">Badge Reward:</span>
+                                    <span>{goal.rewards.achievementName}</span>
                                 </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="font-semibold">Badge Reward:</span>
-                                <span>{goal.rewards.achievementName}</span>
                             </div>
                         </div>
-                    </div>
 
-                    {/*Tasks section*/}
-                    <div className="space-y-4 font-poppins">
-                        <h3 className="font-semibold text-lg font-comic">Tasks</h3>
-                        {goal.tasks.map((task, index) => (
-                            <div
-                                key={task._id}
-                                className={`flex items-center justify-between p-4 rounded-lg transition-all duration-300 ${
-                                    task.isCompleted 
-                                        ? 'bg-green-100 border-2 border-green-300' 
-                                        : 'bg-[#CDE7FE]'
-                                }`}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <span className={`w-6 h-6 flex items-center justify-center rounded-full text-white ${
-                                        task.isCompleted ? 'bg-green-500' : 'bg-[#3A8EBA]'
-                                    }`}>
-                                        {task.isCompleted ? '✓' : index + 1}
-                                    </span>
-                                    <p className="flex flex-col">
-                                        <span className={task.isCompleted ? 'line-through text-gray-500' : ''}>
-                                            {task.title}
+                        {/*Tasks section*/}
+                        <div className="space-y-4 font-poppins">
+                            <h3 className="font-semibold text-lg font-comic">Tasks</h3>
+                            {goal.tasks.map((task, index) => (
+                                <div
+                                    key={task._id}
+                                    className={`flex items-center justify-between p-4 rounded-lg transition-all duration-300 ${
+                                        task.isCompleted 
+                                            ? 'bg-green-100 border-2 border-green-300' 
+                                            : 'bg-[#CDE7FE]'
+                                    }`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <span className={`w-6 h-6 flex items-center justify-center rounded-full text-white ${
+                                            task.isCompleted ? 'bg-green-500' : 'bg-[#3A8EBA]'
+                                        }`}>
+                                            {task.isCompleted ? '✓' : index + 1}
                                         </span>
-                                        <span className={`text-xs ${task.isCompleted ? 'line-through text-gray-400' : ''}`}>
-                                            {task.description}
-                                        </span>
-                                    </p>
-                                </div>
-                                <div className="flex items-center gap-5">
-                                    <div className="flex items-center gap-2">
-                                        <Star className="w-4 h-4 text-yellow-500" />
-                                        <span>{task.rewards.stars}</span>
+                                        <p className="flex flex-col">
+                                            <span className={task.isCompleted ? 'line-through text-gray-500' : ''}>
+                                                {task.title}
+                                            </span>
+                                            <span className={`text-xs ${task.isCompleted ? 'line-through text-gray-400' : ''}`}>
+                                                {task.description}
+                                            </span>
+                                        </p>
                                     </div>
-                                    <div className="flex items-center gap-1">
-                                        <Coins className="w-4 h-4 text-yellow-500" />
-                                        <span>{task.rewards.coins}</span>
+                                    <div className="flex items-center gap-5">
+                                        <div className="flex items-center gap-2">
+                                            <Star className="w-4 h-4 text-yellow-500" />
+                                            <span>{task.rewards.stars}</span>
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                            <Coins className="w-4 h-4 text-yellow-500" />
+                                            <span>{task.rewards.coins}</span>
+                                        </div>
+                                        <Button
+                                            variant="outline"
+                                            className={`text-xs ${
+                                                task.isCompleted 
+                                                    ? 'bg-green-500 text-white hover:bg-green-600' 
+                                                    : ''
+                                            }`}
+                                            disabled={task.isCompleted}
+                                            onClick={() => handleDoItClick(task, goal)}
+                                        >
+                                            {task.isCompleted ? "Done!" : "Do it"}
+                                        </Button>
                                     </div>
-                                    <Button
-                                        variant="outline"
-                                        className={`text-xs ${
-                                            task.isCompleted 
-                                                ? 'bg-green-500 text-white hover:bg-green-600' 
-                                                : ''
-                                        }`}
-                                        disabled={task.isCompleted}
-                                        onClick={() => handleDoItClick(task, goal)}
-                                    >
-                                        {task.isCompleted ? "Done!" : "Do it"}
-                                    </Button>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </div>
             </DialogContent>
